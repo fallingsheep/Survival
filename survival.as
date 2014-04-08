@@ -172,18 +172,22 @@
 			setChildIndex(speedpack,7);
 			speedpack.x=450;
 			speedpack.y=280;
-			//add UI
-			addChild(ui);
-			setChildIndex(ui,8);
-			ui.x=322;
-			ui.y=350;
+			
 			
 			// light
-			addChild(light);
-			mask=light;
+			//addChild(light);
+			//mask=light;
 			
-			
-			
+			//MASK
+                addChild(light);
+                this.mask = light;
+                light.x = player.x;
+                light.y = player.y;
+			//add UI
+			stage.addChild(ui);
+			//setChildIndex(ui,8);
+			ui.x=322;
+			ui.y=350;
 			
 			
 			//add listener to run on every frame
@@ -209,15 +213,19 @@
 			player.rotation=(to_degrees(angle) -90);
 			if (up) {
 				player.y-=player_speed;
+				light.y-=player_speed;
 			}
 			if (down) {
 				player.y+=player_speed;
+				light.y+=player_speed;
 			}
 			if (left) {
 				player.x-=player_speed;
+				light.x-=player_speed;
 			}
 			if (right) {
 				player.x+=player_speed;
+				light.x+=player_speed;
 			}
 			//HIT DETECTION
 			if (walkthruwalls == false){
