@@ -151,8 +151,8 @@
 			//add the player
 			addChild(player);
 			setChildIndex(player,4);
-			player.x=400;//center of stage
-			player.y=200;//center of stage
+			player.x = stage.width / 2;
+            player.y = stage.height / 2;
 			
 			//TEMP ADD ITEMS DIRECTLY TO STAGE ON GAME START 
 			//add ammo crate
@@ -181,8 +181,8 @@
 			//MASK
                 addChild(light);
                 this.mask = light;
-                light.x = player.x;
-                light.y = player.y;
+                light.x = stage.width / 2;
+                light.y = ((stage.height / 2)- 100);
 			//add UI
 			stage.addChild(ui);
 			//setChildIndex(ui,8);
