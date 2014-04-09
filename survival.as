@@ -181,8 +181,9 @@
 			//MASK
                 addChild(light);
                 this.mask = light;
-                light.x = stage.width / 2;
-                light.y = ((stage.height / 2)- 100);
+				//postion "light" over player
+                light.x =  player.x;
+                light.y = player.y- 85;
 			//add UI
 			stage.addChild(ui);
 			//setChildIndex(ui,8);
@@ -286,18 +287,9 @@
 				}
 			}
 		}
-		public function shootFlames():void{
-			if (mousePressed == true){
-						flamethrowerflames.rotation=player.rotation;
-						addChild(flamethrowerflames);
-						flamethrowerflames.x = player.x;
-						flamethrowerflames.y = player.y;
-			}
-		}
-		public function removeFlames():void{
-			if((this.contains(flamethrowerflames))&&(mousePressed == false)){
-				removeChild(flamethrowerflames);
-			}
+		public function updateLight():void{
+			light.x =  player.x;
+            light.y = player.y- 85;
 		}
 		public function lighting():void{
 			var dist_x:Number=player.x-mouseX;
@@ -325,6 +317,7 @@
 			playerMoving();
 			removeFlames();
 			lighting();
+			updateLight();
 		}
 
 ///////////////////////////////////////////////////////
@@ -764,7 +757,21 @@
 			//remove current bullet from array
 			bulletList.splice(bulletList.indexOf(e.currentTarget),1);
 		}
+		//flame thrower
+		public function shootFlames():void{
+			if (mousePressed == true){
+						flamethrowerflames.rotation=player.rotation;
+						addChild(flamethrowerflames);
+						flamethrowerflames.x = player.x;
+						flamethrowerflames.y = player.y;
+			}
+		}
 		
+		public function removeFlames():void{
+			if((this.contains(flamethrowerflames))&&(mousePressed == false)){
+				removeChild(flamethrowerflames);
+			}
+		}
 ///////////////////////////////////////////////////////
 //							ITEMS
 ///////////////////////////////////////////////////////
