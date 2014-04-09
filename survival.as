@@ -287,9 +287,22 @@
 				}
 			}
 		}
+		public function shootFlames():void{
+			if (mousePressed == true){
+						flamethrowerflames.rotation=player.rotation;
+						addChild(flamethrowerflames);
+						flamethrowerflames.x = player.x;
+						flamethrowerflames.y = player.y;
+			}
+		}
 		public function updateLight():void{
 			light.x =  player.x;
             light.y = player.y- 85;
+		}
+		public function removeFlames():void{
+			if((this.contains(flamethrowerflames))&&(mousePressed == false)){
+				removeChild(flamethrowerflames);
+			}
 		}
 		public function lighting():void{
 			var dist_x:Number=player.x-mouseX;
@@ -317,7 +330,7 @@
 			playerMoving();
 			removeFlames();
 			lighting();
-			updateLight();
+			updateLight()
 		}
 
 ///////////////////////////////////////////////////////
@@ -757,21 +770,7 @@
 			//remove current bullet from array
 			bulletList.splice(bulletList.indexOf(e.currentTarget),1);
 		}
-		//flame thrower
-		public function shootFlames():void{
-			if (mousePressed == true){
-						flamethrowerflames.rotation=player.rotation;
-						addChild(flamethrowerflames);
-						flamethrowerflames.x = player.x;
-						flamethrowerflames.y = player.y;
-			}
-		}
 		
-		public function removeFlames():void{
-			if((this.contains(flamethrowerflames))&&(mousePressed == false)){
-				removeChild(flamethrowerflames);
-			}
-		}
 ///////////////////////////////////////////////////////
 //							ITEMS
 ///////////////////////////////////////////////////////
