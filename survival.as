@@ -1,13 +1,11 @@
 ﻿package {
-	import flash.display.Sprite;
+	import flash.geom.*
+    import flash.display.*
 	import flash.events.Event;
 	import flash.events.TimerEvent;
 	import flash.utils.Timer;
-	import flash.display.Stage;
-	import flash.display.MovieClip;
 	import flash.events.KeyboardEvent;
 	import flash.events.MouseEvent;
-	import flash.display.DisplayObjectContainer;
 	
 	public class survival extends Sprite {
 		//global variables
@@ -314,6 +312,10 @@
 			light.graphics.moveTo(player.x, player.y);
 			light.graphics.drawCircle(0,80,80);
 			light.graphics.endFill();
+			light.blendMode = BlendMode.ALPHA;
+			light.alpha=0.5;
+			this.cacheAsBitmap = true;
+			light.cacheAsBitmap = true;
 				
 		}
 ///////////////////////////////////////////////////////
