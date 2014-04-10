@@ -29,9 +29,6 @@
 			x += xVel;
 			y += yVel;
 			//remove bullet if it goes off stage
-			if(x > 800 || x < 0 || y > 368 || y < 0) {
-				this.parent.removeChild(this);
-			}
 			
         }
     }

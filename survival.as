@@ -1,8 +1,8 @@
 ﻿package {
 	import flash.geom.*
     import flash.display.*
-	import flash.events.Event;
-	import flash.events.TimerEvent;
+	import flash.events.*
+	import flash.filters.*
 	import flash.utils.Timer;
 	import flash.events.KeyboardEvent;
 	import flash.events.MouseEvent;
@@ -16,61 +16,44 @@
 		public static var door2:door_mc = new door_mc();
 		public static var pausescreen:pausescreen_mc = new pausescreen_mc();
 		public static var shopscreen:shopscreen_mc = new shopscreen_mc();
-		
 		//Lighting
 		public var light:light_mc= new light_mc();
-		public var torch_power:int=100;
-        public var torch_step:int=100;
-        public var torch_angle:int=90;
-        public var torch_angle_step:int=20;
-		public var flicker=0;// light flicker
-		
 		//standard variables
 		public var ground:ground_mc = new ground_mc();
 		public var ui:ui_mc = new ui_mc();
-		
 		//items
 		public var ammocrate:ammocrate_mc = new ammocrate_mc();
 		public var medpack:medpack_mc = new medpack_mc();
 		public var speedpack:speedpack_mc = new speedpack_mc();
-		
 		//weapons
 		public var pistol:pistol_mc = new pistol_mc();
 		public var uzi:uzi_mc = new uzi_mc();
 		public var shotgun:shotgun_mc = new shotgun_mc();
 		public var flamethrower:flamethrower_mc = new flamethrower_mc();
 		public var flamethrowerflames:flamethrowerflames_mc = new flamethrowerflames_mc();
-		
 		public var playerhitobject:Boolean = false; // has player hit a object
 		public var isusingpistol:Boolean = true;//set pistol as default weapon
 		public var isusinguzi:Boolean = false;
 		public var isusingshotgun:Boolean = false;
 		public var isusingflamethrower:Boolean = false;
 		public var ammoempty:Boolean = false;//ammo empty check
-		
 		public var dooropening:Boolean = false;//door moving check
 		public var door2opening:Boolean = false;//door2 moving check
-		
 		public var stopspawn:Boolean = false;//zombie spawn control
 		public var key_pressed:int=0;
 		public var radius:int=8;//players "size" (sphere)
-		
 		public var up,down,left,right:Boolean=false;
 		public var weapon1,weapon2,weapon3,weapon4:Boolean=false;//switch weapon keys 1,2,3
 		public var mousePressed:Boolean = false; //keeps track of whether the mouse is currently pressed down
-		
 		//shooting speed
 		public var delayCounter:int = 0; //we use this to add delay between the shots
 		public var delayMax:int = 15; //default pistol delay
-		
 		//ammo
 		public var pistolammo:int;
 		public var uziammo:int;
 		public var shotgunammo:int;
 		public var flamethrowerammo:int;
-		
 		public var health:int=100;//starting health
-		
 		//zombies
 		public var zombieskilled:int;//total zombies killed for current stage
 		public var totalzombieskilled:int;//total zombies killed all up
@@ -78,20 +61,17 @@
 		public var zombiespawncount:int = 9; // MUST BE 1 LESS than actual count!! used as starting zombie spawn count
 		public var totalzomibes:int; // total zombies spawned
 		public var zomibeskilled:int; // total zombies killed
-		
 		//timers
 		public var SecondsElapsed:Number = 1;
 		public var Timer10:Timer = new Timer(1000, 10);
 		public var collectedSpeedPack:Boolean = false;
 		public var level:int = 1;//set start level
 		public var currentcash:int = 250;//cash
-		
 		//CHEATS AND DEBUG
 		public var haspistol:Boolean = false;
 		public var hasuzi:Boolean = false;
 		public var hasshotgun:Boolean = false;
 		public var hasflamethrower:Boolean = true;
-		
 		//what stage to start on
 		public var currentstage:int = 1;
 		//cheats
@@ -99,11 +79,11 @@
 		public var walkthruwalls:Boolean = false;
 		public var infinteammo:Boolean = false;
 		public var infintehealth:Boolean = false;
-		
 		public var player_speed:int = 2;//player movement speed (Default is 2)
-		
+		public var playerhastorch:Boolean = false;
+		public var torch:torch_mc= new torch_mc();
 		public static var ispaused:Boolean = false;
-		
+
 		//Intilize game code
 		public function survival():void {
 			addChild(intro);
@@ -178,11 +158,13 @@
 			torch.y=165;		
 			
 			//MASK
-                addChild(light);
-                this.mask = light;
-				//postion "light" over player
-                light.x =  player.x;
-                light.y = player.y - 85;
+            addChild(light);
+            this.mask = light;
+			//postion "light" over player
+            light.x =  player.x;
+            light.y = player.y - 85;
+			setChildIndex(light,9);
+				
 			//add UI
 			stage.addChild(ui);
 			//setChildIndex(ui,8);
@@ -202,20 +184,16 @@
 			
 			trace ("Game Intialised");
 		}
-		public var playerhastorch:Boolean = false;
-		public var torch:torch_mc= new torch_mc();
+
 		
 		public function lighting():void{
-			var dist_x:Number=player.x-mouseX;
-			var dist_y:Number=player.y-mouseY;
-			var angle:Number=- Math.atan2(dist_x,dist_y);
-			var ray_angle:Number
-			
+			var blur:BlurFilter = new BlurFilter();
+			var filterArray:Array = new Array(blur);
 			
 			
 			if (playerhastorch == true){
 			light.x = player.x;
-			light.y = player.y - 110;
+			light.y = player.y - 85;
 			light.graphics.clear();
 			light.graphics.beginFill(0xffffff, 100);
 			light.graphics.moveTo(player.x, player.y);
@@ -224,11 +202,15 @@
 			light.blendMode = BlendMode.ALPHA;
 			//Player torch alpha
 			light.alpha=0.5;
+			//blur edges
+			blur.blurX = 10;
+			blur.blurY = 10;
+			blur.quality = 1;
+			light.filters = filterArray;
 			light.gotoAndStop(1);
 			}else{
 			light.x = player.x;
-			light.y = player.y - 85;
-			light.gotoAndStop(2);
+			light.y = player.y- 85;
 			light.graphics.clear();
 			light.graphics.beginFill(0xffffff, 100);
 			light.graphics.moveTo(player.x, player.y);
@@ -237,7 +219,14 @@
 			light.blendMode = BlendMode.ALPHA;
 			//Player torch alpha
 			light.alpha=0.5;
+			//blur edges
+			blur.blurX = 10;
+			blur.blurY = 10;
+			blur.quality = 1;
+			light.filters = filterArray;
+			light.gotoAndStop(2);
 			}
+			//needed for masks to work properly
 			this.cacheAsBitmap = true;
 			light.cacheAsBitmap = true;
 				
@@ -326,20 +315,7 @@
 				}
 			}
 		}
-		public function shootFlames():void{
-			if (mousePressed == true){
-						flamethrowerflames.rotation=player.rotation;
-						addChild(flamethrowerflames);
-						flamethrowerflames.x = player.x;
-						flamethrowerflames.y = player.y;
-			}
-		}
 
-		public function removeFlames():void{
-			if((this.contains(flamethrowerflames))&&(mousePressed == false)){
-				removeChild(flamethrowerflames);
-			}
-		}
 
 ///////////////////////////////////////////////////////
 //					SCRIPTS / MODULES
@@ -586,7 +562,7 @@
 							zombie1.zombiehitpoints -= 10;
 						}
 						if(zombie1.zombiehitpoints <= 0){
-							this.parent.removeChild(zombie1);
+							ground.removeChild(zombie1);
 						}
 					}
 					//bullets
@@ -595,14 +571,14 @@
 						//check if bullet hits zombie
 						
 						if (bullet1.hitTestObject(zombie1)){
-							if (this.parent.contains(zombie1)){
+							if (ground.contains(zombie1)){
 								//remove zombie and bullet
 								if(isusingshotgun == true){
 									zombie1.zombiehitpoints -= 250;
-									this.parent.removeChild(bullet1);
+									ground.removeChild(bullet1);
 								} else {
 									zombie1.zombiehitpoints -= 100;
-									this.parent.removeChild(bullet1);
+									ground.removeChild(bullet1);
 								}
 
 								if(zombie1.zombiehitpoints <= 0){
@@ -610,21 +586,7 @@
 								}
 							}
 						}
-						//SHOOT THRU WALLS CHEAT
-						if (shootthruwalls == false){
-							//check if bullet hits wall and remove
-							if (environment.hitTestPoint(bullet1.x,bullet1.y, true)){
-								if (this.parent.contains(bullet1)){
-									this.parent.removeChild(bullet1);
-								}
-							}
-							//check if bullet hits door
-							if ((door.hitTestPoint(bullet1.x,bullet1.y, true))||(door.hitTestPoint(bullet1.x,bullet1.y, true))){
-								if (this.parent.contains(bullet1)){
-									this.parent.removeChild(bullet1);
-								}
-							}
-						}
+						
 					}
 			 }
 		}
@@ -787,7 +749,7 @@
 			//add bullet to array
 			bulletList.push(bullet);
 			//add bullet to stage
-			stage.addChild(bullet);
+			ground.addChild(bullet);
 			//reduce ammo by 1
 		}
 		//removes bullet from array
@@ -796,6 +758,43 @@
 			e.currentTarget.removeEventListener(Event.REMOVED_FROM_STAGE, bulletRemoved);
 			//remove current bullet from array
 			bulletList.splice(bulletList.indexOf(e.currentTarget),1);
+		}
+		public function removeBullets():void{
+			for (var bidx:int = bulletList.length - 1; bidx >= 0; bidx--){
+				var bullet1:Bullet = bulletList[bidx];
+				if(bullet1.x > 800 || bullet1.x < 0 || bullet1.y > 368 || bullet1.y < 0) {
+					ground.removeChild(bullet1);
+				}
+				//SHOOT THRU WALLS CHEAT
+				if (shootthruwalls == false){
+				//check if bullet hits wall and remove
+					if (environment.hitTestPoint(bullet1.x,bullet1.y, true)){
+						if (ground.contains(bullet1)){
+							ground.removeChild(bullet1);
+						}
+					}
+					//check if bullet hits door
+					if ((door.hitTestPoint(bullet1.x,bullet1.y, true))||(door.hitTestPoint(bullet1.x,bullet1.y, true))){
+						if (ground.contains(bullet1)){
+							ground.removeChild(bullet1);
+						}
+					}
+				}
+			}
+		}
+		public function shootFlames():void{
+			if (mousePressed == true){
+						flamethrowerflames.rotation=player.rotation;
+						addChild(flamethrowerflames);
+						flamethrowerflames.x = player.x;
+						flamethrowerflames.y = player.y;
+			}
+		}
+
+		public function removeFlames():void{
+			if((this.contains(flamethrowerflames))&&(mousePressed == false)){
+				removeChild(flamethrowerflames);
+			}
 		}
 		
 ///////////////////////////////////////////////////////
