@@ -170,11 +170,12 @@
 			setChildIndex(speedpack,7);
 			speedpack.x=450;
 			speedpack.y=280;
-			
-			
-			// light
-			//addChild(light);
-			//mask=light;
+
+			//torch
+			addChild(torch);
+			setChildIndex(torch,3);
+			torch.x=185;
+			torch.y=165;		
 			
 			//MASK
                 addChild(light);
@@ -202,13 +203,27 @@
 			trace ("Game Intialised");
 		}
 		public var playerhastorch:Boolean = false;
+		public var torch:torch_mc= new torch_mc();
 		
 		public function lighting():void{
 			var dist_x:Number=player.x-mouseX;
 			var dist_y:Number=player.y-mouseY;
 			var angle:Number=- Math.atan2(dist_x,dist_y);
 			var ray_angle:Number
-			light.graphics.clear();
+			
+			if (playerhastorch == true){
+				light.graphics.clear();
+			light.graphics.beginFill(0xffffff, 100);
+			light.graphics.moveTo(player.x, player.y);
+			light.graphics.drawCircle(0,80,100);
+			light.graphics.endFill();
+			light.blendMode = BlendMode.ALPHA;
+			//Player torch alpha
+			light.alpha=0.5;
+				light.gotoAndStop(1);
+			}else{
+				light.gotoAndStop(2);
+				light.graphics.clear();
 			light.graphics.beginFill(0xffffff, 100);
 			light.graphics.moveTo(player.x, player.y);
 			light.graphics.drawCircle(0,80,80);
@@ -216,10 +231,6 @@
 			light.blendMode = BlendMode.ALPHA;
 			//Player torch alpha
 			light.alpha=0.5;
-			if (playerhastorch == true){
-				light.gotoAndStop(1);
-			}else{
-				light.gotoAndStop(2);
 			}
 			this.cacheAsBitmap = true;
 			light.cacheAsBitmap = true;
@@ -317,10 +328,7 @@
 						flamethrowerflames.y = player.y;
 			}
 		}
-		public function updateLight():void{
-			light.x =  player.x;
-            light.y = player.y- 85;
-		}
+
 		public function removeFlames():void{
 			if((this.contains(flamethrowerflames))&&(mousePressed == false)){
 				removeChild(flamethrowerflames);
@@ -341,7 +349,6 @@
 			playerMoving();
 			removeFlames();
 			lighting();
-			updateLight()
 		}
 
 ///////////////////////////////////////////////////////
@@ -751,6 +758,9 @@
 			if (this.contains(speedpack)){
 				removeChild(speedpack);
 			}
+			if (this.contains(torch)){
+				removeChild(torch);
+			}
 			if (this.contains(door)){
 				removeChild(door);
 			}
@@ -801,6 +811,19 @@
 			if (player.hitTestObject(speedpack)){
 				//run colleted speedpack function
 				collectSpeedpack();
+			}
+			//check if player "collects" Torch
+			if (player.hitTestObject(torch)){
+				//run colleted medpack function
+				collectTorch();
+			}
+		}
+		//torch
+		public function collectTorch():void {
+			if (this.contains(torch)){
+				//remove item from stage
+				removeChild(torch);
+				playerhastorch = true;
 			}
 		}
 		//AMMO
