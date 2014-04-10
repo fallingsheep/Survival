@@ -181,7 +181,7 @@
                 this.mask = light;
 				//postion "light" over player
                 light.x =  player.x;
-                light.y = player.y- 85;
+                light.y = player.y - 85;
 			//add UI
 			stage.addChild(ui);
 			//setChildIndex(ui,8);
@@ -200,6 +200,30 @@
 			stage.addEventListener(MouseEvent.MOUSE_UP, mouseUpHandler, false, 0, true);
 			
 			trace ("Game Intialised");
+		}
+		public var playerhastorch:Boolean = false;
+		
+		public function lighting():void{
+			var dist_x:Number=player.x-mouseX;
+			var dist_y:Number=player.y-mouseY;
+			var angle:Number=- Math.atan2(dist_x,dist_y);
+			var ray_angle:Number
+			light.graphics.clear();
+			light.graphics.beginFill(0xffffff, 100);
+			light.graphics.moveTo(player.x, player.y);
+			light.graphics.drawCircle(0,80,80);
+			light.graphics.endFill();
+			light.blendMode = BlendMode.ALPHA;
+			//Player torch alpha
+			light.alpha=0.5;
+			if (playerhastorch == true){
+				light.gotoAndStop(1);
+			}else{
+				light.gotoAndStop(2);
+			}
+			this.cacheAsBitmap = true;
+			light.cacheAsBitmap = true;
+				
 		}
 		//MAIN GAME LOOP
 		public function mainloop(e:Event):void {
@@ -302,22 +326,7 @@
 				removeChild(flamethrowerflames);
 			}
 		}
-		public function lighting():void{
-			var dist_x:Number=player.x-mouseX;
-			var dist_y:Number=player.y-mouseY;
-			var angle:Number=- Math.atan2(dist_x,dist_y);
-			var ray_angle:Number
-			light.graphics.clear();
-			light.graphics.beginFill(0xffffff, 100);
-			light.graphics.moveTo(player.x, player.y);
-			light.graphics.drawCircle(0,80,80);
-			light.graphics.endFill();
-			light.blendMode = BlendMode.ALPHA;
-			light.alpha=0.5;
-			this.cacheAsBitmap = true;
-			light.cacheAsBitmap = true;
-				
-		}
+
 ///////////////////////////////////////////////////////
 //					SCRIPTS / MODULES
 ///////////////////////////////////////////////////////
