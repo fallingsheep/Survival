@@ -224,7 +224,7 @@
 			light.blendMode = BlendMode.ALPHA;
 			//Player torch alpha
 			light.alpha=0.5;
-				light.gotoAndStop(1);
+			light.gotoAndStop(1);
 			}else{
 			light.x = player.x;
 			light.y = player.y - 85;
