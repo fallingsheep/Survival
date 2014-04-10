@@ -211,8 +211,12 @@
 			var angle:Number=- Math.atan2(dist_x,dist_y);
 			var ray_angle:Number
 			
+			
+			
 			if (playerhastorch == true){
-				light.graphics.clear();
+			light.x = player.x;
+			light.y = player.y - 110;
+			light.graphics.clear();
 			light.graphics.beginFill(0xffffff, 100);
 			light.graphics.moveTo(player.x, player.y);
 			light.graphics.drawCircle(0,80,100);
@@ -222,8 +226,10 @@
 			light.alpha=0.5;
 				light.gotoAndStop(1);
 			}else{
-				light.gotoAndStop(2);
-				light.graphics.clear();
+			light.x = player.x;
+			light.y = player.y - 85;
+			light.gotoAndStop(2);
+			light.graphics.clear();
 			light.graphics.beginFill(0xffffff, 100);
 			light.graphics.moveTo(player.x, player.y);
 			light.graphics.drawCircle(0,80,80);
