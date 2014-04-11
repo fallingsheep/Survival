@@ -1,8 +1,9 @@
 ﻿package {
-	import flash.geom.*
-    import flash.display.*
-	import flash.events.*
-	import flash.filters.*
+	import flash.geom.*;
+    import flash.display.*;
+	import flash.events.*;
+	import flash.filters.*;
+	import flash.net.*;
 	import flash.utils.Timer;
 	import flash.events.KeyboardEvent;
 	import flash.events.MouseEvent;
@@ -92,14 +93,14 @@
 		//START GAME
 		public function startgame(event:MouseEvent):void {
 			intro.startgame.removeEventListener(MouseEvent.CLICK, startgame);
+			if (this.contains(intro)){
+			removeChild(intro);
+			}
 			//starting ammo
 			pistolammo = 30;
 			uziammo = 0;
 			shotgunammo = 0;
 			flamethrowerammo = 0;
-			
-			
-			removeChild(intro);
 			//environment
 			addChild(environment);
 			setChildIndex(environment,0);
@@ -182,9 +183,16 @@
 			stage.addEventListener(MouseEvent.MOUSE_DOWN, mouseDownHandler, false, 0, true);
 			stage.addEventListener(MouseEvent.MOUSE_UP, mouseUpHandler, false, 0, true);
 			
+			
+			
 			trace ("Game Intialised");
 		}
-
+		private function restartGame(event:MouseEvent):void {
+   		 var url:String = stage.loaderInfo.url;
+  	 	 var request:URLRequest = new URLRequest(url);
+   		 navigateToURL(request,"_level0");
+		 trace ("Game Restarted");
+		}
 		
 		public function lighting():void{
 			var blur:BlurFilter = new BlurFilter();
@@ -423,6 +431,7 @@
 					trace("GAME PAUSED");
 					stage.addChild(pausescreen);
 					pausescreen.gotoshop.addEventListener(MouseEvent.CLICK, showshop);
+					pausescreen.restartgame.addEventListener(MouseEvent.CLICK, restartGame);
 					
 				}
 				else if  (ispaused == true){
@@ -431,7 +440,9 @@
 					stage.addEventListener(Event.ENTER_FRAME,processScripts);
 					trace("GAME RESUMED");
 					pausescreen.gotoshop.removeEventListener(MouseEvent.CLICK, showshop);
-					stage.removeChild(pausescreen);
+					if(this.contains(pausescreen)){
+						stage.removeChild(pausescreen);
+					}
 				}
 				break;
 			}

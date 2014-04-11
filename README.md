@@ -1,6 +1,9 @@
 Survival
 ========
 
+DEMO - http://www.swfcabin.com/open/1397192311
+the demo is has a bug where the "mask" (light around player) dissappears
+
 AS3 Zombie survival game made form many tutorials of the net, is in noway coded "good" :P
 
 Move: W,A,S,D
