@@ -22,7 +22,6 @@
 		public var ground:ground_mc = new ground_mc();
 		public var ui:ui_mc = new ui_mc();
 		public var deadzombie:deadzombie_mc = new deadzombie_mc();
-		public var deadbigzombie:deadbigzombie_mc = new deadbigzombie_mc();
 		
 		//items
 		public var ammocrate:ammocrate_mc = new ammocrate_mc();
@@ -379,6 +378,7 @@
 					stage.addChild(pausescreen);
 					pausescreen.gotoshop.addEventListener(MouseEvent.CLICK, showshop);
 					pausescreen.restartgame.addEventListener(MouseEvent.CLICK, restartGame);
+					pausescreen.exitpausescreen.addEventListener(MouseEvent.CLICK, closepausescreen);
 					
 				}
 				else if  (ispaused == true){
@@ -394,6 +394,17 @@
 				break;
 			}
 		}
+		public function closepausescreen():void{
+			ispaused = false;
+					stage.addEventListener(Event.ENTER_FRAME,mainloop);
+					stage.addEventListener(Event.ENTER_FRAME,processScripts);
+					trace("GAME RESUMED");
+					pausescreen.gotoshop.removeEventListener(MouseEvent.CLICK, showshop);
+					if(stage.contains(pausescreen)){
+						stage.removeChild(pausescreen);
+					}
+		}
+		
 		public var playermoving:Boolean = false;
 		
 		public function playerMoving():void{
@@ -446,9 +457,17 @@
 			pausescreen.gotoshop.removeEventListener(MouseEvent.CLICK, showshop);
 			pausescreen.addChild(shopscreen);
 			shopscreen.buyarmour.addEventListener(MouseEvent.CLICK, buyARMOUR);
+			shopscreen.buymedkit.addEventListener(MouseEvent.CLICK, buyMEDKIT);
+			
 			shopscreen.buyuzi.addEventListener(MouseEvent.CLICK, buyUZI);
 			shopscreen.buyshotgun.addEventListener(MouseEvent.CLICK, buySHOTGUN);
 			shopscreen.buyflamethrower.addEventListener(MouseEvent.CLICK, buyFLAMETHROWER);
+			
+			shopscreen.buypistolammo.addEventListener(MouseEvent.CLICK, buyPISTOLAMMO);
+			shopscreen.buyuziammo.addEventListener(MouseEvent.CLICK, buyUZIAMMO);
+			shopscreen.buyshotgunammo.addEventListener(MouseEvent.CLICK, buySHOTGUNAMMO);
+			shopscreen.buyflamethrowerammo.addEventListener(MouseEvent.CLICK, buyFLAMETHROWERAMMO);
+			
 			shopscreen.exitshop.addEventListener(MouseEvent.CLICK, closeshop);
 		}
 		public function closeshop(event:MouseEvent):void {
@@ -457,6 +476,7 @@
 				pausescreen.removeChild(shopscreen);
 			}
 		}
+		//WEAPONS
 		public function buyUZI(event:MouseEvent):void {
 			if (currentcash >= 1000){
 			hasuzi = true;
@@ -487,13 +507,63 @@
 				shopscreen.shopmessage.text = "Not enough cash!";//shop message
 			}
 		}
+		//ARMOUR
 		public function buyARMOUR(event:MouseEvent):void {
-			if (currentcash >= 200){
+			if (currentcash >= 2000){
 			hasarmour = true;
-			armour += 10;
-			currentcash -= 200;//cost of armour
+			armour += 40;
+			currentcash -= 2000;//cost of armour
 			updatetext();//update armour display
-			shopscreen.shopmessage.text = "Bought ARMOUR!";//shop message
+			shopscreen.shopmessage.text = "Bought Armour!";//shop message
+			}else{
+				shopscreen.shopmessage.text = "Not enough cash!";//shop message
+			}
+		}
+		//MEDKIT
+		public function buyMEDKIT(event:MouseEvent):void {
+			if (currentcash >= 1500){
+			hasarmour = true;
+			collectMedpack();
+			currentcash -= 1500;//cost of armour
+			updatetext();//update armour display
+			shopscreen.shopmessage.text = "Bought Medkit!";//shop message
+			}else{
+				shopscreen.shopmessage.text = "Not enough cash!";//shop message
+			}
+		}
+		//AMMO
+		public function buyPISTOLAMMO(event:MouseEvent):void {
+			if (currentcash >= 50){
+			pistolammo = 100;
+			currentcash -= 50;//cost of uzi
+			shopscreen.shopmessage.text = "Bought Pistol Ammo!";//shop message
+			}else{
+				shopscreen.shopmessage.text = "Not enough cash!";//shop message
+			}
+		}
+		public function buyUZIAMMO(event:MouseEvent):void {
+			if (currentcash >= 500){
+			uziammo = 350;
+			currentcash -= 500;//cost of uzi
+			shopscreen.shopmessage.text = "Bought UZI Ammo!";//shop message
+			}else{
+				shopscreen.shopmessage.text = "Not enough cash!";//shop message
+			}
+		}
+		public function buySHOTGUNAMMO(event:MouseEvent):void {
+			if (currentcash >= 150){
+			shotgunammo = 50;
+			currentcash -= 150;//cost of uzi
+			shopscreen.shopmessage.text = "Bought Shotgun Ammo!";//shop message
+			}else{
+				shopscreen.shopmessage.text = "Not enough cash!";//shop message
+			}
+		}
+		public function buyFLAMETHROWERAMMO(event:MouseEvent):void {
+			if (currentcash >= 500){
+			flamethrowerammo = 250;
+			currentcash -= 500;//cost of uzi
+			shopscreen.shopmessage.text = "Bought Flamethrower Ammo!";//shop message
 			}else{
 				shopscreen.shopmessage.text = "Not enough cash!";//shop message
 			}
@@ -502,6 +572,7 @@
 //						ZOMBIES
 ///////////////////////////////////////////////////////
 		var zombieArray:Array = [];//holds all zombies
+		var deadzombieArray:Array = [];//holds all deadzombies
 
 		public function checkzombieHit():void{
 			for (var idx:int = zombieArray.length - 1; idx >= 0; idx--){
@@ -558,20 +629,21 @@
 							zombie1.zombiehitpoints -= 10;
 						}
 						if(zombie1.zombiehitpoints <= 0){
-							if (zombie1.zombieType == 0){
-								addChild(deadzombie);
-								deadzombie.x = zombie1.x;
-								deadzombie.y = zombie1.y;
-								deadzombie.gotoAndStop(15);
-							}
-							if (zombie1.zombieType == 1){
-								addChild(deadbigzombie);
-								deadbigzombie.x = zombie1.x;
-								deadbigzombie.y = zombie1.y;
-								deadbigzombie.gotoAndStop(15);
-							}
-							ground.removeChild(zombie1);
-						}
+									var numOfClips:Number = 5;
+									var deadzombieArray:Array = new Array();
+									
+									for(var i=0; i<numOfClips; i++)
+									{
+									  	var deadzombie:deadzombie_mc = new deadzombie_mc();
+										ground.addChild(deadzombie);
+										ground.setChildIndex(deadzombie,2);
+									 	deadzombieArray.push(deadzombie);
+									}
+									deadzombie.x = zombie1.x;
+									deadzombie.y = zombie1.y;
+									deadzombie.gotoAndStop(15);
+									ground.removeChild(zombie1);
+								}
 					}
 					//bullets
 					for (var bidx:int = bulletList.length - 1; bidx >= 0; bidx--){
@@ -590,20 +662,22 @@
 								}
 
 								if(zombie1.zombiehitpoints <= 0){
-							if (zombie1.zombieType == 0){
-								addChild(deadzombie);
-								deadzombie.x = zombie1.x;
-								deadzombie.y = zombie1.y;
-								deadzombie.gotoAndStop(15);
-							}
-							if (zombie1.zombieType == 1){
-								addChild(deadbigzombie);
-								deadbigzombie.x = zombie1.x;
-								deadbigzombie.y = zombie1.y;
-								deadbigzombie.gotoAndStop(15);
-							}
-							ground.removeChild(zombie1);
-						}
+									var numOfClips:Number = 5;
+									var deadzombieArray:Array = new Array();
+									
+									for(var i=0; i<numOfClips; i++)
+									{
+									  var deadzombie:deadzombie_mc = new deadzombie_mc();
+									  ground.addChild(deadzombie);
+									  ground.setChildIndex(deadzombie,2);
+									  deadzombieArray.push(deadzombie);
+									}
+									deadzombie.x = zombie1.x;
+									deadzombie.y = zombie1.y;
+									deadzombie.gotoAndStop(15);
+									ground.removeChild(zombie1);
+								}
+								
 							}
 						}
 						
@@ -625,6 +699,7 @@
 							zombieArray.push(zombie);
 							//add zombie to stage
 							ground.addChild(zombie);
+							ground.setChildIndex(zombie,1);
 							//increase zombie counters
 							zombiecount += 1;
 							totalzomibes += 1;
@@ -648,6 +723,13 @@
 			//give cash
 			currentcash += 5;
 			trace ("Zombie Removed");
+		}
+		public function deadzombieRemoved(ee:Event):void{
+			//remove the event listner from current zombie
+			ee.currentTarget.removeEventListener(Event.REMOVED_FROM_STAGE, deadzombieRemoved);
+			//remove current zombie from array
+			deadzombieArray.splice(zombieArray.indexOf(ee.currentTarget),1);
+			trace ("Dead Zombie Removed");
 		}
 ///////////////////////////////////////////////////////
 //						LEVELS
@@ -844,18 +926,18 @@
 			if (this.contains(medpack)){
 				//remove item from stage
 				removeChild(medpack);
-				//Check if health is less than 90
-				if (health <= 90){
-					//add 10 health to current health count
-					health += 10;
-				}
-				//check if health is greater than 90
-				else if(health > 90){
-					//set current health to 100
-					health = 100;
-				}
-				trace ("Collected Medpack");
 			}
+			//Check if health is less than 90
+			if (health <= 90){
+				//add 10 health to current health count
+				health += 50;
+			}
+			//check if health is greater than 90
+			else if(health > 90){
+				//set current health to 100
+				health = 100;
+			}
+			trace ("Collected Medpack");
 		}
 		
 		//SPEEDPACK
