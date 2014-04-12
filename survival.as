@@ -17,6 +17,7 @@
 		public static var door2:door_mc = new door_mc();
 		public var pausescreen:pausescreen_mc = new pausescreen_mc();
 		public var gameoverscreen:gameoverscreen_mc = new gameoverscreen_mc();
+		
 		public var shopscreen:shopscreen_mc = new shopscreen_mc();
 		public var light:light_mc= new light_mc();
 		public var ground:ground_mc = new ground_mc();
@@ -105,7 +106,15 @@
 		public function survival():void {
 			addChild(intro);
 			intro.startgame.addEventListener(MouseEvent.CLICK, startgame);
+			stage.scaleMode = StageScaleMode.NO_SCALE;
+  			stage.align = StageAlign.TOP;
+			stage.addEventListener(Event.RESIZE, resizeHandler);
+ 			stage.addEventListener(FullScreenEvent.FULL_SCREEN, resizeHandler);
+			
 
+		}
+		private function resizeHandler(e:Event):void {
+			
 		}
 		//START GAME
 		public function startgame(event:MouseEvent):void {
@@ -140,7 +149,7 @@
 			
 			//lighting
             addChild(light);
-			setChildIndex(player,3);
+			setChildIndex(light,3);
 			var myBlur:BlurFilter = new BlurFilter();
 			myBlur.quality = 5;
 			myBlur.blurX = 50;
@@ -149,8 +158,8 @@
 			//add UI
 			addChild(ui);
 			setChildIndex(ui,4);
-			ui.x=322;
-			ui.y=350;
+			ui.x=330;
+			ui.y=340;
 			
 			
 			//add listener to run on every frame
@@ -478,8 +487,29 @@
 				pausescreen.removeChild(shopscreen);
 			}
 		}
+		public var confirmpistolammo:confirmpistolammo_mc = new confirmpistolammo_mc();
+		public var confirmshotgun:confirmshotgun_mc = new confirmshotgun_mc();
+		public var confirmshotgunammo:confirmshotgunammo_mc = new confirmshotgunammo_mc();
+		public var confirmuzi:confirmuzi_mc = new confirmuzi_mc();
+		public var confirmuziammo:confirmuziammo_mc = new confirmuziammo_mc();
+		public var confirmflamethrower:confirmflamethrower_mc = new confirmflamethrower_mc();
+		public var confirmflamethrowerammo:confirmflamethrowerammo_mc = new confirmflamethrowerammo_mc();
+		public var confirmmedkit:confirmmedkit_mc = new confirmmedkit_mc();
+		public var confirmarmour:confirmarmour_mc = new confirmarmour_mc();
+		public var confirmtorch:confirmtorch_mc = new confirmtorch_mc();
+
 		//WEAPONS
 		public function buyUZI(event:MouseEvent):void {
+			shopscreen.addChild(confirmuzi);
+			confirmuzi.yesuzi.addEventListener(MouseEvent.CLICK, confirmBUYUZI);
+			confirmuzi.nouzi.addEventListener(MouseEvent.CLICK, cancelBUYUZI);
+		}
+		public function cancelBUYUZI(event:MouseEvent):void {
+			if(shopscreen.contains(confirmuzi)){
+				shopscreen.removeChild(confirmuzi);
+			}
+		}
+		public function confirmBUYUZI(event:MouseEvent):void {
 			if (currentcash >= 1000){
 			hasuzi = true;
 			uziammo = 200;
@@ -490,6 +520,16 @@
 			}
 		}
 		public function buySHOTGUN(event:MouseEvent):void {
+			shopscreen.addChild(confirmshotgun);
+			confirmshotgun.yesshotgun.addEventListener(MouseEvent.CLICK, confirmBUYSHOTGUN);
+			confirmshotgun.noshotgun.addEventListener(MouseEvent.CLICK, cancelBUYSHOTGUN);
+		}
+		public function cancelBUYSHOTGUN(event:MouseEvent):void {
+			if(shopscreen.contains(confirmshotgun)){
+				shopscreen.removeChild(confirmshotgun);
+			}
+		}
+		public function confirmBUYSHOTGUN(event:MouseEvent):void {
 			if (currentcash >= 500){
 			hasshotgun = true;
 			shotgunammo = 200;
@@ -500,6 +540,16 @@
 			}
 		}
 		public function buyFLAMETHROWER(event:MouseEvent):void {
+			shopscreen.addChild(confirmflamethrower);
+			confirmflamethrower.yesflamethrower.addEventListener(MouseEvent.CLICK, confirmBUYFLAMETHROWER);
+			confirmflamethrower.noflamethrower.addEventListener(MouseEvent.CLICK, cancelBUYFLAMETHROWER);
+		}
+		public function cancelBUYFLAMETHROWER(event:MouseEvent):void {
+			if(shopscreen.contains(confirmflamethrower)){
+				shopscreen.removeChild(confirmflamethrower);
+			}
+		}
+		public function confirmBUYFLAMETHROWER(event:MouseEvent):void {
 			if (currentcash >= 2500){
 			hasflamethrower = true;
 			flamethrowerammo = 300;
@@ -511,6 +561,16 @@
 		}
 		//ARMOUR
 		public function buyARMOUR(event:MouseEvent):void {
+			shopscreen.addChild(confirmarmour);
+			confirmarmour.yesarmour.addEventListener(MouseEvent.CLICK, confirmBUYARMOUR);
+			confirmarmour.noarmour.addEventListener(MouseEvent.CLICK, cancelBUYARMOUR);
+		}
+		public function cancelBUYARMOUR(event:MouseEvent):void {
+			if(shopscreen.contains(confirmarmour)){
+				shopscreen.removeChild(confirmarmour);
+			}
+		}
+		public function confirmBUYARMOUR(event:MouseEvent):void {
 			if (currentcash >= 2000){
 			hasarmour = true;
 			armour += 40;
@@ -523,6 +583,16 @@
 		}
 		//MEDKIT
 		public function buyMEDKIT(event:MouseEvent):void {
+			shopscreen.addChild(confirmmedkit);
+			confirmmedkit.yesmedkit.addEventListener(MouseEvent.CLICK, confirmBUYMEDKIT);
+			confirmmedkit.nomedkit.addEventListener(MouseEvent.CLICK, cancelBUYMEDKIT);
+		}
+		public function cancelBUYMEDKIT(event:MouseEvent):void {
+			if(shopscreen.contains(confirmmedkit)){
+				shopscreen.removeChild(confirmmedkit);
+			}
+		}
+		public function confirmBUYMEDKIT(event:MouseEvent):void {
 			if (currentcash >= 1500){
 			hasarmour = true;
 			collectMedpack();
@@ -535,6 +605,16 @@
 		}
 		//TORCH
 		public function buyTORCH(event:MouseEvent):void {
+			shopscreen.addChild(confirmtorch);
+			confirmtorch.yestorch.addEventListener(MouseEvent.CLICK, confirmBUYTORCH);
+			confirmtorch.notorch.addEventListener(MouseEvent.CLICK, cancelBUYTORCH);
+		}
+		public function cancelBUYTORCH(event:MouseEvent):void {
+			if(shopscreen.contains(confirmtorch)){
+				shopscreen.removeChild(confirmtorch);
+			}
+		}
+		public function confirmBUYTORCH(event:MouseEvent):void {
 			if (currentcash >= 2500){
 			playerhastorch = true;
 			currentcash -= 2500;//cost of torch
@@ -545,6 +625,16 @@
 		}
 		//AMMO
 		public function buyPISTOLAMMO(event:MouseEvent):void {
+			shopscreen.addChild(confirmpistolammo);
+			confirmpistolammo.yespistolammo.addEventListener(MouseEvent.CLICK, confirmBUYPISTOLAMMO);
+			confirmpistolammo.nopistolammo.addEventListener(MouseEvent.CLICK, cancelBUYPISTOLAMMO);
+		}
+		public function cancelBUYPISTOLAMMO(event:MouseEvent):void {
+			if(shopscreen.contains(confirmpistolammo)){
+				shopscreen.removeChild(confirmpistolammo);
+			}
+		}
+		public function confirmBUYPISTOLAMMO(event:MouseEvent):void {
 			if (currentcash >= 50){
 			pistolammo = 100;
 			currentcash -= 50;//cost of uzi
@@ -554,6 +644,16 @@
 			}
 		}
 		public function buyUZIAMMO(event:MouseEvent):void {
+			shopscreen.addChild(confirmuziammo);
+			confirmuziammo.yesuziammo.addEventListener(MouseEvent.CLICK, confirmBUYUZIAMMO);
+			confirmuziammo.nouziammo.addEventListener(MouseEvent.CLICK, cancelBUYUZIAMMO);
+		}
+		public function cancelBUYUZIAMMO(event:MouseEvent):void {
+			if(shopscreen.contains(confirmuziammo)){
+				shopscreen.removeChild(confirmuziammo);
+			}
+		}
+		public function confirmBUYUZIAMMO(event:MouseEvent):void {
 			if (currentcash >= 500){
 			uziammo = 350;
 			currentcash -= 500;//cost of uzi
@@ -561,8 +661,17 @@
 			}else{
 				shopscreen.shopmessage.text = "Not enough cash!";//shop message
 			}
+		}public function buySHOTGUNAMMO(event:MouseEvent):void {
+			shopscreen.addChild(confirmshotgunammo);
+			confirmshotgunammo.yesshotgunammo.addEventListener(MouseEvent.CLICK, confirmSHOTGUNAMMO);
+			confirmshotgunammo.noshotgunammo.addEventListener(MouseEvent.CLICK, cancelBUYSHOTGUNAMMO);
 		}
-		public function buySHOTGUNAMMO(event:MouseEvent):void {
+		public function cancelBUYSHOTGUNAMMO(event:MouseEvent):void {
+			if(shopscreen.contains(confirmshotgunammo)){
+				shopscreen.removeChild(confirmshotgunammo);
+			}
+		}
+		public function confirmSHOTGUNAMMO(event:MouseEvent):void {
 			if (currentcash >= 150){
 			shotgunammo = 50;
 			currentcash -= 150;//cost of uzi
@@ -572,6 +681,16 @@
 			}
 		}
 		public function buyFLAMETHROWERAMMO(event:MouseEvent):void {
+			shopscreen.addChild(confirmflamethrowerammo);
+			confirmflamethrowerammo.yesflamethrowerammo.addEventListener(MouseEvent.CLICK, confirmBUYFLAMETHROWERAMMO);
+			confirmflamethrowerammo.noflamethrowerammo.addEventListener(MouseEvent.CLICK, cancelBUYFLAMETHROWERAMMO);
+		}
+		public function cancelBUYFLAMETHROWERAMMO(event:MouseEvent):void {
+			if(shopscreen.contains(confirmflamethrowerammo)){
+				shopscreen.removeChild(confirmflamethrowerammo);
+			}
+		}
+		public function confirmBUYFLAMETHROWERAMMO(event:MouseEvent):void {
 			if (currentcash >= 500){
 			flamethrowerammo = 250;
 			currentcash -= 500;//cost of uzi
@@ -647,8 +766,9 @@
 									for(var i=0; i<numOfClips; i++)
 									{
 									  	var deadzombie:deadzombie_mc = new deadzombie_mc();
-										ground.addChild(deadzombie);
-										ground.setChildIndex(deadzombie,2);
+										
+										addChild(deadzombie);
+										setChildIndex(deadzombie,2);
 									 	deadzombieArray.push(deadzombie);
 									}
 									deadzombie.x = zombie1.x;
@@ -680,8 +800,8 @@
 									for(var i=0; i<numOfClips; i++)
 									{
 									  var deadzombie:deadzombie_mc = new deadzombie_mc();
-									  ground.addChild(deadzombie);
-									  ground.setChildIndex(deadzombie,2);
+									  addChild(deadzombie);
+									  setChildIndex(deadzombie,2);
 									  deadzombieArray.push(deadzombie);
 									}
 									deadzombie.x = zombie1.x;
@@ -1042,8 +1162,8 @@
 				ui.ammotext.text = flamethrowerammo.toString();
 			}
 			
-			ui.healthtext.text = health.toString();
-			ui.armourtext.text = armour.toString();
+			ui.healthbar.width = health;
+			ui.armourbar.width = armour;
 			ui.zombieskilledtext.text = totalzombieskilled.toString();
 			ui.cashtext.text = ("$"+currentcash.toString());
 			ui.leveltext.text = level.toString();

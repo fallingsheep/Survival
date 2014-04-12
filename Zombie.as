@@ -63,7 +63,7 @@
 					isbigzombie = false;
 					zombiehitpoints = 200;
 					zombiedamage = 1;
-					agrorange = 350;//how far zombie can see
+					agrorange = 400;//how far zombie can see
 				}else if((zombieType == 1) && (bigzombiechance == 1)){
 					radius = 9;//how big is the zombie in pixels (sphere)
 					this.gotoAndStop(2)
@@ -71,8 +71,9 @@
 					isbigzombie = true;
 					zombiedamage = 5;
 					zombiehitpoints = 1000;
-					agrorange = 350;
+					agrorange = 400;
 				}else{
+					zombieType = 0;
 					radius = 19;
 					this.gotoAndStop(1)
 					zombieSpeed = 0.5;
@@ -117,19 +118,6 @@
 					this.x++;
 				}
 				while (survival.door.hitTestPoint(this.x+radius, this.y, true)) {
-					this.x--;
-				}
-				//stop zombies going thru door2
-				while (survival.door2.hitTestPoint(this.x, this.y+radius, true)) {
-					this.y--;
-				}
-				while (survival.door2.hitTestPoint(this.x, this.y-radius, true)) {
-					this.y++;
-				}
-				while (survival.door2.hitTestPoint(this.x-radius, this.y, true)) {
-					this.x++;
-				}
-				while (survival.door2.hitTestPoint(this.x+radius, this.y, true)) {
 					this.x--;
 				}
 				//move zombie towards player
