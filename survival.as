@@ -15,38 +15,45 @@
 		public static var player:player_mc = new player_mc();
 		public static var door:door_mc = new door_mc();
 		public static var door2:door_mc = new door_mc();
-		public static var pausescreen:pausescreen_mc = new pausescreen_mc();
-		public static var gameoverscreen:gameoverscreen_mc = new gameoverscreen_mc();
-		public static var shopscreen:shopscreen_mc = new shopscreen_mc();
-		//Lighting
+		public var pausescreen:pausescreen_mc = new pausescreen_mc();
+		public var gameoverscreen:gameoverscreen_mc = new gameoverscreen_mc();
+		public var shopscreen:shopscreen_mc = new shopscreen_mc();
 		public var light:light_mc= new light_mc();
-		//standard variables
 		public var ground:ground_mc = new ground_mc();
 		public var ui:ui_mc = new ui_mc();
+		
 		//items
 		public var ammocrate:ammocrate_mc = new ammocrate_mc();
 		public var medpack:medpack_mc = new medpack_mc();
 		public var speedpack:speedpack_mc = new speedpack_mc();
+		
 		//weapons
 		public var pistol:pistol_mc = new pistol_mc();
 		public var uzi:uzi_mc = new uzi_mc();
 		public var shotgun:shotgun_mc = new shotgun_mc();
+		public var bulletproofvest:bulletproofvest_mc = new bulletproofvest_mc();
 		public var flamethrower:flamethrower_mc = new flamethrower_mc();
 		public var flamethrowerflames:flamethrowerflames_mc = new flamethrowerflames_mc();
+		
 		public var playerhitobject:Boolean = false; // has player hit a object
 		public var isusingpistol:Boolean = true;//set pistol as default weapon
+		
 		public var isusinguzi:Boolean = false;
 		public var isusingshotgun:Boolean = false;
 		public var isusingflamethrower:Boolean = false;
+		
 		public var ammoempty:Boolean = false;//ammo empty check
+		
 		public var dooropening:Boolean = false;//door moving check
 		public var door2opening:Boolean = false;//door2 moving check
+		
 		public var stopspawn:Boolean = false;//zombie spawn control
 		public var key_pressed:int=0;
 		public var radius:int=8;//players "size" (sphere)
 		public var up,down,left,right:Boolean=false;
 		public var weapon1,weapon2,weapon3,weapon4:Boolean=false;//switch weapon keys 1,2,3
 		public var mousePressed:Boolean = false; //keeps track of whether the mouse is currently pressed down
+		
 		//shooting speed
 		public var delayCounter:int = 0; //we use this to add delay between the shots
 		public var delayMax:int = 15; //default pistol delay
@@ -55,7 +62,12 @@
 		public var uziammo:int;
 		public var shotgunammo:int;
 		public var flamethrowerammo:int;
+		
+		public var hasarmour:Boolean = true;
+		public var armour:int=25;//starting armour
+		
 		public var health:int=100;//starting health
+		
 		//zombies
 		public var zombieskilled:int;//total zombies killed for current stage
 		public var totalzombieskilled:int;//total zombies killed all up
@@ -83,6 +95,7 @@
 		public var infintehealth:Boolean = false;
 		public var player_speed:int = 2;//player movement speed (Default is 2)
 		public var playerhastorch:Boolean = false;
+		
 		public var torch:torch_mc= new torch_mc();
 		public static var ispaused:Boolean = false;
 
@@ -158,11 +171,11 @@
    		 navigateToURL(request,"_level0");
 		 trace ("Game Restarted");
 		}
-		
 		public function lighting():void{
 			var blur:BlurFilter = new BlurFilter();
 			var filterArray:Array = new Array(blur);
-			
+			this.cacheAsBitmap = true;
+			light.cacheAsBitmap = true;
 			
 			if (playerhastorch == true){
 			light.x = player.x;
@@ -181,7 +194,8 @@
 			blur.quality = 1;
 			light.filters = filterArray;
 			light.gotoAndStop(1);
-			}else{
+			}
+			if (playerhastorch == false){
 			light.x = player.x;
 			light.y = player.y- 85;
 			light.graphics.clear();
@@ -200,8 +214,7 @@
 			light.gotoAndStop(2);
 			}
 			//needed for masks to work properly
-			this.cacheAsBitmap = true;
-			light.cacheAsBitmap = true;
+			
 				
 		}
 		//MAIN GAME LOOP
@@ -306,6 +319,7 @@
 			playerMoving();
 			removeFlames();
 			checkhealth();
+			checkarmour();
 		}
 
 ///////////////////////////////////////////////////////
@@ -407,7 +421,7 @@
 					stage.addEventListener(Event.ENTER_FRAME,processScripts);
 					trace("GAME RESUMED");
 					pausescreen.gotoshop.removeEventListener(MouseEvent.CLICK, showshop);
-					if(this.contains(pausescreen)){
+					if(stage.contains(pausescreen)){
 						stage.removeChild(pausescreen);
 					}
 				}
@@ -454,12 +468,18 @@
 				gameover();
 			}
 		}
+		public function checkarmour():void{
+			if (armour <=0){
+				hasarmour = false;
+			}
+		}
 ///////////////////////////////////////////////////////
 //						SHOP
 ///////////////////////////////////////////////////////
 		public function showshop(event:MouseEvent):void {
 			pausescreen.gotoshop.removeEventListener(MouseEvent.CLICK, showshop);
 			pausescreen.addChild(shopscreen);
+			shopscreen.buyarmour.addEventListener(MouseEvent.CLICK, buyARMOUR);
 			shopscreen.buyuzi.addEventListener(MouseEvent.CLICK, buyUZI);
 			shopscreen.buyshotgun.addEventListener(MouseEvent.CLICK, buySHOTGUN);
 			shopscreen.buyflamethrower.addEventListener(MouseEvent.CLICK, buyFLAMETHROWER);
@@ -501,11 +521,40 @@
 				shopscreen.shopmessage.text = "Not enough cash!";//shop message
 			}
 		}
+		public function buyARMOUR(event:MouseEvent):void {
+			if (currentcash >= 200){
+			hasarmour = true;
+			armour += 10;
+			currentcash -= 200;//cost of armour
+			updatetext();//update armour display
+			shopscreen.shopmessage.text = "Bought ARMOUR!";//shop message
+			}else{
+				shopscreen.shopmessage.text = "Not enough cash!";//shop message
+			}
+		}
 ///////////////////////////////////////////////////////
 //						ZOMBIES
 ///////////////////////////////////////////////////////
 		var zombieArray:Array = [];//holds all zombies
 		
+		public function zomibehitplayer():void{
+			if (infintehealth == false){
+				if (hasarmour == false){
+					health -= 1;
+				}else if (hasarmour == true){
+					armour -= 1;
+				}
+			}
+		}
+		public function zombiebighitplayer():void{
+			if (infintehealth == false){
+				if (hasarmour == false){
+					health -= 5;
+				}else if (hasarmour == true){
+					armour -= 5;
+				}
+			}
+		}
 		public function checkzombieHit():void{
 			for (var idx:int = zombieArray.length - 1; idx >= 0; idx--){
 						var zombie1:Zombie = zombieArray[idx];
@@ -514,30 +563,22 @@
 					if (zombie1.hitTestPoint(player.x+radius, player.y, true)){
 						player.x -= 1;
 						zombie1.x += 1;
-						if (infintehealth == false){
-						health -= 1;
-						}
+						zomibehitplayer();
 					}
 					if (zombie1.hitTestPoint(player.x, player.y-radius, true)){
 						player.y += 1;
 						zombie1.y -= 1;
-						if (infintehealth == false){
-						health -= 1;
-						}
+						zomibehitplayer();
 					}
 					if (zombie1.hitTestPoint(player.x-radius, player.y, true)){
 						player.x += 1;
 						zombie1.x -= 1;
-						if (infintehealth == false){
-						health -= 1;
-						}
+						zomibehitplayer();
 					}
 					if (zombie1.hitTestPoint(player.x, player.y+radius, true)){
 						player.y -= 1;
 						zombie1.y += 1;
-						if (infintehealth == false){
-						health -= 1;
-						}
+						zomibehitplayer();
 					}
 					//flamerthrower
 					if(flamethrowerflames.hitTestPoint(zombie1.x,zombie1.y, true)){
@@ -912,6 +953,7 @@
 			}
 			
 			ui.healthtext.text = health.toString();
+			ui.armourtext.text = armour.toString();
 			ui.zombieskilledtext.text = totalzombieskilled.toString();
 			ui.cashtext.text = currentcash.toString();
 			ui.leveltext.text = level.toString();
