@@ -1045,7 +1045,7 @@
 			ui.healthtext.text = health.toString();
 			ui.armourtext.text = armour.toString();
 			ui.zombieskilledtext.text = totalzombieskilled.toString();
-			ui.cashtext.text = currentcash.toString();
+			ui.cashtext.text = ("$"+currentcash.toString());
 			ui.leveltext.text = level.toString();
 			//weapon icon in gui
 			//pistol
