@@ -16,6 +16,7 @@
 		public static var door:door_mc = new door_mc();
 		public static var door2:door_mc = new door_mc();
 		public static var pausescreen:pausescreen_mc = new pausescreen_mc();
+		public static var gameoverscreen:gameoverscreen_mc = new gameoverscreen_mc();
 		public static var shopscreen:shopscreen_mc = new shopscreen_mc();
 		//Lighting
 		public var light:light_mc= new light_mc();
@@ -103,68 +104,31 @@
 			flamethrowerammo = 0;
 			//environment
 			addChild(environment);
-			setChildIndex(environment,0);
+			//setChildIndex(environment,0);
 			environment.x=0;
 			environment.y=0;
 			environment.gotoAndStop(1);//go to first stage
 			
 			//Add the background
 			addChild(ground);
-			setChildIndex(ground,1);//above environment
+			//setChildIndex(ground,1);//above environment
 			ground.x=0;
 			ground.y=0;
 			ground.gotoAndStop(1);//go to first stage
-			
-			//door
-			addChild(door);
-			setChildIndex(door,2);
-			door.x=186.25;
-			door.y=284.95;
-			
-			//door2
-			addChild(door2);
-			setChildIndex(door2,3);
-			door2.x=186.55;
-			door2.y=167.45;		
-			
+
 			//add the player
 			addChild(player);
-			setChildIndex(player,4);
+			//setChildIndex(player,3);
 			player.x = stage.width / 2;
             player.y = stage.height / 2;
 			
-			//TEMP ADD ITEMS DIRECTLY TO STAGE ON GAME START 
-			//add ammo crate
-			addChild(ammocrate);
-			setChildIndex(ammocrate,5);
-			ammocrate.x=465;
-			ammocrate.y=285;
-			
-			//add medpack
-			addChild(medpack);
-			setChildIndex(medpack,6);
-			medpack.x=440;
-			medpack.y=285;
-			
-			//add speedpack
-			addChild(speedpack);
-			setChildIndex(speedpack,7);
-			speedpack.x=450;
-			speedpack.y=280;
-
-			//torch
-			addChild(torch);
-			setChildIndex(torch,3);
-			torch.x=185;
-			torch.y=165;		
-			
 			//MASK
-            addChild(light);
+            this.addChild(light);
             this.mask = light;
 			//postion "light" over player
             light.x =  player.x;
             light.y = player.y - 85;
-			setChildIndex(light,9);
+			//setChildIndex(light,4);
 				
 			//add UI
 			stage.addChild(ui);
@@ -183,7 +147,8 @@
 			stage.addEventListener(MouseEvent.MOUSE_DOWN, mouseDownHandler, false, 0, true);
 			stage.addEventListener(MouseEvent.MOUSE_UP, mouseUpHandler, false, 0, true);
 			
-			
+			//lighting
+			lighting();
 			
 			trace ("Game Intialised");
 		}
@@ -241,6 +206,8 @@
 		}
 		//MAIN GAME LOOP
 		public function mainloop(e:Event):void {
+			//lighting fix
+			lighting();
 			
 			var dist_x:Number=player.x-mouseX;
 			var dist_y:Number=player.y-mouseY;
@@ -334,15 +301,15 @@
 			createZombies();
 			checkzombieHit();
 			collectItem();
-			openDoor();
+			//openDoor();
 			finishlevel();
 			playerMoving();
 			removeFlames();
-			lighting();
+			checkhealth();
 		}
 
 ///////////////////////////////////////////////////////
-//							PLAYER CONTROLS
+//							PLAYER
 ///////////////////////////////////////////////////////
 		public function on_key_down(e:KeyboardEvent):void {
 			switch (e.keyCode) {
@@ -481,6 +448,11 @@
 		}
 		public function mouseUpHandler(e:MouseEvent):void {
 			mousePressed = false; //reset this to false
+		}
+		public function checkhealth():void{
+			if (health <=0){
+				gameover();
+			}
 		}
 ///////////////////////////////////////////////////////
 //						SHOP
@@ -700,7 +672,6 @@
 				currentstage += 1;
 				//move to  next stage
 				nextstage();
-				clearstage();//removes left over items
 			}
 		}
 		public function nextstage():void{
@@ -717,36 +688,7 @@
 				ground.gotoAndStop(2);
 			}
 		}
-		public function clearstage():void{
-			trace ("Stage Cleared!");
-			if (this.contains(uzi)){
-				removeChild(uzi);
-			}
-			if (this.contains(pistol)){
-				removeChild(pistol);
-			}
-			if (this.contains(shotgun)){
-				removeChild(shotgun);
-			}
-			if (this.contains(medpack)){
-				removeChild(medpack);
-			}
-			if (this.contains(ammocrate)){
-				removeChild(ammocrate);
-			}
-			if (this.contains(speedpack)){
-				removeChild(speedpack);
-			}
-			if (this.contains(torch)){
-				removeChild(torch);
-			}
-			if (this.contains(door)){
-				removeChild(door);
-			}
-			if (this.contains(door2)){
-				removeChild(door2);
-			}
-		}
+
 ///////////////////////////////////////////////////////
 //						WEAPONS
 ///////////////////////////////////////////////////////
@@ -840,6 +782,8 @@
 				//remove item from stage
 				removeChild(torch);
 				playerhastorch = true;
+				//update lighting
+				lighting();
 			}
 		}
 		//AMMO
@@ -1001,6 +945,18 @@
 				ui.icon_flamethrower.visible = true;
 			}
 		}
+///////////////////////////////////////////////////////
+//							GAMEOVER
+///////////////////////////////////////////////////////
+	public function gameover():void{
+		ispaused = true;
+					stage.removeEventListener(Event.ENTER_FRAME,mainloop);
+					stage.removeEventListener(Event.ENTER_FRAME,processScripts);
+					trace("GAME OVER");
+					stage.addChild(gameoverscreen);
+					gameoverscreen.restartgame.addEventListener(MouseEvent.CLICK, restartGame);
+		
+	}
 ///////////////////////////////////////////////////////
 //							MISC
 ///////////////////////////////////////////////////////

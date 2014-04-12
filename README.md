@@ -25,6 +25,7 @@ Current Items:
 medpack
 speedpack
 ammopack
+Torch
 
 SHOP TODO:
 confirm window when buying
@@ -39,6 +40,7 @@ Melee Weapons (knife, sword, bat, axe, golf club, etc)
 More Weapons (grenades, rockect launcher, etc)
 Bosses
 More Zombie types (Spitter, exploder, etc)
+Items Drops
 More Items (double damage, Rapid Fire, Cash, Multipliers(damage,cash,etc)
 Armour system
 Sound effects + Music
