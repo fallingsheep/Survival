@@ -81,7 +81,8 @@
 		public var Timer10:Timer = new Timer(1000, 10);
 		public var collectedSpeedPack:Boolean = false;
 		public var level:int = 1;//set start level
-		public var currentcash:int = 250;//cash
+		
+		public var currentcash:int = 25000;//cash
 		//CHEATS AND DEBUG
 		public var haspistol:Boolean = false;
 		public var hasuzi:Boolean = false;
@@ -456,6 +457,7 @@
 		public function showshop(event:MouseEvent):void {
 			pausescreen.gotoshop.removeEventListener(MouseEvent.CLICK, showshop);
 			pausescreen.addChild(shopscreen);
+			shopscreen.buytorch.addEventListener(MouseEvent.CLICK, buyTORCH);
 			shopscreen.buyarmour.addEventListener(MouseEvent.CLICK, buyARMOUR);
 			shopscreen.buymedkit.addEventListener(MouseEvent.CLICK, buyMEDKIT);
 			
@@ -527,6 +529,16 @@
 			currentcash -= 1500;//cost of armour
 			updatetext();//update armour display
 			shopscreen.shopmessage.text = "Bought Medkit!";//shop message
+			}else{
+				shopscreen.shopmessage.text = "Not enough cash!";//shop message
+			}
+		}
+		//TORCH
+		public function buyTORCH(event:MouseEvent):void {
+			if (currentcash >= 2500){
+			playerhastorch = true;
+			currentcash -= 2500;//cost of torch
+			shopscreen.shopmessage.text = "Bought Torch!";//shop message
 			}else{
 				shopscreen.shopmessage.text = "Not enough cash!";//shop message
 			}
