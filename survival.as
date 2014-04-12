@@ -20,6 +20,7 @@
 		
 		public var shopscreen:shopscreen_mc = new shopscreen_mc();
 		public var light:light_mc= new light_mc();
+		public var details:details_mc= new details_mc();
 		public var ground:ground_mc = new ground_mc();
 		public var ui:ui_mc = new ui_mc();
 		public var deadzombie:deadzombie_mc = new deadzombie_mc();
@@ -147,9 +148,16 @@
 			player.x = stage.width / 2;
             player.y = stage.height / 2;
 			
+			//details 
+			addChild(details);
+			setChildIndex(details,3);
+			details.x = 0;
+            details.y = 0;
+			details.gotoAndStop(1);//go to first stage
+			
 			//lighting
             addChild(light);
-			setChildIndex(light,3);
+			setChildIndex(light,4);
 			var myBlur:BlurFilter = new BlurFilter();
 			myBlur.quality = 5;
 			myBlur.blurX = 50;
@@ -157,7 +165,7 @@
 			light.filters = [myBlur];
 			//add UI
 			addChild(ui);
-			setChildIndex(ui,4);
+			setChildIndex(ui,5);
 			ui.x=330;
 			ui.y=340;
 			
