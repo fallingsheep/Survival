@@ -103,6 +103,7 @@
 		public function survival():void {
 			addChild(intro);
 			intro.startgame.addEventListener(MouseEvent.CLICK, startgame);
+
 		}
 		//START GAME
 		public function startgame(event:MouseEvent):void {
@@ -117,35 +118,35 @@
 			flamethrowerammo = 0;
 			//environment
 			addChild(environment);
-			//setChildIndex(environment,0);
+			setChildIndex(environment,0);
 			environment.x=0;
 			environment.y=0;
 			environment.gotoAndStop(1);//go to first stage
 			
 			//Add the background
 			addChild(ground);
-			//setChildIndex(ground,1);//above environment
+			setChildIndex(ground,1);//above environment
 			ground.x=0;
 			ground.y=0;
 			ground.gotoAndStop(1);//go to first stage
 
 			//add the player
 			addChild(player);
-			//setChildIndex(player,3);
+			setChildIndex(player,2);
 			player.x = stage.width / 2;
             player.y = stage.height / 2;
 			
-			//MASK
-            this.addChild(light);
-            this.mask = light;
-			//postion "light" over player
-            light.x =  player.x;
-            light.y = player.y - 85;
-			//setChildIndex(light,4);
-				
+			//lighting
+            addChild(light);
+			setChildIndex(player,3);
+			var myBlur:BlurFilter = new BlurFilter();
+			myBlur.quality = 3;
+			myBlur.blurX = 20;
+			myBlur.blurY = 20;
+			light.filters = [myBlur];
 			//add UI
-			stage.addChild(ui);
-			//setChildIndex(ui,8);
+			addChild(ui);
+			setChildIndex(ui,4);
 			ui.x=322;
 			ui.y=350;
 			
@@ -162,7 +163,9 @@
 			
 			//lighting
 			lighting();
-			
+			this.cacheAsBitmap = true;
+			light.cacheAsBitmapMatrix = light.transform.concatenatedMatrix;
+			light.cacheAsBitmap = true;
 			trace ("Game Intialised");
 		}
 		private function restartGame(event:MouseEvent):void {
@@ -172,55 +175,26 @@
 		 trace ("Game Restarted");
 		}
 		public function lighting():void{
-			var blur:BlurFilter = new BlurFilter();
-			var filterArray:Array = new Array(blur);
-			this.cacheAsBitmap = true;
-			light.cacheAsBitmap = true;
 			
 			if (playerhastorch == true){
 			light.x = player.x;
-			light.y = player.y - 85;
-			light.graphics.clear();
-			light.graphics.beginFill(0xffffff, 100);
-			light.graphics.moveTo(player.x, player.y);
-			light.graphics.drawCircle(0,80,100);
-			light.graphics.endFill();
-			light.blendMode = BlendMode.ALPHA;
-			//Player torch alpha
-			light.alpha=0.5;
-			//blur edges
-			blur.blurX = 10;
-			blur.blurY = 10;
-			blur.quality = 1;
-			light.filters = filterArray;
+			light.y = player.y;
 			light.gotoAndStop(1);
 			}
 			if (playerhastorch == false){
 			light.x = player.x;
-			light.y = player.y- 85;
-			light.graphics.clear();
-			light.graphics.beginFill(0xffffff, 100);
-			light.graphics.moveTo(player.x, player.y);
-			light.graphics.drawCircle(0,80,80);
-			light.graphics.endFill();
-			light.blendMode = BlendMode.ALPHA;
-			//Player torch alpha
-			light.alpha=0.5;
-			//blur edges
-			blur.blurX = 10;
-			blur.blurY = 10;
-			blur.quality = 1;
-			light.filters = filterArray;
+			light.y = player.y;
 			light.gotoAndStop(2);
 			}
+			// Apply the glow filter to the cross shape. 
+
+
 			//needed for masks to work properly
 			
 				
 		}
 		//MAIN GAME LOOP
 		public function mainloop(e:Event):void {
-			//lighting fix
-			lighting();
 			
 			var dist_x:Number=player.x-mouseX;
 			var dist_y:Number=player.y-mouseY;
@@ -320,6 +294,7 @@
 			removeFlames();
 			checkhealth();
 			checkarmour();
+			lighting();
 		}
 
 ///////////////////////////////////////////////////////
