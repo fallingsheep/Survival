@@ -394,7 +394,7 @@
 				break;
 			}
 		}
-		public function closepausescreen():void{
+		public function closepausescreen(e:MouseEvent):void{
 			ispaused = false;
 					stage.addEventListener(Event.ENTER_FRAME,mainloop);
 					stage.addEventListener(Event.ENTER_FRAME,processScripts);
