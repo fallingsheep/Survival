@@ -15,8 +15,9 @@
 		public var zombieType:Number;
 		public var agrorange:int;
 		public var inrangeX,inrangeY:Boolean;
-		public static var isbigzombie:Boolean;
+		public var isbigzombie:Boolean;
 		public var zombiehitpoints:int;
+		public var zombiedamage:int;
 			
         public function Zombie(stageRef:Stage, ZombieX:int, ZombieY:int):void {
 			zombieRandom = randomRange(0,6);
@@ -49,14 +50,9 @@
 				ZombieX=700;
 				ZombieY=300;
 			}
-			zombiehitpoints = 2;//intialise hitpoints
             this.stageRef = stageRef;
             this.x = ZombieX;
             this.y = ZombieY;
-			
-			
-			//limit zombie movement speed
-				//zombieSpeed = Math.random();//random zombie speed
 				
 				zombieType = randomRange(0,1);//how many types of zombies
 				bigzombiechance = randomRange(0,8);
@@ -66,12 +62,14 @@
 					zombieSpeed = 0.5;
 					isbigzombie = false;
 					zombiehitpoints = 200;
+					zombiedamage = 1;
 					agrorange = 350;//how far zombie can see
 				}else if((zombieType == 1) && (bigzombiechance == 1)){
 					radius = 9;//how big is the zombie in pixels (sphere)
 					this.gotoAndStop(2)
 					zombieSpeed = 0.2;
 					isbigzombie = true;
+					zombiedamage = 5;
 					zombiehitpoints = 1000;
 					agrorange = 350;
 				}else{
@@ -79,8 +77,9 @@
 					this.gotoAndStop(1)
 					zombieSpeed = 0.5;
 					isbigzombie = false;
-					zombiehitpoints = 2;
+					zombiehitpoints = 200;
 					agrorange = 350;//how far zombie can see
+					zombiedamage = 1;
 				}
 
 				addEventListener(Event.ENTER_FRAME,loop);
