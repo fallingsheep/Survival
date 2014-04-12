@@ -140,9 +140,9 @@
             addChild(light);
 			setChildIndex(player,3);
 			var myBlur:BlurFilter = new BlurFilter();
-			myBlur.quality = 3;
-			myBlur.blurX = 20;
-			myBlur.blurY = 20;
+			myBlur.quality = 5;
+			myBlur.blurX = 50;
+			myBlur.blurY = 50;
 			light.filters = [myBlur];
 			//add UI
 			addChild(ui);
@@ -160,12 +160,6 @@
 			//add mouse listeners
 			stage.addEventListener(MouseEvent.MOUSE_DOWN, mouseDownHandler, false, 0, true);
 			stage.addEventListener(MouseEvent.MOUSE_UP, mouseUpHandler, false, 0, true);
-			
-			//lighting
-			lighting();
-			this.cacheAsBitmap = true;
-			light.cacheAsBitmapMatrix = light.transform.concatenatedMatrix;
-			light.cacheAsBitmap = true;
 			trace ("Game Intialised");
 		}
 		private function restartGame(event:MouseEvent):void {
@@ -185,12 +179,7 @@
 			light.x = player.x;
 			light.y = player.y;
 			light.gotoAndStop(2);
-			}
-			// Apply the glow filter to the cross shape. 
-
-
-			//needed for masks to work properly
-			
+			}			
 				
 		}
 		//MAIN GAME LOOP
