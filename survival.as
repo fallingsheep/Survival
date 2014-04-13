@@ -26,7 +26,7 @@
 		public var ground:ground_mc = new ground_mc();
 		public var ui:ui_mc = new ui_mc();
 		public var deadzombie:deadzombie_mc = new deadzombie_mc();
-		
+		public var enemycontainer:enemycontainer_mc = new enemycontainer_mc();
 		//items
 		public var ammocrate:ammocrate_mc = new ammocrate_mc();
 		public var medpack:medpack_mc = new medpack_mc();
@@ -165,13 +165,13 @@
 			environment.y=0;
 			environment.gotoAndStop(1);//go to first stage
 			
-			//Add the background
-			addChild(ground);
-			setChildIndex(ground,1);//above environment
-			ground.x=0;
-			ground.y=0;
-			ground.gotoAndStop(1);//go to first stage
 
+			//Add action enemycontainer
+			addChild(enemycontainer);
+			setChildIndex(enemycontainer,1)
+			enemycontainer.x=0;
+			enemycontainer.y=0;
+			
 			//add the player
 			addChild(player);
 			setChildIndex(player,2);
@@ -193,11 +193,13 @@
 			myBlur.blurX = 50;
 			myBlur.blurY = 50;
 			light.filters = [myBlur];
+			
 			//add UI
 			addChild(ui);
 			setChildIndex(ui,5);
 			ui.x=315;
 			ui.y=346;
+			
 			
 			
 			//add listener to run on every frame
@@ -779,7 +781,41 @@
 ///////////////////////////////////////////////////////
 		var zombieArray:Array = [];//holds all zombies
 		var deadzombieArray:Array = [];//holds all deadzombies
-
+		
+		//create new zombie from Zombie class and place on stage at spawn point
+		public function createZombies():void {
+			//check how many zombies have been spawned
+			if(zombiecount > zombiespawncount){
+				stopspawn = true;
+			}else{
+				if (stopspawn == false) {
+					//check how many zombies on stage
+							var zombie:Zombie = new Zombie(stage, Zombie.ZombieX, Zombie.ZombieY);
+							//Add event to zombie to remove them from array when removed from stage
+							zombie.addEventListener(Event.REMOVED_FROM_STAGE, zombieRemoved, false, 0, true);
+							//add zombie to array
+							zombieArray.push(zombie);
+							//TEMP FIX LAYER ISSUE
+							//Add the background
+							enemycontainer.addChild(ground);
+							enemycontainer.setChildIndex(ground,0);
+							ground.x=0;
+							ground.y=0;
+							ground.gotoAndStop(1);//go to first stage
+							
+							
+							//add zombie to stage
+							enemycontainer.addChild(zombie);
+							enemycontainer.setChildIndex(zombie,1);
+							//increase zombie counters
+							zombiecount += 1;
+							totalzomibes += 1;
+							
+							
+				}
+			}
+		}
+		
 		public function checkzombieHit():void{
 			for (var idx:int = zombieArray.length - 1; idx >= 0; idx--){
 						var zombie1:Zombie = zombieArray[idx];
@@ -842,14 +878,14 @@
 									
 									for(var ii=0; ii<numOfClips; ii++)
 									{
-										addChild(deadzombie);
-										setChildIndex(deadzombie,2);
+										ground.addChild(deadzombie);
+										//setChildIndex(deadzombie,2);
 									 	deadzombieArray.push(deadzombie);
 									}
-									deadzombie.x = zombie1.x;
-									deadzombie.y = zombie1.y;
-									deadzombie.gotoAndStop(15);
-									ground.removeChild(zombie1);
+									ground.deadzombie.x = zombie1.x;
+									ground.deadzombie.y = zombie1.y;
+									ground.deadzombie.gotoAndStop(15);
+									enemycontainer.removeChild(zombie1);
 									if(zombie1.zombieType == 0){
 									experience += 100;
 									}
@@ -864,14 +900,14 @@
 						//check if bullet hits zombie
 						
 						if (bullet1.hitTestObject(zombie1)){
-							if (ground.contains(zombie1)){
+							if (enemycontainer.contains(zombie1)){
 								//remove zombie and bullet
 								if(isusingshotgun == true){
 									zombie1.zombiehitpoints -= 250;
-									ground.removeChild(bullet1);
+									enemycontainer.removeChild(bullet1);
 								} else {
 									zombie1.zombiehitpoints -= 100;
-									ground.removeChild(bullet1);
+									enemycontainer.removeChild(bullet1);
 								}
 
 								if(zombie1.zombiehitpoints <= 0){
@@ -879,14 +915,14 @@
 									
 									for(var i=0; i<numOfClips; i++)
 									{
-									  addChild(deadzombie);
-									  setChildIndex(deadzombie,2);
+									  ground.addChild(deadzombie);
+									 // setChildIndex(deadzombie,2);
 									  deadzombieArray.push(deadzombie);
 									}
 									deadzombie.x = zombie1.x;
 									deadzombie.y = zombie1.y;
 									deadzombie.gotoAndStop(15);
-									ground.removeChild(zombie1);
+									enemycontainer.removeChild(zombie1);
 									if(zombie1.zombieType == 0){
 									experience += 100;
 									}
@@ -900,29 +936,6 @@
 						
 					}
 			 }
-		}
-		//create new zombie from Zombie class and place on stage at spawn point
-		public function createZombies():void {
-			//check how many zombies have been spawned
-			if(zombiecount > zombiespawncount){
-				stopspawn = true;
-			}else{
-				if (stopspawn == false) {
-					//check how many zombies on stage
-							var zombie:Zombie = new Zombie(stage, Zombie.ZombieX, Zombie.ZombieY);
-							//Add event to zombie to remove them from array when removed from stage
-							zombie.addEventListener(Event.REMOVED_FROM_STAGE, zombieRemoved, false, 0, true);
-							//add zombie to array
-							zombieArray.push(zombie);
-							//add zombie to stage
-							ground.addChild(zombie);
-							ground.setChildIndex(zombie,1);
-							//increase zombie counters
-							zombiecount += 1;
-							totalzomibes += 1;
-							
-				}
-			}
 		}
 
 		//removes zombie from array
@@ -1038,7 +1051,7 @@
 			//add bullet to array
 			bulletList.push(bullet);
 			//add bullet to stage
-			ground.addChild(bullet);
+			enemycontainer.addChild(bullet);
 			//reduce ammo by 1
 		}
 		//removes bullet from array
@@ -1052,20 +1065,20 @@
 			for (var bidx:int = bulletList.length - 1; bidx >= 0; bidx--){
 				var bullet1:Bullet = bulletList[bidx];
 				if(bullet1.x > 800 || bullet1.x < 0 || bullet1.y > 368 || bullet1.y < 0) {
-					ground.removeChild(bullet1);
+					enemycontainer.removeChild(bullet1);
 				}
 				//SHOOT THRU WALLS CHEAT
 				if (shootthruwalls == false){
 				//check if bullet hits wall and remove
 					if (environment.hitTestPoint(bullet1.x,bullet1.y, true)){
-						if (ground.contains(bullet1)){
-							ground.removeChild(bullet1);
+						if (enemycontainer.contains(bullet1)){
+							enemycontainer.removeChild(bullet1);
 						}
 					}
 					//check if bullet hits door
 					if ((door.hitTestPoint(bullet1.x,bullet1.y, true))||(door.hitTestPoint(bullet1.x,bullet1.y, true))){
-						if (ground.contains(bullet1)){
-							ground.removeChild(bullet1);
+						if (enemycontainer.contains(bullet1)){
+							enemycontainer.removeChild(bullet1);
 						}
 					}
 				}
@@ -1074,7 +1087,7 @@
 		public function shootFlames():void{
 			if (mousePressed == true){
 						flamethrowerflames.rotation=player.rotation;
-						ground.addChild(flamethrowerflames);
+						enemycontainer.addChild(flamethrowerflames);
 						flamethrowerflames.x = player.x;
 						flamethrowerflames.y = player.y;
 			}
@@ -1082,7 +1095,7 @@
 
 		public function removeFlames():void{
 			if((this.contains(flamethrowerflames))&&(mousePressed == false)){
-				ground.removeChild(flamethrowerflames);
+				enemycontainer.removeChild(flamethrowerflames);
 			}
 		}
 		
