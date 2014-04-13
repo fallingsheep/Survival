@@ -41,13 +41,13 @@
 		public var flamethrowerflames:flamethrowerflames_mc = new flamethrowerflames_mc();
 		
 		public var playerhitobject:Boolean = false; // has player hit a object
-		public var isusingpistol:Boolean = true;//set pistol as default weapon
+		public var isusingpistol:Boolean;//
 		
-		public var isusinguzi:Boolean = false;
-		public var isusingshotgun:Boolean = false;
-		public var isusingflamethrower:Boolean = false;
+		public var isusinguzi:Boolean;
+		public var isusingshotgun:Boolean;
+		public var isusingflamethrower:Boolean;
 		
-		public var ammoempty:Boolean = false;//ammo empty check
+		public var ammoempty:Boolean;//ammo empty check
 		
 		public var dooropening:Boolean = false;//door moving check
 		public var door2opening:Boolean = false;//door2 moving check
@@ -68,47 +68,47 @@
 		public var shotgunammo:int;
 		public var flamethrowerammo:int;
 		
-		public var hasarmour:Boolean = true;
-		public var armour:int=25;//starting armour
+		public var hasarmour:Boolean;
+		public var armour:int;//starting armour
 		
-		public var health:int=100;//starting health
+		public var health:int;//starting health
 		
 		//zombies
 		public var zombieskilled:int;//total zombies killed for current stage
 		public var totalzombieskilled:int;//total zombies killed all up
-		public var zombiecount:int = 0;// how many zombies created
-		public var zombiespawncount:int = 9; // MUST BE 1 LESS than actual count!! used as starting zombie spawn count
+		public var zombiecount:int;// how many zombies created
+		public var zombiespawncount:int; // MUST BE 1 LESS than actual count!! used as starting zombie spawn count
 		public var totalzomibes:int; // total zombies spawned
 		public var zomibeskilled:int; // total zombies killed
 		//timers
-		public var SecondsElapsed:Number = 1;
-		public var UiSecondsElapsed:Number = 1;
+		public var SecondsElapsed:Number ;
+		public var UiSecondsElapsed:Number;
 		public var Timer10:Timer = new Timer(1000, 10);
 		public var UiTimer10:Timer = new Timer(1000, 10);
-		public var collectedSpeedPack:Boolean = false;
-		public var level:int = 1;//set start level
+		public var collectedSpeedPack:Boolean;
+		public var level:int;//set start level
 		
-		public var currentcash:int = 25000;//cash
+		public var currentcash:int;//cash
 		//CHEATS AND DEBUG
-		public var haspistol:Boolean = false;
-		public var hasuzi:Boolean = false;
-		public var hasshotgun:Boolean = false;
-		public var hasflamethrower:Boolean = true;
+		public var haspistol:Boolean;
+		public var hasuzi:Boolean;
+		public var hasshotgun:Boolean;
+		public var hasflamethrower:Boolean;
 		//what stage to start on
-		public var currentstage:int = 1;
+		public var currentstage:int;
 		//cheats
-		public var shootthruwalls:Boolean = false;
-		public var walkthruwalls:Boolean = false;
-		public var infinteammo:Boolean = false;
-		public var infintehealth:Boolean = false;
-		public var player_speed:int = 2;//player movement speed (Default is 2)
-		public var playerhastorch:Boolean = false;
+		public var shootthruwalls:Boolean;
+		public var walkthruwalls:Boolean;
+		public var infinteammo:Boolean;
+		public var infintehealth:Boolean;
+		public var player_speed:int;//player movement speed (Default is 2)
+		public var playerhastorch:Boolean ;
 		
 		public var torch:torch_mc= new torch_mc();
-		public static var ispaused:Boolean = false;
+		public static var ispaused:Boolean;
 		
 		public var currentrank:int;
-		public var experience:int = 0;
+		public var experience:int;
 		//ranks
 		public static var rank0:rank0_mc = new rank0_mc();
 		public static var rank1:rank1_mc = new rank1_mc();
@@ -132,7 +132,7 @@
 		public static var rank19:rank19_mc = new rank19_mc();
 		
 					//The speed of the scroll movement.
-		public var scrollSpeed:Number = 0.5;
+		public var scrollSpeed:Number;
 			
 			//This adds two instances of the movie clip onto the stage.
 		public var s1:fogbg_mc = new fogbg_mc();
@@ -143,22 +143,56 @@
 		public function survival():void {
 			addChild(intro);
 			intro.startgame.addEventListener(MouseEvent.CLICK, startgame);
-			stage.scaleMode = StageScaleMode.NO_SCALE;
-  			stage.align = StageAlign.TOP;
-			stage.addEventListener(Event.RESIZE, resizeHandler);
- 			stage.addEventListener(FullScreenEvent.FULL_SCREEN, resizeHandler);
+			intro.resumesavedgamebutton.addEventListener(MouseEvent.CLICK, resumesavedgame);
 			
+			//defaults
+			scrollSpeed = 0.5;
+			isusingpistol = true;//
+			isusinguzi = false;
+			isusingshotgun = false;
+			isusingflamethrower = false;
+			ammoempty = false;
+			experience = 0;//rank
+			currentcash = 25000;//cash
+			haspistol = true;
+			hasuzi = false;
+			hasshotgun = false;
+			hasflamethrower = false;
+			currentstage = 1;
+			shootthruwalls = false;
+			walkthruwalls = false;
+			infinteammo = false;
+			infintehealth = false;
+			player_speed = 2;//player movement speed (Default is 2)
+			playerhastorch = false;
+			ispaused = false;
+			hasarmour = true;
+			armour = 25;//starting armour
+			health = 100;//starting health
+			zombieskilled = 0;//total zombies killed for current stage
+			totalzombieskilled = 0;//total zombies killed all up
+			zombiecount = 0;// how many zombies created
+			zombiespawncount = 9; // MUST BE 1 LESS than actual count!! used as starting zombie spawn count
+			totalzomibes = 0; // total zombies spawned
+			zomibeskilled = 0; // total zombies killed
+			SecondsElapsed = 1;
+			UiSecondsElapsed = 1;
+			collectedSpeedPack = false;
+			level = 1;//set start level
+			//starting ammo
+			pistolammo = 100;
+			uziammo = 0;
+			shotgunammo = 0;
+			flamethrowerammo = 0;
+		}
 
-		}
-		private function resizeHandler(e:Event):void {
-			
-		}
 		//START GAME
 		public function startgame(event:MouseEvent):void {
 			intro.startgame.removeEventListener(MouseEvent.CLICK, startgame);
 			if (this.contains(intro)){
 			removeChild(intro);
 			}
+			
 			//start fog
 			ground.addChild(s1); 
 			ground.addChild(s2);
@@ -186,15 +220,7 @@
 				s2.x = s2.width;
 				}
 			}
-			
-			
-			
-			currentrank = 0;
-			//starting ammo
-			pistolammo = 100;
-			uziammo = 0;
-			shotgunammo = 0;
-			flamethrowerammo = 1000;
+
 			//environment
 			addChild(environment);
 			setChildIndex(environment,0);
@@ -448,32 +474,6 @@
 					trace ("Switched to flamethrower:" + delayMax);
 				}
 				break;
-				//PAUSE GAME
-				case 80 : // P
-				if (ispaused == false){
-					ispaused = true;
-					stage.removeEventListener(Event.ENTER_FRAME,mainloop);
-					stage.removeEventListener(Event.ENTER_FRAME,processScripts);
-					trace("GAME PAUSED");
-					stage.addChild(pausescreen);
-					pausescreen.gotoshop.addEventListener(MouseEvent.CLICK, showshop);
-					pausescreen.gotorankscreen.addEventListener(MouseEvent.CLICK, showrankscreen);
-					pausescreen.gotoachivementscreen.addEventListener(MouseEvent.CLICK, showachivementscreen);
-					pausescreen.restartgame.addEventListener(MouseEvent.CLICK, restartGame);
-					pausescreen.exitpausescreen.addEventListener(MouseEvent.CLICK, closepausescreen);
-					
-				}
-				else if  (ispaused == true){
-					ispaused = false;
-					stage.addEventListener(Event.ENTER_FRAME,mainloop);
-					stage.addEventListener(Event.ENTER_FRAME,processScripts);
-					trace("GAME RESUMED");
-					pausescreen.gotoshop.removeEventListener(MouseEvent.CLICK, showshop);
-					if(stage.contains(pausescreen)){
-						stage.removeChild(pausescreen);
-					}
-				}
-				break;
 			}
 		}
 		public function openpausescreen(e:MouseEvent):void{
@@ -487,6 +487,7 @@
 					pausescreen.gotoachivementscreen.addEventListener(MouseEvent.CLICK, showachivementscreen);
 					pausescreen.restartgame.addEventListener(MouseEvent.CLICK, restartGame);
 					pausescreen.exitpausescreen.addEventListener(MouseEvent.CLICK, closepausescreen);
+					pausescreen.savegamebutton.addEventListener(MouseEvent.CLICK, saveData);
 		}
 		public function closepausescreen(e:MouseEvent):void{
 					ispaused = false;
@@ -498,7 +499,7 @@
 						stage.removeChild(pausescreen);
 					}
 		}
-		private function restartGame(event:MouseEvent):void {
+		public function restartGame(event:MouseEvent):void {
    		 		stage.addChild(confirmrestartgame);
 				confirmrestartgame.yesrestartgame.addEventListener(MouseEvent.CLICK, confirmRESTART);
 				confirmrestartgame.norestartgame.addEventListener(MouseEvent.CLICK, cancelRESTART);
@@ -1616,20 +1617,111 @@
 ///////////////////////////////////////////////////////
 //							EFFECTS
 ///////////////////////////////////////////////////////		
-		public function lighting():void{
-			
-			if (playerhastorch == true){
+	public function lighting():void{		
+		if (playerhastorch == true){
 			light.x = player.x;
 			light.y = player.y;
 			light.gotoAndStop(1);
-			}
-			if (playerhastorch == false){
+		}
+		if (playerhastorch == false){
 			light.x = player.x;
 			light.y = player.y;
 			light.gotoAndStop(2);
-			}			
-				
+		}			
+	}
+		
+///////////////////////////////////////////////////////
+//							SAVE AND LOAD
+///////////////////////////////////////////////////////		
+	public var saveDataObject:SharedObject;
+
+	public function saveData(e:MouseEvent):void{
+			saveDataObject = SharedObject.getLocal("test"); 
+			saveDataObject.data.savedscrollSpeed = scrollSpeed;
+			saveDataObject.data.savedisusingpistol = isusingpistol;
+			saveDataObject.data.savedisusinguzi = isusinguzi;
+			saveDataObject.data.savedisusingshotgun = isusingshotgun;
+			saveDataObject.data.savedisusingflamethrower = isusingflamethrower;
+			saveDataObject.data.savedammoempty = ammoempty;
+			saveDataObject.data.savedexperience = experience;
+			saveDataObject.data.savedcurrentcash = currentcash;
+			saveDataObject.data.savedhaspistol = haspistol;
+			saveDataObject.data.savedhasuzi = hasuzi;
+			saveDataObject.data.savedhasshotgun = hasshotgun;
+			saveDataObject.data.savedhasflamethrower = hasflamethrower;
+			saveDataObject.data.savedcurrentstage = currentstage;
+			saveDataObject.data.savedshootthruwalls = shootthruwalls;
+			saveDataObject.data.savedwalkthruwalls = walkthruwalls;
+			saveDataObject.data.savedinfinteammo = infinteammo;
+			saveDataObject.data.savedinfintehealth = infintehealth;
+			saveDataObject.data.savedplayer_speed = player_speed;
+			saveDataObject.data.savedplayerhastorch = playerhastorch;
+			saveDataObject.data.savedispaused = ispaused;
+			saveDataObject.data.savedhasarmour = hasarmour;
+			saveDataObject.data.savedarmour = armour;
+			saveDataObject.data.savedhealth = health;
+			saveDataObject.data.savedzombieskilled = zombieskilled;
+			saveDataObject.data.savedtotalzombieskilled = totalzombieskilled;
+			saveDataObject.data.savedzombiecount = zombiecount;
+			saveDataObject.data.savedzombiespawncount = zombiespawncount;
+			saveDataObject.data.savedtotalzomibes = totalzomibes;
+			saveDataObject.data.savedzomibeskilled = zomibeskilled;
+			saveDataObject.data.savedSecondsElapsed = SecondsElapsed;
+			saveDataObject.data.savedUiSecondsElapsed = UiSecondsElapsed;
+			saveDataObject.data.savedcollectedSpeedPack = collectedSpeedPack;
+			saveDataObject.data.savedlevel = level;
+
+			trace("Game Saved!");
+			saveDataObject.flush(); // immediately save to the local drive
+			trace(saveDataObject.size); // this will show the size of the save file, in bytes
+	}
+ 
+	public function loadData():void{
+		saveDataObject = SharedObject.getLocal("test"); 
+		  	scrollSpeed = saveDataObject.data.savedscrollSpeed;
+			isusingpistol = saveDataObject.data.savedisusingpistol;
+			isusinguzi = saveDataObject.data.savedisusinguzi;
+			isusingshotgun = saveDataObject.data.savedisusingshotgun;
+			isusingflamethrower = saveDataObject.data.savedisusingflamethrower;
+			ammoempty = saveDataObject.data.savedammoempty;
+			experience = saveDataObject.data.savedexperience;
+			currentcash = saveDataObject.data.savedcurrentcash;
+			haspistol = saveDataObject.data.savedhaspistol;
+			hasuzi = saveDataObject.data.savedhasuzi;
+			hasshotgun = saveDataObject.data.savedhasshotgun;
+			hasflamethrower = saveDataObject.data.savedhasflamethrower;
+			currentstage = saveDataObject.data.savedcurrentstage;
+			shootthruwalls = saveDataObject.data.savedshootthruwalls;
+			walkthruwalls = saveDataObject.data.savedwalkthruwalls;
+			infinteammo = saveDataObject.data.savedinfinteammo;
+			infintehealth = saveDataObject.data.savedinfintehealth;
+			player_speed = saveDataObject.data.savedplayer_speed;
+			playerhastorch = saveDataObject.data.savedplayerhastorch;
+			ispaused = saveDataObject.data.savedispaused;
+			hasarmour = saveDataObject.data.savedhasarmour;
+			armour = saveDataObject.data.savedarmour;
+			health = saveDataObject.data.savedhealth;
+			zombieskilled = saveDataObject.data.savedzombieskilled;
+			totalzombieskilled = saveDataObject.data.savedtotalzombieskilled;
+			zombiecount = saveDataObject.data.savedzombiecount;
+			zombiespawncount = saveDataObject.data.savedzombiespawncount;
+			totalzomibes = saveDataObject.data.savedtotalzomibes;
+			zomibeskilled = saveDataObject.data.savedzomibeskilled;
+			SecondsElapsed = saveDataObject.data.savedSecondsElapsed;
+			UiSecondsElapsed = saveDataObject.data.savedUiSecondsElapsed;
+			collectedSpeedPack = saveDataObject.data.savedcollectedSpeedPack;
+			level = saveDataObject.data.savedlevel;
+			
+			updatetext(); // finally, update the text field
+		 	startgame(null);
+			trace("Game Loaded!");
+	}
+//RESUME GAME
+		public function resumesavedgame(e:MouseEvent):void{
+			loadData();
 		}
+
+		
 ///////////////////////////////////////////////////////
 //							MISC
 ///////////////////////////////////////////////////////
