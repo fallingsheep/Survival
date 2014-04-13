@@ -157,7 +157,7 @@
 			pistolammo = 100;
 			uziammo = 0;
 			shotgunammo = 0;
-			flamethrowerammo = 0;
+			flamethrowerammo = 1000;
 			//environment
 			addChild(environment);
 			setChildIndex(environment,0);
@@ -1074,7 +1074,7 @@
 		public function shootFlames():void{
 			if (mousePressed == true){
 						flamethrowerflames.rotation=player.rotation;
-						addChild(flamethrowerflames);
+						ground.addChild(flamethrowerflames);
 						flamethrowerflames.x = player.x;
 						flamethrowerflames.y = player.y;
 			}
@@ -1082,7 +1082,7 @@
 
 		public function removeFlames():void{
 			if((this.contains(flamethrowerflames))&&(mousePressed == false)){
-				removeChild(flamethrowerflames);
+				ground.removeChild(flamethrowerflames);
 			}
 		}
 		
