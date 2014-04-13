@@ -83,12 +83,12 @@
 					zombiedamage = 1;
 				}
 
-				addEventListener(Event.ENTER_FRAME,loop);
+				addEventListener(Event.ENTER_FRAME,zombieloop);
         }
 ///////////////////////////////////////////////////////
 //							Main Loop
 ///////////////////////////////////////////////////////
-		private function loop(e:Event):void {
+		public function zombieloop(e:Event):void {
 			if (survival.ispaused == false){
 				var Zdist_x:Number=this.x-survival.player.x;
 				var Zdist_y:Number=this.y-survival.player.y;

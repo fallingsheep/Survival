@@ -91,6 +91,7 @@
 		public var infinteammo:Boolean = false;
 		public var infintehealth:Boolean = false;
 		public var player_speed:int = 2;//player movement speed (Default is 2)
+		public var gamewasloaded:Boolean = false;
 		public var playerhastorch:Boolean = false;
 		public var torch:torch_mc= new torch_mc();
 		public static var ispaused:Boolean = false;
@@ -211,7 +212,6 @@
 			ui.x=315;
 			ui.y=346;
 			
-			
 			//add listener to run on every frame
 			stage.addEventListener(Event.ENTER_FRAME,mainloop);
 			stage.addEventListener(Event.ENTER_FRAME,processScripts);
@@ -226,6 +226,23 @@
 		//MAIN GAME LOOP
 		public function mainloop(e:Event):void {
 			
+			if (gamewasloaded == true){
+				loadData();
+				updatetext();
+				checkSpeedPackTimer();
+				createZombies();
+				checkzombieHit();
+			collectItem();
+			finishlevel();
+			playerMoving();
+			removeFlames();
+			checkhealth();
+			checkarmour();
+			lighting();
+			ProcessXP();
+				gamewasloaded = false;
+				trace ("Game Loaded");
+			}
 			var dist_x:Number=player.x-mouseX;
 			var dist_y:Number=player.y-mouseY;
 			var angle:Number=- Math.atan2(dist_x,dist_y);
@@ -1620,6 +1637,11 @@
 			saveDataObject.data.savedlevel = level;
 			saveDataObject.data.savedplayerX = player.x;
 			saveDataObject.data.savedplayerY = player.y;
+			//ammo
+			saveDataObject.data.savedpistolammo = pistolammo;
+			saveDataObject.data.saveduziammo = uziammo;
+			saveDataObject.data.savedshotgunammo = shotgunammo;
+			saveDataObject.data.savedflamethrowerammo = flamethrowerammo;
 
 			trace("Game Saved!");
 			saveDataObject.flush(); // immediately save to the local drive
@@ -1663,16 +1685,18 @@
 			level = saveDataObject.data.savedlevel;
 			player.x = saveDataObject.data.savedplayerX;
 			player.y = saveDataObject.data.savedplayerY;
+			//ammo
+			pistolammo = saveDataObject.data.savedpistolammo;
+			uziammo = saveDataObject.data.saveduziammo;
+			shotgunammo = saveDataObject.data.savedshotgunammo;
+			flamethrowerammo = saveDataObject.data.savedflamethrowerammo;
 			
-			mainloop(null);
-			processScripts(null);
-			updatetext(); // finally, update the text field
-			startgame(null);
 			trace("Game Loaded!");
 	}
 //RESUME GAME
 		public function resumesavedgame(e:MouseEvent):void{
-			loadData(); 	
+			startgame(null);
+			gamewasloaded = true;
 		}
 
 		
