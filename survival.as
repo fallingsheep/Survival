@@ -130,6 +130,15 @@
 		public static var rank17:rank17_mc = new rank17_mc();
 		public static var rank18:rank18_mc = new rank18_mc();
 		public static var rank19:rank19_mc = new rank19_mc();
+		
+					//The speed of the scroll movement.
+		public var scrollSpeed:Number = 0.5;
+			
+			//This adds two instances of the movie clip onto the stage.
+		public var s1:fogbg_mc = new fogbg_mc();
+		public var s2:fogbg_mc = new fogbg_mc();
+		
+		
 		//Intilize game code
 		public function survival():void {
 			addChild(intro);
@@ -150,6 +159,34 @@
 			if (this.contains(intro)){
 			removeChild(intro);
 			}
+			//start fog
+			ground.addChild(s1); 
+			ground.addChild(s2);
+			ground.setChildIndex(s1,1);
+			ground.setChildIndex(s2,1);
+			s1.alpha = 0.5;
+			s2.alpha = 0.5;
+			//This positions the second movieclip next to the first one.
+			s1.x = 0;
+			s2.x = s1.width;
+			
+			//Adds an event listener to the stage.
+			addEventListener(Event.ENTER_FRAME, moveScroll); 
+			
+			//This function moves both the images to left. If the first and second 
+			//images goes pass the left stage boundary then it gets moved to 
+			//the other side of the stage. 
+			function moveScroll(e:Event):void{
+				s1.x -= scrollSpeed;  
+				s2.x -= scrollSpeed;  
+				
+				if(s1.x < -s1.width){
+				s1.x = s1.width;
+				}else if(s2.x < -s2.width){
+				s2.x = s2.width;
+				}
+			}
+			
 			
 			
 			currentrank = 0;
@@ -201,7 +238,6 @@
 			ui.y=346;
 			
 			
-			
 			//add listener to run on every frame
 			stage.addEventListener(Event.ENTER_FRAME,mainloop);
 			stage.addEventListener(Event.ENTER_FRAME,processScripts);
@@ -213,27 +249,12 @@
 			stage.addEventListener(MouseEvent.MOUSE_UP, mouseUpHandler, false, 0, true);
 			trace ("Game Intialised");
 		}
-		public function lighting():void{
-			
-			if (playerhastorch == true){
-			light.x = player.x;
-			light.y = player.y;
-			light.gotoAndStop(1);
-			}
-			if (playerhastorch == false){
-			light.x = player.x;
-			light.y = player.y;
-			light.gotoAndStop(2);
-			}			
-				
-		}
 		//MAIN GAME LOOP
 		public function mainloop(e:Event):void {
 			
 			var dist_x:Number=player.x-mouseX;
 			var dist_y:Number=player.y-mouseY;
 			var angle:Number=- Math.atan2(dist_x,dist_y);
-			
 			
 			player.rotation=(to_degrees(angle) -90);
 			if (up) {
@@ -596,6 +617,9 @@
 			}else{
 				shopscreen.shopmessage.text = "Not enough cash!";//shop message
 			}
+			if(shopscreen.contains(confirmuzi)){
+				shopscreen.removeChild(confirmuzi);
+			}
 		}
 		public function buySHOTGUN(event:MouseEvent):void {
 			shopscreen.addChild(confirmshotgun);
@@ -616,6 +640,9 @@
 			}else{
 				shopscreen.shopmessage.text = "Not enough cash!";//shop message
 			}
+			if(shopscreen.contains(confirmshotgun)){
+				shopscreen.removeChild(confirmshotgun);
+			}
 		}
 		public function buyFLAMETHROWER(event:MouseEvent):void {
 			shopscreen.addChild(confirmflamethrower);
@@ -635,6 +662,9 @@
 			shopscreen.shopmessage.text = "Bought Flamethrower!";//shop message
 			}else{
 				shopscreen.shopmessage.text = "Not enough cash!";//shop message
+			}
+			if(shopscreen.contains(confirmflamethrower)){
+				shopscreen.removeChild(confirmflamethrower);
 			}
 		}
 		//ARMOUR
@@ -658,6 +688,9 @@
 			}else{
 				shopscreen.shopmessage.text = "Not enough cash!";//shop message
 			}
+			if(shopscreen.contains(confirmarmour)){
+				shopscreen.removeChild(confirmarmour);
+			}
 		}
 		//MEDKIT
 		public function buyMEDKIT(event:MouseEvent):void {
@@ -680,6 +713,9 @@
 			}else{
 				shopscreen.shopmessage.text = "Not enough cash!";//shop message
 			}
+			if(shopscreen.contains(confirmmedkit)){
+				shopscreen.removeChild(confirmmedkit);
+			}
 		}
 		//TORCH
 		public function buyTORCH(event:MouseEvent):void {
@@ -699,6 +735,9 @@
 			shopscreen.shopmessage.text = "Bought Torch!";//shop message
 			}else{
 				shopscreen.shopmessage.text = "Not enough cash!";//shop message
+			}
+			if(shopscreen.contains(confirmtorch)){
+				shopscreen.removeChild(confirmtorch);
 			}
 		}
 		//AMMO
@@ -720,6 +759,9 @@
 			}else{
 				shopscreen.shopmessage.text = "Not enough cash!";//shop message
 			}
+			if(shopscreen.contains(confirmpistolammo)){
+				shopscreen.removeChild(confirmpistolammo);
+			}
 		}
 		public function buyUZIAMMO(event:MouseEvent):void {
 			shopscreen.addChild(confirmuziammo);
@@ -739,6 +781,9 @@
 			}else{
 				shopscreen.shopmessage.text = "Not enough cash!";//shop message
 			}
+			if(shopscreen.contains(confirmuziammo)){
+				shopscreen.removeChild(confirmuziammo);
+			}
 		}public function buySHOTGUNAMMO(event:MouseEvent):void {
 			shopscreen.addChild(confirmshotgunammo);
 			confirmshotgunammo.yesshotgunammo.addEventListener(MouseEvent.CLICK, confirmSHOTGUNAMMO);
@@ -756,6 +801,9 @@
 			shopscreen.shopmessage.text = "Bought Shotgun Ammo!";//shop message
 			}else{
 				shopscreen.shopmessage.text = "Not enough cash!";//shop message
+			}
+			if(shopscreen.contains(confirmshotgunammo)){
+				shopscreen.removeChild(confirmshotgunammo);
 			}
 		}
 		public function buyFLAMETHROWERAMMO(event:MouseEvent):void {
@@ -775,6 +823,9 @@
 			shopscreen.shopmessage.text = "Bought Flamethrower Ammo!";//shop message
 			}else{
 				shopscreen.shopmessage.text = "Not enough cash!";//shop message
+			}
+			if(shopscreen.contains(confirmflamethrowerammo)){
+				shopscreen.removeChild(confirmflamethrowerammo);
 			}
 		}
 ///////////////////////////////////////////////////////
@@ -807,7 +858,7 @@
 							
 							//add zombie to stage
 							enemycontainer.addChild(zombie);
-							enemycontainer.setChildIndex(zombie,1);
+							enemycontainer.setChildIndex(zombie,0);
 							//increase zombie counters
 							zombiecount += 1;
 							totalzomibes += 1;
@@ -866,13 +917,13 @@
 							}
 						}
 					}
-					var numOfClips:Number = 25;
+					var numOfClips:Number = 500;
 					var deadzombieArray:Array = new Array();
 					var deadzombie:deadzombie_mc = new deadzombie_mc();
 					
 					//flamerthrower
 					if(flamethrowerflames.hitTestPoint(zombie1.x,zombie1.y, true)){
-						if (this.parent.contains(zombie1)){
+						if (this.contains(zombie1)){
 							zombie1.zombiehitpoints -= 10;
 						}
 						if(zombie1.zombiehitpoints <= 0){
@@ -880,18 +931,18 @@
 									for(var ii=0; ii<numOfClips; ii++)
 									{
 										ground.addChild(deadzombie);
-										//setChildIndex(deadzombie,2);
-									 	deadzombieArray.push(deadzombie);
+										ground.setChildIndex(deadzombie,1);
+										deadzombieArray.push(deadzombie);
 									}
-									ground.deadzombie.x = zombie1.x;
-									ground.deadzombie.y = zombie1.y;
-									ground.deadzombie.gotoAndStop(15);
+									deadzombie.x = zombie1.x;
+									deadzombie.y = zombie1.y;
+									deadzombie.gotoAndStop(15);
 									enemycontainer.removeChild(zombie1);
 									if(zombie1.zombieType == 0){
-									experience += 100;
+										experience += 100;
 									}
 									if(zombie1.zombieType == 1){
-									experience += 500;
+										experience += 500;
 									}
 								}
 					}
@@ -917,7 +968,7 @@
 									for(var i=0; i<numOfClips; i++)
 									{
 									  ground.addChild(deadzombie);
-									 // setChildIndex(deadzombie,2);
+									 ground.setChildIndex(deadzombie,1);
 									  deadzombieArray.push(deadzombie);
 									}
 									deadzombie.x = zombie1.x;
@@ -1095,8 +1146,11 @@
 		}
 
 		public function removeFlames():void{
-			if((this.contains(flamethrowerflames))&&(mousePressed == false)){
-				enemycontainer.removeChild(flamethrowerflames);
+			if(mousePressed == false){
+				if(enemycontainer.contains(flamethrowerflames)){
+					enemycontainer.removeChild(flamethrowerflames);
+				}
+				
 			}
 		}
 		
@@ -1558,6 +1612,23 @@
 
 				}
 			}
+		}
+///////////////////////////////////////////////////////
+//							EFFECTS
+///////////////////////////////////////////////////////		
+		public function lighting():void{
+			
+			if (playerhastorch == true){
+			light.x = player.x;
+			light.y = player.y;
+			light.gotoAndStop(1);
+			}
+			if (playerhastorch == false){
+			light.x = player.x;
+			light.y = player.y;
+			light.gotoAndStop(2);
+			}			
+				
 		}
 ///////////////////////////////////////////////////////
 //							MISC
