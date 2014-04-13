@@ -335,13 +335,13 @@
 //							ACHIVEMENTS
 ///////////////////////////////////////////////////////		
 		public function showachivementscreen(event:MouseEvent):void {
-			stage.addChild(achivementscreen);
+			pausescreen.addChild(achivementscreen);
 			achivementscreen.exitachivementscreen.addEventListener(MouseEvent.CLICK, closeachivementscreen);
 		}
 		public function closeachivementscreen(event:MouseEvent):void {
 			pausescreen.gotoachivementscreen.addEventListener(MouseEvent.CLICK, showachivementscreen);
-			if(stage.contains(achivementscreen)){
-				stage.removeChild(achivementscreen);
+			if(pausescreen.contains(achivementscreen)){
+				pausescreen.removeChild(achivementscreen);
 			}
 		}
 
@@ -463,6 +463,7 @@
 					stage.addChild(pausescreen);
 					pausescreen.gotoshop.addEventListener(MouseEvent.CLICK, showshop);
 					pausescreen.gotorankscreen.addEventListener(MouseEvent.CLICK, showrankscreen);
+					pausescreen.gotoachivementscreen.addEventListener(MouseEvent.CLICK, showachivementscreen);
 					pausescreen.restartgame.addEventListener(MouseEvent.CLICK, restartGame);
 					pausescreen.exitpausescreen.addEventListener(MouseEvent.CLICK, closepausescreen);
 		}
