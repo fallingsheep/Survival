@@ -17,7 +17,9 @@
 		public static var door2:door_mc = new door_mc();
 		public var pausescreen:pausescreen_mc = new pausescreen_mc();
 		public var gameoverscreen:gameoverscreen_mc = new gameoverscreen_mc();
-		
+		public var rankscreen:rankscreen_mc = new rankscreen_mc();
+		public var confirmrestartgame:confirmrestartgame_mc = new confirmrestartgame_mc();
+		public var achivementscreen:achivementscreen_mc = new achivementscreen_mc();
 		public var shopscreen:shopscreen_mc = new shopscreen_mc();
 		public var light:light_mc= new light_mc();
 		public var details:details_mc= new details_mc();
@@ -80,7 +82,9 @@
 		public var zomibeskilled:int; // total zombies killed
 		//timers
 		public var SecondsElapsed:Number = 1;
+		public var UiSecondsElapsed:Number = 1;
 		public var Timer10:Timer = new Timer(1000, 10);
+		public var UiTimer10:Timer = new Timer(1000, 10);
 		public var collectedSpeedPack:Boolean = false;
 		public var level:int = 1;//set start level
 		
@@ -102,7 +106,30 @@
 		
 		public var torch:torch_mc= new torch_mc();
 		public static var ispaused:Boolean = false;
-
+		
+		public var currentrank:int;
+		public var experience:int = 0;
+		//ranks
+		public static var rank0:rank0_mc = new rank0_mc();
+		public static var rank1:rank1_mc = new rank1_mc();
+		public static var rank2:rank2_mc = new rank2_mc();
+		public static var rank3:rank3_mc = new rank3_mc();
+		public static var rank4:rank4_mc = new rank4_mc();
+		public static var rank5:rank5_mc = new rank5_mc();
+		public static var rank6:rank6_mc = new rank6_mc();
+		public static var rank7:rank7_mc = new rank7_mc();
+		public static var rank8:rank8_mc = new rank8_mc();
+		public static var rank9:rank9_mc = new rank9_mc();
+		public static var rank10:rank10_mc = new rank10_mc();
+		public static var rank11:rank11_mc = new rank11_mc();
+		public static var rank12:rank12_mc = new rank12_mc();
+		public static var rank13:rank13_mc = new rank13_mc();
+		public static var rank14:rank14_mc = new rank14_mc();
+		public static var rank15:rank15_mc = new rank15_mc();
+		public static var rank16:rank16_mc = new rank16_mc();
+		public static var rank17:rank17_mc = new rank17_mc();
+		public static var rank18:rank18_mc = new rank18_mc();
+		public static var rank19:rank19_mc = new rank19_mc();
 		//Intilize game code
 		public function survival():void {
 			addChild(intro);
@@ -123,8 +150,11 @@
 			if (this.contains(intro)){
 			removeChild(intro);
 			}
+			
+			
+			currentrank = 0;
 			//starting ammo
-			pistolammo = 30;
+			pistolammo = 100;
 			uziammo = 0;
 			shotgunammo = 0;
 			flamethrowerammo = 0;
@@ -166,8 +196,8 @@
 			//add UI
 			addChild(ui);
 			setChildIndex(ui,5);
-			ui.x=330;
-			ui.y=340;
+			ui.x=315;
+			ui.y=346;
 			
 			
 			//add listener to run on every frame
@@ -180,12 +210,6 @@
 			stage.addEventListener(MouseEvent.MOUSE_DOWN, mouseDownHandler, false, 0, true);
 			stage.addEventListener(MouseEvent.MOUSE_UP, mouseUpHandler, false, 0, true);
 			trace ("Game Intialised");
-		}
-		private function restartGame(event:MouseEvent):void {
-   		 var url:String = stage.loaderInfo.url;
-  	 	 var request:URLRequest = new URLRequest(url);
-   		 navigateToURL(request,"_level0");
-		 trace ("Game Restarted");
 		}
 		public function lighting():void{
 			
@@ -303,7 +327,22 @@
 			checkhealth();
 			checkarmour();
 			lighting();
+			ProcessXP();
 		}
+///////////////////////////////////////////////////////
+//							ACHIVEMENTS
+///////////////////////////////////////////////////////		
+		public function showachivementscreen(event:MouseEvent):void {
+			stage.addChild(achivementscreen);
+			achivementscreen.exitachivementscreen.addEventListener(MouseEvent.CLICK, closeachivementscreen);
+		}
+		public function closeachivementscreen(event:MouseEvent):void {
+			pausescreen.gotoachivementscreen.addEventListener(MouseEvent.CLICK, showachivementscreen);
+			if(stage.contains(achivementscreen)){
+				stage.removeChild(achivementscreen);
+			}
+		}
+
 
 ///////////////////////////////////////////////////////
 //							PLAYER
@@ -395,6 +434,8 @@
 					trace("GAME PAUSED");
 					stage.addChild(pausescreen);
 					pausescreen.gotoshop.addEventListener(MouseEvent.CLICK, showshop);
+					pausescreen.gotorankscreen.addEventListener(MouseEvent.CLICK, showrankscreen);
+					pausescreen.gotoachivementscreen.addEventListener(MouseEvent.CLICK, showachivementscreen);
 					pausescreen.restartgame.addEventListener(MouseEvent.CLICK, restartGame);
 					pausescreen.exitpausescreen.addEventListener(MouseEvent.CLICK, closepausescreen);
 					
@@ -412,8 +453,19 @@
 				break;
 			}
 		}
+		public function openpausescreen(e:MouseEvent):void{
+					ispaused = true;
+					stage.removeEventListener(Event.ENTER_FRAME,mainloop);
+					stage.removeEventListener(Event.ENTER_FRAME,processScripts);
+					trace("GAME PAUSED");
+					stage.addChild(pausescreen);
+					pausescreen.gotoshop.addEventListener(MouseEvent.CLICK, showshop);
+					pausescreen.gotorankscreen.addEventListener(MouseEvent.CLICK, showrankscreen);
+					pausescreen.restartgame.addEventListener(MouseEvent.CLICK, restartGame);
+					pausescreen.exitpausescreen.addEventListener(MouseEvent.CLICK, closepausescreen);
+		}
 		public function closepausescreen(e:MouseEvent):void{
-			ispaused = false;
+					ispaused = false;
 					stage.addEventListener(Event.ENTER_FRAME,mainloop);
 					stage.addEventListener(Event.ENTER_FRAME,processScripts);
 					trace("GAME RESUMED");
@@ -422,7 +474,22 @@
 						stage.removeChild(pausescreen);
 					}
 		}
-		
+		private function restartGame(event:MouseEvent):void {
+   		 		stage.addChild(confirmrestartgame);
+				confirmrestartgame.yesrestartgame.addEventListener(MouseEvent.CLICK, confirmRESTART);
+				confirmrestartgame.norestartgame.addEventListener(MouseEvent.CLICK, cancelRESTART);
+		}
+		private function cancelRESTART(event:MouseEvent):void {
+			if(stage.contains(confirmrestartgame)){
+   		 		stage.removeChild(confirmrestartgame);
+			}
+		}
+		private function confirmRESTART(event:MouseEvent):void {
+   		 var url:String = stage.loaderInfo.url;
+  	 	 var request:URLRequest = new URLRequest(url);
+   		 navigateToURL(request,"_level0");
+		 trace ("Game Restarted");
+		}
 		public var playermoving:Boolean = false;
 		
 		public function playerMoving():void{
@@ -762,19 +829,19 @@
 							}
 						}
 					}
+					var numOfClips:Number = 25;
+					var deadzombieArray:Array = new Array();
+					var deadzombie:deadzombie_mc = new deadzombie_mc();
+					
 					//flamerthrower
 					if(flamethrowerflames.hitTestPoint(zombie1.x,zombie1.y, true)){
 						if (this.parent.contains(zombie1)){
 							zombie1.zombiehitpoints -= 10;
 						}
 						if(zombie1.zombiehitpoints <= 0){
-									var numOfClips:Number = 5;
-									var deadzombieArray:Array = new Array();
 									
-									for(var i=0; i<numOfClips; i++)
+									for(var ii=0; ii<numOfClips; ii++)
 									{
-									  	var deadzombie:deadzombie_mc = new deadzombie_mc();
-										
 										addChild(deadzombie);
 										setChildIndex(deadzombie,2);
 									 	deadzombieArray.push(deadzombie);
@@ -783,6 +850,12 @@
 									deadzombie.y = zombie1.y;
 									deadzombie.gotoAndStop(15);
 									ground.removeChild(zombie1);
+									if(zombie1.zombieType == 0){
+									experience += 100;
+									}
+									if(zombie1.zombieType == 1){
+									experience += 500;
+									}
 								}
 					}
 					//bullets
@@ -802,12 +875,10 @@
 								}
 
 								if(zombie1.zombiehitpoints <= 0){
-									var numOfClips:Number = 5;
-									var deadzombieArray:Array = new Array();
+									
 									
 									for(var i=0; i<numOfClips; i++)
 									{
-									  var deadzombie:deadzombie_mc = new deadzombie_mc();
 									  addChild(deadzombie);
 									  setChildIndex(deadzombie,2);
 									  deadzombieArray.push(deadzombie);
@@ -816,6 +887,12 @@
 									deadzombie.y = zombie1.y;
 									deadzombie.gotoAndStop(15);
 									ground.removeChild(zombie1);
+									if(zombie1.zombieType == 0){
+									experience += 100;
+									}
+									if(zombie1.zombieType == 1){
+									experience += 500;
+									}
 								}
 								
 							}
@@ -1120,6 +1197,7 @@
 				}
 			}
 		}
+		
 ///////////////////////////////////////////////////////
 //							LEVEL ITEMS
 ///////////////////////////////////////////////////////
@@ -1169,9 +1247,10 @@
 			if (isusingflamethrower == true){
 				ui.ammotext.text = flamethrowerammo.toString();
 			}
-			
+			ui.uipausegame.addEventListener(MouseEvent.CLICK, openpausescreen);
 			ui.healthbar.width = health;
 			ui.armourbar.width = armour;
+			ui.stagetext.text = currentstage.toString();
 			ui.zombieskilledtext.text = totalzombieskilled.toString();
 			ui.cashtext.text = ("$"+currentcash.toString());
 			ui.leveltext.text = level.toString();
@@ -1217,6 +1296,255 @@
 					gameoverscreen.restartgame.addEventListener(MouseEvent.CLICK, restartGame);
 		
 	}
+///////////////////////////////////////////////////////
+//							RANK SYSTEM
+///////////////////////////////////////////////////////
+
+		public function showrankscreen(event:MouseEvent):void {
+			pausescreen.gotorankscreen.removeEventListener(MouseEvent.CLICK, showrankscreen);
+			pausescreen.addChild(rankscreen);
+			rankscreen.exitrankscreen.addEventListener(MouseEvent.CLICK, closerankscreen);
+		}
+		public function closerankscreen(event:MouseEvent):void {
+			pausescreen.gotorankscreen.addEventListener(MouseEvent.CLICK, showrankscreen);
+			pausescreen.removeChild(rankscreen);
+		}
+		public function ProcessXP():void{
+			if (experience < 1000){
+				currentrank = 0;
+				stage.addChild(rank0);
+				rank0.x = 66;
+				rank0.y = 387;
+			}
+			if (experience >= 1000){
+				currentrank = 1;
+				stage.addChild(rank1);
+				rank1.x = 66;
+				rank1.y = 387;
+				if (stage.contains(rank0)){
+				stage.removeChild(rank0);
+				
+				
+
+				}
+			}
+			if (experience >= 2500){
+				currentrank = 2;
+				stage.addChild(rank2);
+				rank2.x = 66;
+				rank2.y = 387;
+				if (stage.contains(rank1)){
+				stage.removeChild(rank1);
+				
+				
+
+				}
+			}
+			if (experience >= 5000){
+				currentrank = 3;
+				addChild(rank3);
+				rank3.x = 66;
+				rank3.y = 387;
+				if (stage.contains(rank2)){
+				stage.removeChild(rank2);
+				
+				
+
+				}
+			}
+			if (experience >= 10000){
+				currentrank = 4;
+				addChild(rank4);
+				rank4.x = 66;
+				rank4.y = 387;
+				if (stage.contains(rank3)){
+				stage.removeChild(rank3);
+				
+				
+
+				}
+			}
+			if (experience >= 20000){
+				currentrank = 5;
+				addChild(rank5);
+				rank5.x = 66;
+				rank5.y = 387;
+				if (stage.contains(rank4)){
+				stage.removeChild(rank4);
+				
+				
+
+				}
+			}
+			if (experience >= 40000){
+				currentrank = 6;
+				addChild(rank6);
+				rank6.x = 66;
+				rank6.y = 387;
+				if (stage.contains(rank5)){
+				stage.removeChild(rank5);
+				
+				
+
+				}
+			}
+			if (experience >= 80000){
+				currentrank = 7;
+				addChild(rank7);
+				rank7.x = 66;
+				rank7.y = 387;
+				if (stage.contains(rank6)){
+				stage.removeChild(rank6);
+				
+				
+
+				}
+			}
+			if (experience >= 160000){
+				currentrank = 8;
+				addChild(rank8);
+				rank8.x = 66;
+				rank8.y = 387;
+				if (stage.contains(rank7)){
+				stage.removeChild(rank7);
+				
+				
+
+				}
+			}
+			if (experience >= 320000){
+				currentrank = 9;
+				addChild(rank9);
+				rank9.x = 66;
+				rank9.y = 387;
+				if (stage.contains(rank8)){
+				stage.removeChild(rank8);
+				
+				
+
+				}
+			}
+			if (experience >= 640000){
+				currentrank = 10;
+				addChild(rank10);
+				rank10.x = 66;
+				rank10.y = 387;
+				if (stage.contains(rank9)){
+				stage.removeChild(rank9);
+				
+				
+
+				}
+			}
+			if (experience >= 1200000){
+				currentrank = 11;
+				addChild(rank11);
+				rank11.x = 66;
+				rank11.y = 387;
+				if (stage.contains(rank10)){
+				stage.removeChild(rank10);
+				
+				
+
+				}
+			}
+			if (experience >= 2400000){
+				currentrank = 12;
+				addChild(rank12);
+				rank12.x = 66;
+				rank12.y = 387;
+				if (stage.contains(rank11)){
+				stage.removeChild(rank11);
+				
+				
+
+				}
+			}
+			if (experience >= 4800000){
+				currentrank = 13;
+				addChild(rank13);
+				rank13.x = 66;
+				rank13.y = 387;
+				if (stage.contains(rank12)){
+				stage.removeChild(rank12);
+				
+				
+
+				}
+			}
+			if (experience >= 9600000){
+				currentrank = 14;
+				addChild(rank14);
+				rank14.x = 66;
+				rank14.y = 387;
+				if (stage.contains(rank13)){
+				stage.removeChild(rank13);
+				
+				
+
+				}
+			}
+			if (experience >= 19200000){
+				currentrank = 15;
+				addChild(rank0);
+				rank15.x = 66;
+				rank15.y = 387;
+				if (stage.contains(rank14)){
+				stage.removeChild(rank14);
+				
+				
+
+				}
+			}
+			if (experience >= 38400000){
+				currentrank = 16;
+				addChild(rank0);
+				rank16.x = 66;
+				rank16.y = 387;
+				if (stage.contains(rank15)){
+				stage.removeChild(rank15);
+				
+				
+
+				}
+			}
+			if (experience >= 76800000){
+				currentrank = 17;
+				addChild(rank17);
+				rank17.x = 66;
+				rank17.y = 387;
+				if (stage.contains(rank16)){
+				stage.removeChild(rank16);
+				
+				
+
+				}
+			}
+			if (experience >= 153600000){
+				currentrank = 18;
+				addChild(rank18);
+				rank18.x = 66;
+				rank18.y = 387;
+				if (stage.contains(rank17)){
+				stage.removeChild(rank17);
+				
+				
+
+				}
+			}
+			if (experience >= 307200000){
+				currentrank = 19;
+				addChild(rank19);
+				rank19.x = 66;
+				rank19.y = 387;
+				if (stage.contains(rank18)){
+				stage.removeChild(rank18);
+				
+				
+
+				}
+			}
+		}
 ///////////////////////////////////////////////////////
 //							MISC
 ///////////////////////////////////////////////////////
