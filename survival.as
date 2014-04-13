@@ -132,9 +132,12 @@
 		public function survival():void {
 			addChild(intro);
 			intro.startgame.addEventListener(MouseEvent.CLICK, startgame);
-			intro.resumesavedgamebutton.addEventListener(MouseEvent.CLICK, resumesavedgame);
+			intro.resumesavedgamebutton.addEventListener(MouseEvent.CLICK, loadgame);
 		}
-
+		public function loadgame(event:MouseEvent):void{
+			gamewasloaded = true;
+			startgame(null);
+		}
 		//START GAME
 		public function startgame(event:MouseEvent):void {
 			intro.startgame.removeEventListener(MouseEvent.CLICK, startgame);
@@ -222,27 +225,16 @@
 			stage.addEventListener(MouseEvent.MOUSE_DOWN, mouseDownHandler, false, 0, true);
 			stage.addEventListener(MouseEvent.MOUSE_UP, mouseUpHandler, false, 0, true);
 			trace ("Game Intialised");
+						if (gamewasloaded == true){
+				loadData();
+				updatetext();
+				gamewasloaded = false;
+				trace ("Game Loaded");
+			}
 		}
 		//MAIN GAME LOOP
 		public function mainloop(e:Event):void {
 			
-			if (gamewasloaded == true){
-				loadData();
-				updatetext();
-				checkSpeedPackTimer();
-				createZombies();
-				checkzombieHit();
-			collectItem();
-			finishlevel();
-			playerMoving();
-			removeFlames();
-			checkhealth();
-			checkarmour();
-			lighting();
-			ProcessXP();
-				gamewasloaded = false;
-				trace ("Game Loaded");
-			}
 			var dist_x:Number=player.x-mouseX;
 			var dist_y:Number=player.y-mouseY;
 			var angle:Number=- Math.atan2(dist_x,dist_y);
@@ -1060,7 +1052,7 @@
 //						WEAPONS
 ///////////////////////////////////////////////////////
 		//create a array to hold all bullets fired
-		var bulletList:Array = [];
+		public var bulletList:Array = [];
 		public function shootBullet():void {
 			//create new bullet based on players X/Y and Rotation
 			var bullet:Bullet = new Bullet(stage, player.x, player.y, player.rotation);
@@ -1627,8 +1619,6 @@
 			saveDataObject.data.savedhealth = health;
 			saveDataObject.data.savedzombieskilled = zombieskilled;
 			saveDataObject.data.savedtotalzombieskilled = totalzombieskilled;
-			saveDataObject.data.savedzombiecount = zombiecount;
-			saveDataObject.data.savedzombiespawncount = zombiespawncount;
 			saveDataObject.data.savedtotalzomibes = totalzomibes;
 			saveDataObject.data.savedzomibeskilled = zomibeskilled;
 			saveDataObject.data.savedSecondsElapsed = SecondsElapsed;
@@ -1675,8 +1665,6 @@
 			health = saveDataObject.data.savedhealth;
 			zombieskilled = saveDataObject.data.savedzombieskilled;
 			totalzombieskilled = saveDataObject.data.savedtotalzombieskilled;
-			zombiecount = saveDataObject.data.savedzombiecount;
-			zombiespawncount = saveDataObject.data.savedzombiespawncount;
 			totalzomibes = saveDataObject.data.savedtotalzomibes;
 			zomibeskilled = saveDataObject.data.savedzomibeskilled;
 			SecondsElapsed = saveDataObject.data.savedSecondsElapsed;
@@ -1693,11 +1681,6 @@
 			
 			trace("Game Loaded!");
 	}
-//RESUME GAME
-		public function resumesavedgame(e:MouseEvent):void{
-			startgame(null);
-			gamewasloaded = true;
-		}
 
 		
 ///////////////////////////////////////////////////////
