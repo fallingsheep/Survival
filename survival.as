@@ -148,42 +148,19 @@
 			//defaults
 			scrollSpeed = 0.5;
 			isusingpistol = true;//
-			isusinguzi = false;
-			isusingshotgun = false;
-			isusingflamethrower = false;
-			ammoempty = false;
-			experience = 0;//rank
 			currentcash = 25000;//cash
 			haspistol = true;
-			hasuzi = false;
-			hasshotgun = false;
-			hasflamethrower = false;
 			currentstage = 1;
-			shootthruwalls = false;
-			walkthruwalls = false;
-			infinteammo = false;
-			infintehealth = false;
 			player_speed = 2;//player movement speed (Default is 2)
-			playerhastorch = false;
-			ispaused = false;
 			hasarmour = true;
 			armour = 25;//starting armour
 			health = 100;//starting health
-			zombieskilled = 0;//total zombies killed for current stage
-			totalzombieskilled = 0;//total zombies killed all up
-			zombiecount = 0;// how many zombies created
 			zombiespawncount = 9; // MUST BE 1 LESS than actual count!! used as starting zombie spawn count
-			totalzomibes = 0; // total zombies spawned
-			zomibeskilled = 0; // total zombies killed
 			SecondsElapsed = 1;
 			UiSecondsElapsed = 1;
-			collectedSpeedPack = false;
 			level = 1;//set start level
 			//starting ammo
 			pistolammo = 100;
-			uziammo = 0;
-			shotgunammo = 0;
-			flamethrowerammo = 0;
 		}
 
 		//START GAME
