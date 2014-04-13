@@ -31,7 +31,6 @@
 		public var ammocrate:ammocrate_mc = new ammocrate_mc();
 		public var medpack:medpack_mc = new medpack_mc();
 		public var speedpack:speedpack_mc = new speedpack_mc();
-		
 		//weapons
 		public var pistol:pistol_mc = new pistol_mc();
 		public var uzi:uzi_mc = new uzi_mc();
@@ -39,76 +38,65 @@
 		public var bulletproofvest:bulletproofvest_mc = new bulletproofvest_mc();
 		public var flamethrower:flamethrower_mc = new flamethrower_mc();
 		public var flamethrowerflames:flamethrowerflames_mc = new flamethrowerflames_mc();
-		
 		public var playerhitobject:Boolean = false; // has player hit a object
-		public var isusingpistol:Boolean;//
-		
-		public var isusinguzi:Boolean;
-		public var isusingshotgun:Boolean;
-		public var isusingflamethrower:Boolean;
-		
+		public var isusingpistol:Boolean = true;//
+		public var isusinguzi:Boolean = false;
+		public var isusingshotgun:Boolean = false;;
+		public var isusingflamethrower:Boolean = false;;
 		public var ammoempty:Boolean;//ammo empty check
-		
 		public var dooropening:Boolean = false;//door moving check
 		public var door2opening:Boolean = false;//door2 moving check
-		
-		public var stopspawn:Boolean = false;//zombie spawn control
+		public var stopspawn:Boolean= false;//zombie spawn control
 		public var key_pressed:int=0;
 		public var radius:int=8;//players "size" (sphere)
 		public var up,down,left,right:Boolean=false;
 		public var weapon1,weapon2,weapon3,weapon4:Boolean=false;//switch weapon keys 1,2,3
 		public var mousePressed:Boolean = false; //keeps track of whether the mouse is currently pressed down
-		
 		//shooting speed
 		public var delayCounter:int = 0; //we use this to add delay between the shots
 		public var delayMax:int = 15; //default pistol delay
 		//ammo
-		public var pistolammo:int;
-		public var uziammo:int;
-		public var shotgunammo:int;
-		public var flamethrowerammo:int;
-		
-		public var hasarmour:Boolean;
-		public var armour:int;//starting armour
-		
-		public var health:int;//starting health
-		
+		public var pistolammo:int = 100;
+		public var uziammo:int = 0;
+		public var shotgunammo:int = 0;
+		public var flamethrowerammo:int = 0;
+		public var hasarmour:Boolean = true;
+		public var armour:int = 25;//starting armour
+		public var health:int = 100;//starting health
 		//zombies
-		public var zombieskilled:int;//total zombies killed for current stage
-		public var totalzombieskilled:int;//total zombies killed all up
-		public var zombiecount:int;// how many zombies created
-		public var zombiespawncount:int; // MUST BE 1 LESS than actual count!! used as starting zombie spawn count
-		public var totalzomibes:int; // total zombies spawned
-		public var zomibeskilled:int; // total zombies killed
+		public var zombieskilled:int = 0;//total zombies killed for current stage
+		public var totalzombieskilled:int = 0;//total zombies killed all up
+		public var zombiecount:int = 0;// how many zombies created
+		public var zombiespawncount:int = 9; // MUST BE 1 LESS than actual count!! used as starting zombie spawn count
+		public var totalzomibes:int = 0; // total zombies spawned
+		public var zomibeskilled:int = 0; // total zombies killed
 		//timers
-		public var SecondsElapsed:Number ;
-		public var UiSecondsElapsed:Number;
+		public var SecondsElapsed:Number = 1;
+		public var UiSecondsElapsed:Number = 1;
 		public var Timer10:Timer = new Timer(1000, 10);
 		public var UiTimer10:Timer = new Timer(1000, 10);
-		public var collectedSpeedPack:Boolean;
-		public var level:int;//set start level
-		
-		public var currentcash:int;//cash
+		public var collectedSpeedPack:Boolean = false;
+		public var level:int = 1;//set start level
+		public var currentcash:int = 25000;//cash
 		//CHEATS AND DEBUG
-		public var haspistol:Boolean;
-		public var hasuzi:Boolean;
-		public var hasshotgun:Boolean;
-		public var hasflamethrower:Boolean;
+		public var haspistol:Boolean = true;
+		public var hasuzi:Boolean = false;
+		public var hasshotgun:Boolean = false;
+		public var hasflamethrower:Boolean = false;
 		//what stage to start on
-		public var currentstage:int;
+		public var currentstage:int = 1;
 		//cheats
-		public var shootthruwalls:Boolean;
-		public var walkthruwalls:Boolean;
-		public var infinteammo:Boolean;
-		public var infintehealth:Boolean;
-		public var player_speed:int;//player movement speed (Default is 2)
-		public var playerhastorch:Boolean ;
-		
+		public var shootthruwalls:Boolean = false;
+		public var walkthruwalls:Boolean = false;
+		public var infinteammo:Boolean = false;
+		public var infintehealth:Boolean = false;
+		public var player_speed:int = 2;//player movement speed (Default is 2)
+		public var playerhastorch:Boolean = false;
 		public var torch:torch_mc= new torch_mc();
-		public static var ispaused:Boolean;
+		public static var ispaused:Boolean = false;
+		public var currentrank:int = 0;
+		public var experience:int = 0;		
 		
-		public var currentrank:int;
-		public var experience:int;
 		//ranks
 		public static var rank0:rank0_mc = new rank0_mc();
 		public static var rank1:rank1_mc = new rank1_mc();
@@ -132,7 +120,7 @@
 		public static var rank19:rank19_mc = new rank19_mc();
 		
 					//The speed of the scroll movement.
-		public var scrollSpeed:Number;
+		public var scrollSpeed:Number = 0.5;
 			
 			//This adds two instances of the movie clip onto the stage.
 		public var s1:fogbg_mc = new fogbg_mc();
@@ -144,23 +132,6 @@
 			addChild(intro);
 			intro.startgame.addEventListener(MouseEvent.CLICK, startgame);
 			intro.resumesavedgamebutton.addEventListener(MouseEvent.CLICK, resumesavedgame);
-			
-			//defaults
-			scrollSpeed = 0.5;
-			isusingpistol = true;//
-			currentcash = 25000;//cash
-			haspistol = true;
-			currentstage = 1;
-			player_speed = 2;//player movement speed (Default is 2)
-			hasarmour = true;
-			armour = 25;//starting armour
-			health = 100;//starting health
-			zombiespawncount = 9; // MUST BE 1 LESS than actual count!! used as starting zombie spawn count
-			SecondsElapsed = 1;
-			UiSecondsElapsed = 1;
-			level = 1;//set start level
-			//starting ammo
-			pistolammo = 100;
 		}
 
 		//START GAME
@@ -169,7 +140,7 @@
 			if (this.contains(intro)){
 			removeChild(intro);
 			}
-			
+			stopspawn = false;//zombie spawn control
 			//start fog
 			ground.addChild(s1); 
 			ground.addChild(s2);
@@ -1647,6 +1618,8 @@
 			saveDataObject.data.savedUiSecondsElapsed = UiSecondsElapsed;
 			saveDataObject.data.savedcollectedSpeedPack = collectedSpeedPack;
 			saveDataObject.data.savedlevel = level;
+			saveDataObject.data.savedplayerX = player.x;
+			saveDataObject.data.savedplayerY = player.y;
 
 			trace("Game Saved!");
 			saveDataObject.flush(); // immediately save to the local drive
@@ -1688,14 +1661,18 @@
 			UiSecondsElapsed = saveDataObject.data.savedUiSecondsElapsed;
 			collectedSpeedPack = saveDataObject.data.savedcollectedSpeedPack;
 			level = saveDataObject.data.savedlevel;
+			player.x = saveDataObject.data.savedplayerX;
+			player.y = saveDataObject.data.savedplayerY;
 			
+			mainloop(null);
+			processScripts(null);
 			updatetext(); // finally, update the text field
-		 	startgame(null);
+			startgame(null);
 			trace("Game Loaded!");
 	}
 //RESUME GAME
 		public function resumesavedgame(e:MouseEvent):void{
-			loadData();
+			loadData(); 	
 		}
 
 		
