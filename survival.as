@@ -132,11 +132,11 @@
 		public function survival():void {
 			addChild(intro);
 			intro.startgame.addEventListener(MouseEvent.CLICK, startgame);
-			intro.resumesavedgamebutton.addEventListener(MouseEvent.CLICK, loadgame);
 		}
 		public function loadgame(event:MouseEvent):void{
-			gamewasloaded = true;
-			startgame(null);
+			loadData();
+			//add confirm load here
+			closepausescreen();
 		}
 		//START GAME
 		public function startgame(event:MouseEvent):void {
@@ -225,12 +225,6 @@
 			stage.addEventListener(MouseEvent.MOUSE_DOWN, mouseDownHandler, false, 0, true);
 			stage.addEventListener(MouseEvent.MOUSE_UP, mouseUpHandler, false, 0, true);
 			trace ("Game Intialised");
-						if (gamewasloaded == true){
-				loadData();
-				updatetext();
-				gamewasloaded = false;
-				trace ("Game Loaded");
-			}
 		}
 		//MAIN GAME LOOP
 		public function mainloop(e:Event):void {
@@ -317,9 +311,9 @@
 		}
 
 
-///////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //					SCRIPTS / MODULES
-///////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		public function processScripts(e:Event):void{
 			updatetext();
 			checkSpeedPackTimer();
@@ -335,9 +329,9 @@
 			lighting();
 			ProcessXP();
 		}
-///////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //							ACHIVEMENTS
-///////////////////////////////////////////////////////		
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////		
 		public function showachivementscreen(event:MouseEvent):void {
 			pausescreen.addChild(achivementscreen);
 			achivementscreen.exitachivementscreen.addEventListener(MouseEvent.CLICK, closeachivementscreen);
@@ -348,11 +342,38 @@
 				pausescreen.removeChild(achivementscreen);
 			}
 		}
+		
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//							PAUSE GAME
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////		
+		public function openpausescreen(e:MouseEvent):void{
+					ispaused = true;
+					stage.removeEventListener(Event.ENTER_FRAME,mainloop);
+					stage.removeEventListener(Event.ENTER_FRAME,processScripts);
+					trace("GAME PAUSED");
+					stage.addChild(pausescreen);
+					pausescreen.gotoshop.addEventListener(MouseEvent.CLICK, showshop);
+					pausescreen.gotorankscreen.addEventListener(MouseEvent.CLICK, showrankscreen);
+					pausescreen.gotoachivementscreen.addEventListener(MouseEvent.CLICK, showachivementscreen);
+					pausescreen.restartgame.addEventListener(MouseEvent.CLICK, restartGame);
+					pausescreen.exitpausescreen.addEventListener(MouseEvent.CLICK, closepausescreen);
+					pausescreen.savegamebutton.addEventListener(MouseEvent.CLICK, saveData);
+								pausescreen.loadgamebutton.addEventListener(MouseEvent.CLICK, loadgame);
+		}
+		public function closepausescreen(e:MouseEvent):void{
+					ispaused = false;
+					stage.addEventListener(Event.ENTER_FRAME,mainloop);
+					stage.addEventListener(Event.ENTER_FRAME,processScripts);
+					trace("GAME RESUMED");
+					pausescreen.gotoshop.removeEventListener(MouseEvent.CLICK, showshop);
+					if(stage.contains(pausescreen)){
+						stage.removeChild(pausescreen);
+					}
+		}
 
-
-///////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //							PLAYER
-///////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		public function on_key_down(e:KeyboardEvent):void {
 			switch (e.keyCode) {
 				case 65 : // Left Arrow
@@ -433,45 +454,6 @@
 				break;
 			}
 		}
-		public function openpausescreen(e:MouseEvent):void{
-					ispaused = true;
-					stage.removeEventListener(Event.ENTER_FRAME,mainloop);
-					stage.removeEventListener(Event.ENTER_FRAME,processScripts);
-					trace("GAME PAUSED");
-					stage.addChild(pausescreen);
-					pausescreen.gotoshop.addEventListener(MouseEvent.CLICK, showshop);
-					pausescreen.gotorankscreen.addEventListener(MouseEvent.CLICK, showrankscreen);
-					pausescreen.gotoachivementscreen.addEventListener(MouseEvent.CLICK, showachivementscreen);
-					pausescreen.restartgame.addEventListener(MouseEvent.CLICK, restartGame);
-					pausescreen.exitpausescreen.addEventListener(MouseEvent.CLICK, closepausescreen);
-					pausescreen.savegamebutton.addEventListener(MouseEvent.CLICK, saveData);
-		}
-		public function closepausescreen(e:MouseEvent):void{
-					ispaused = false;
-					stage.addEventListener(Event.ENTER_FRAME,mainloop);
-					stage.addEventListener(Event.ENTER_FRAME,processScripts);
-					trace("GAME RESUMED");
-					pausescreen.gotoshop.removeEventListener(MouseEvent.CLICK, showshop);
-					if(stage.contains(pausescreen)){
-						stage.removeChild(pausescreen);
-					}
-		}
-		public function restartGame(event:MouseEvent):void {
-   		 		stage.addChild(confirmrestartgame);
-				confirmrestartgame.yesrestartgame.addEventListener(MouseEvent.CLICK, confirmRESTART);
-				confirmrestartgame.norestartgame.addEventListener(MouseEvent.CLICK, cancelRESTART);
-		}
-		private function cancelRESTART(event:MouseEvent):void {
-			if(stage.contains(confirmrestartgame)){
-   		 		stage.removeChild(confirmrestartgame);
-			}
-		}
-		private function confirmRESTART(event:MouseEvent):void {
-   		 var url:String = stage.loaderInfo.url;
-  	 	 var request:URLRequest = new URLRequest(url);
-   		 navigateToURL(request,"_level0");
-		 trace ("Game Restarted");
-		}
 		public var playermoving:Boolean = false;
 		
 		public function playerMoving():void{
@@ -517,9 +499,9 @@
 				hasarmour = false;
 			}
 		}
-///////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //						SHOP
-///////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		public function showshop(event:MouseEvent):void {
 			pausescreen.gotoshop.removeEventListener(MouseEvent.CLICK, showshop);
 			pausescreen.addChild(shopscreen);
@@ -786,9 +768,9 @@
 				shopscreen.removeChild(confirmflamethrowerammo);
 			}
 		}
-///////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //						ZOMBIES
-///////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		var zombieArray:Array = [];//holds all zombies
 		var deadzombieArray:Array = [];//holds all deadzombies
 		
@@ -971,9 +953,9 @@
 			deadzombieArray.splice(zombieArray.indexOf(ee.currentTarget),1);
 			trace ("Dead Zombie Removed");
 		}
-///////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //						LEVELS
-///////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		
 		public function finishlevel():void{
 			if ((level == 1)&&(zombieskilled >= 10)){
@@ -1048,9 +1030,9 @@
 			}
 		}
 
-///////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //						WEAPONS
-///////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		//create a array to hold all bullets fired
 		public var bulletList:Array = [];
 		public function shootBullet():void {
@@ -1112,9 +1094,9 @@
 			}
 		}
 		
-///////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //							ITEMS
-///////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		//check if player collects an item
 		public function collectItem():void{
 			//check if player "collects" Ammo
@@ -1200,9 +1182,9 @@
 				trace ("Collected Speedpack");
 			}
 		}
-///////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //							ITEM TIMERS
-///////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		public function checkSpeedPackTimer():void{
 			//check if player has speedpack
 			if (collectedSpeedPack == true){
@@ -1224,9 +1206,9 @@
 			}
 		}
 		
-///////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //							LEVEL ITEMS
-///////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		//open door
 		public function openDoor():void{
 			
@@ -1257,9 +1239,9 @@
 				door2opening = false;
 			}
 		}
-///////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //							GUI/TEXT
-///////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		public function updatetext():void{
 			if (isusingpistol == true){
 				ui.ammotext.text = pistolammo.toString();
@@ -1310,9 +1292,9 @@
 				ui.icon_flamethrower.visible = true;
 			}
 		}
-///////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //							GAMEOVER
-///////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	public function gameover():void{
 		ispaused = true;
 					stage.removeEventListener(Event.ENTER_FRAME,mainloop);
@@ -1322,9 +1304,9 @@
 					gameoverscreen.restartgame.addEventListener(MouseEvent.CLICK, restartGame);
 		
 	}
-///////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //							RANK SYSTEM
-///////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 		public function showrankscreen(event:MouseEvent):void {
 			pausescreen.gotorankscreen.removeEventListener(MouseEvent.CLICK, showrankscreen);
@@ -1571,9 +1553,9 @@
 				}
 			}
 		}
-///////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //							EFFECTS
-///////////////////////////////////////////////////////		
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////		
 	public function lighting():void{		
 		if (playerhastorch == true){
 			light.x = player.x;
@@ -1586,10 +1568,28 @@
 			light.gotoAndStop(2);
 		}			
 	}
-		
-///////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//					RESTART GAME
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		public function restartGame(event:MouseEvent):void {
+   		 		stage.addChild(confirmrestartgame);
+				confirmrestartgame.yesrestartgame.addEventListener(MouseEvent.CLICK, confirmRESTART);
+				confirmrestartgame.norestartgame.addEventListener(MouseEvent.CLICK, cancelRESTART);
+		}
+		private function cancelRESTART(event:MouseEvent):void {
+			if(stage.contains(confirmrestartgame)){
+   		 		stage.removeChild(confirmrestartgame);
+			}
+		}
+		private function confirmRESTART(event:MouseEvent):void {
+   		 var url:String = stage.loaderInfo.url;
+  	 	 var request:URLRequest = new URLRequest(url);
+   		 navigateToURL(request,"_level0");
+		 trace ("Game Restarted");
+		}
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //							SAVE AND LOAD
-///////////////////////////////////////////////////////		
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////		
 	public var saveDataObject:SharedObject;
 
 	public function saveData(e:MouseEvent):void{
@@ -1633,7 +1633,10 @@
 			saveDataObject.data.savedshotgunammo = shotgunammo;
 			saveDataObject.data.savedflamethrowerammo = flamethrowerammo;
 
-			trace("Game Saved!");
+			trace("Game Saved!");//replace with conformation screen later
+			
+			//SAVE ACHIVEMENT DATA 
+			
 			saveDataObject.flush(); // immediately save to the local drive
 			trace(saveDataObject.size); // this will show the size of the save file, in bytes
 	}
@@ -1679,13 +1682,16 @@
 			shotgunammo = saveDataObject.data.savedshotgunammo;
 			flamethrowerammo = saveDataObject.data.savedflamethrowerammo;
 			
+			//DONT LOAD ACHIVEMENT DATA HERE IT WILL OVERWRITE ANY NEW DATA IN CURRENT SESSION!!
+			//LOAD ACHIVEMENT DATA WHEN GAME FIRST STARTS
+			
 			trace("Game Loaded!");
 	}
 
 		
-///////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //							MISC
-///////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		//converts degrees to radians
 		public function to_radians(n:Number):Number {
 			return (n*0.0174532925);
