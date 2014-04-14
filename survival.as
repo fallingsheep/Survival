@@ -140,33 +140,8 @@
 			removeChild(intro);
 			}
 			stopspawn = false;//zombie spawn control
-			//start fog
-			ground.addChild(s1); 
-			ground.addChild(s2);
-			ground.setChildIndex(s1,1);
-			ground.setChildIndex(s2,1);
-			s1.alpha = 0.5;
-			s2.alpha = 0.5;
-			//This positions the second movieclip next to the first one.
-			s1.x = 0;
-			s2.x = s1.width;
 			
-			//Adds an event listener to the stage.
-			addEventListener(Event.ENTER_FRAME, moveScroll); 
-			
-			//This function moves both the images to left. If the first and second 
-			//images goes pass the left stage boundary then it gets moved to 
-			//the other side of the stage. 
-			function moveScroll(e:Event):void{
-				s1.x -= scrollSpeed;  
-				s2.x -= scrollSpeed;  
-				
-				if(s1.x < -s1.width){
-				s1.x = s1.width;
-				}else if(s2.x < -s2.width){
-				s2.x = s2.width;
-				}
-			}
+			startfog(); //start ground
 
 			//environment
 			addChild(environment);
@@ -323,6 +298,8 @@
 			checkarmour();
 			lighting();
 			ProcessXP();
+			
+			startfog(); // keep fog going
 		}
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //							ACHIVEMENTS
@@ -513,6 +490,8 @@
 			shopscreen.buyshotgunammo.addEventListener(MouseEvent.CLICK, buySHOTGUNAMMO);
 			shopscreen.buyflamethrowerammo.addEventListener(MouseEvent.CLICK, buyFLAMETHROWERAMMO);
 			
+			shopscreen.buyspeedboost.addEventListener(MouseEvent.CLICK, buySPEEDBOOST);
+			
 			shopscreen.exitshop.addEventListener(MouseEvent.CLICK, closeshop);
 		}
 		public function closeshop(event:MouseEvent):void {
@@ -531,6 +510,7 @@
 		public var confirmmedkit:confirmmedkit_mc = new confirmmedkit_mc();
 		public var confirmarmour:confirmarmour_mc = new confirmarmour_mc();
 		public var confirmtorch:confirmtorch_mc = new confirmtorch_mc();
+		public var confirmspeedboost:confirmspeedboost_mc = new confirmspeedboost_mc();
 
 		//WEAPONS
 		public function buyUZI(event:MouseEvent):void {
@@ -732,7 +712,7 @@
 		public function confirmSHOTGUNAMMO(event:MouseEvent):void {
 			if (currentcash >= 150){
 			shotgunammo = 50;
-			currentcash -= 150;//cost of uzi
+			currentcash -= 150;//cost of shotgun ammo
 			shopscreen.shopmessage.text = "Bought Shotgun Ammo!";//shop message
 			}else{
 				shopscreen.shopmessage.text = "Not enough cash!";//shop message
@@ -754,13 +734,35 @@
 		public function confirmBUYFLAMETHROWERAMMO(event:MouseEvent):void {
 			if (currentcash >= 500){
 			flamethrowerammo = 250;
-			currentcash -= 500;//cost of uzi
+			currentcash -= 500;//cost of flaethrower ammo
 			shopscreen.shopmessage.text = "Bought Flamethrower Ammo!";//shop message
 			}else{
 				shopscreen.shopmessage.text = "Not enough cash!";//shop message
 			}
 			if(shopscreen.contains(confirmflamethrowerammo)){
 				shopscreen.removeChild(confirmflamethrowerammo);
+			}
+		}
+		public function buySPEEDBOOST(event:MouseEvent):void {
+			shopscreen.addChild(confirmspeedboost);
+			confirmspeedboost.yesspeedboost.addEventListener(MouseEvent.CLICK, confirmSPEEDBOOST);
+			confirmspeedboost.nospeedboost.addEventListener(MouseEvent.CLICK, cancelSPEEDBOOST);
+		}
+		public function cancelSPEEDBOOST(event:MouseEvent):void {
+			if(shopscreen.contains(confirmspeedboost)){
+				shopscreen.removeChild(confirmspeedboost);
+			}
+		}
+		public function confirmSPEEDBOOST(event:MouseEvent):void {
+			if (currentcash >= 1000){
+			collectSpeedpack();
+			currentcash -= 1000;//cost of speedboost
+			shopscreen.shopmessage.text = "Bought Speed Boost!";//shop message
+			}else{
+				shopscreen.shopmessage.text = "Not enough cash!";//shop message
+			}
+			if(shopscreen.contains(confirmspeedboost)){
+				shopscreen.removeChild(confirmspeedboost);
 			}
 		}
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1134,10 +1136,11 @@
 				//add ammo to current ammo count
 				pistolammo += 100;
 				uziammo += 100;
-				shotgunammo += 100;
-				flamethrowerammo += 1000;
+				shotgunammo += 10;
+				flamethrowerammo += 150;
+				//reset ammo
 				ammoempty = false;
-				trace ("Collected Ammo");
+				trace ("Collected Ammo Pack");
 			}
 		}
 		//MEDPACK
@@ -1163,11 +1166,13 @@
 		//SPEEDPACK
 		public function collectSpeedpack():void {
 			if (this.contains(speedpack)){
+					removeChild(speedpack);
+				}
 				//adds timer listener event when speed pack is collected
 				addEventListener(TimerEvent.TIMER, checkSpeedPackTimer);
 				//check if item exists
 				//remove item from stage
-				removeChild(speedpack);
+				
 				//set player speed to 4
 				player_speed = 4;
 				//start timer
@@ -1175,7 +1180,7 @@
 				//set collected speed pack to true
 				collectedSpeedPack = true;
 				trace ("Collected Speedpack");
-			}
+
 		}
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //							ITEM TIMERS
@@ -1563,6 +1568,35 @@
 			light.gotoAndStop(2);
 		}			
 	}
+	public function startfog():void{		
+	//start fog
+			ground.addChild(s1); 
+			ground.addChild(s2);
+			ground.setChildIndex(s1,1);
+			ground.setChildIndex(s2,1);
+			s1.alpha = 0.5;
+			s2.alpha = 0.5;
+			//This positions the second movieclip next to the first one.
+			s1.x = 0;
+			s2.x = s1.width;
+			
+			//Adds an event listener to the stage.
+			addEventListener(Event.ENTER_FRAME, moveScroll); 
+			
+			//This function moves both the images to left. If the first and second 
+			//images goes pass the left stage boundary then it gets moved to 
+			//the other side of the stage. 
+			function moveScroll(e:Event):void{
+				s1.x -= scrollSpeed;  
+				s2.x -= scrollSpeed;  
+				
+				if(s1.x < -s1.width){
+				s1.x = s1.width;
+				}else if(s2.x < -s2.width){
+				s2.x = s2.width;
+				}
+			}
+	};
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //					RESTART GAME
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
