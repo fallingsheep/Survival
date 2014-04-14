@@ -133,11 +133,6 @@
 			addChild(intro);
 			intro.startgame.addEventListener(MouseEvent.CLICK, startgame);
 		}
-		public function loadgame(event:MouseEvent):void{
-			loadData();
-			//add confirm load here
-			closepausescreen();
-		}
 		//START GAME
 		public function startgame(event:MouseEvent):void {
 			intro.startgame.removeEventListener(MouseEvent.CLICK, startgame);
@@ -1686,8 +1681,13 @@
 			//LOAD ACHIVEMENT DATA WHEN GAME FIRST STARTS
 			
 			trace("Game Loaded!");
-	}
-
+		}
+		
+		public function loadgame(event:MouseEvent):void{
+			loadData();
+			//add confirm load here
+			closepausescreen(null);
+		}
 		
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //							MISC
