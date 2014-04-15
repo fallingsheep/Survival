@@ -931,7 +931,7 @@
 									for(var i=0; i<numOfClips; i++)
 									{
 									  ground.addChild(deadzombie);
-									 ground.setChildIndex(deadzombie,1);
+									 ground.setChildIndex(deadzombie,2);
 									  deadzombieArray.push(deadzombie);
 									}
 									deadzombie.x = zombie1.x;
@@ -1594,8 +1594,8 @@
 	//start fog
 			ground.addChild(s1); 
 			ground.addChild(s2);
-			ground.setChildIndex(s1,1);
-			ground.setChildIndex(s2,1);
+			//ground.setChildIndex(s1,3);
+			//ground.setChildIndex(s2,3);
 			s1.alpha = 0.5;
 			s2.alpha = 0.5;
 			//This positions the second movieclip next to the first one.
