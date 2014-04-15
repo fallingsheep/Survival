@@ -20,31 +20,47 @@
 		public var zombiedamage:int;
 			
         public function Zombie(stageRef:Stage, ZombieX:int, ZombieY:int):void {
-			zombieRandom = randomRange(0,6);
+			zombieRandom = randomRange(0,9);
 			//set zombies X and Y to random spawn points
 			if (zombieRandom == 0){
-				ZombieX=100;
-				ZombieY=100;
+				ZombieX=35;
+				ZombieY=365;
 			}
 			else if (zombieRandom == 1){
-				ZombieX=700;
-				ZombieY=100;
+				ZombieX=285;
+				ZombieY=365;
 			}
 			else if (zombieRandom == 2){
-				ZombieX=350;
-				ZombieY=50;
+				ZombieX=535;
+				ZombieY=365;
 			}
 			else if (zombieRandom == 3){
-				ZombieX=350;
-				ZombieY=350;
+				ZombieX=760
+				ZombieY=365;
 			}
 			else if (zombieRandom == 4){
-				ZombieX=100;
-				ZombieY=300;
+				ZombieX=35;
+				ZombieY=40;
 			}
 			else if (zombieRandom == 5){
-				ZombieX=700;
-				ZombieY=300;
+				ZombieX=285;
+				ZombieY=40;
+			}
+			else if (zombieRandom == 6){
+				ZombieX=535;
+				ZombieY=40;
+			}
+			else if (zombieRandom == 7){
+				ZombieX=760;
+				ZombieY=40;
+			}
+			else if (zombieRandom == 8){
+				ZombieX=760;
+				ZombieY=200;
+			}
+			else if (zombieRandom == 9){
+				ZombieX=35;
+				ZombieY=200;
 			}
 			else{
 				ZombieX=700;

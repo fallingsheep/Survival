@@ -69,7 +69,7 @@
 		public var zombieskilled:int = 0;//total zombies killed for current stage
 		public var totalzombieskilled:int = 0;//total zombies killed all up
 		public var zombiecount:int = 0;// how many zombies created
-		public var zombiespawncount:int = 9; // MUST BE 1 LESS than actual count!! used as starting zombie spawn count
+		public var zombiespawncount:int = 19; // MUST BE 1 LESS than actual count!! used as starting zombie spawn count
 		public var totalzomibes:int = 0; // total zombies spawned
 		public var zomibeskilled:int = 0; // total zombies killed
 		//timers
@@ -300,8 +300,6 @@
 			checkarmour();
 			lighting();
 			ProcessXP();
-			
-			startfog(); // keep fog going
 		}
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //							ACHIVEMENTS
@@ -984,55 +982,55 @@
 		
 		public function finishlevel():void{
 			if ((level == 1)&&(zombieskilled >= 10)){
-				zombiespawncount = 9; // how many zombies to spawn for level 2 (if you want 10 set it to 9!)
+				zombiespawncount = 19; // how many zombies to spawn for level 2 (if you want 10 set it to 9!)
 				level += 1;
 				stopspawn = false;
 				trace ("Level:" + level);
 			}
-			else if ((level == 2)&&(zombieskilled >= 20)){
-				zombiespawncount = 9;
+			else if ((level == 2)&&(zombieskilled >= 30)){
+				zombiespawncount = 19;
 				level += 1;
 				stopspawn = false;
 				trace ("Level:" + level);
 			}
-			else if ((level == 3)&&(zombieskilled >= 30)){
-				zombiespawncount = 9;
+			else if ((level == 3)&&(zombieskilled >= 50)){
+				zombiespawncount = 19;
 				level += 1;
 				stopspawn = false;
 				trace ("Level:" + level);
 			}
-			else if ((level == 4)&&(zombieskilled >= 40)){
-				zombiespawncount = 9;
+			else if ((level == 4)&&(zombieskilled >= 70)){
+				zombiespawncount = 19;
 				level += 1;
 				stopspawn = false;
 				trace ("Level:" + level);
 			}
-			else if ((level == 5)&&(zombieskilled >= 50)){
-				zombiespawncount = 9;
+			else if ((level == 5)&&(zombieskilled >= 90)){
+				zombiespawncount = 19;
 				level += 1;
 				stopspawn = false;
 				trace ("Level:" + level);
 			}
-			else if ((level == 6)&&(zombieskilled >= 60)){
-				zombiespawncount = 9;
+			else if ((level == 6)&&(zombieskilled >= 110)){
+				zombiespawncount = 19;
 				level += 1;
 				stopspawn = false;
 				trace ("Level:" + level);
 			}
-			else if ((level == 7)&&(zombieskilled >= 70)){
-				zombiespawncount = 9;
+			else if ((level == 7)&&(zombieskilled >= 1300)){
+				zombiespawncount = 19;
 				level += 1;
 				stopspawn = false;
 				trace ("Level:" + level);
 			}
-			else if ((level == 8)&&(zombieskilled >= 80)){
-				zombiespawncount = 9;
+			else if ((level == 8)&&(zombieskilled >= 150)){
+				zombiespawncount = 19;
 				level += 1;
 				stopspawn = false;
 				trace ("Level:" + level);
 			}
-			else if ((level == 9)&&(zombieskilled >= 90)){
-				zombiespawncount = 9;
+			else if ((level == 9)&&(zombieskilled >= 170)){
+				zombiespawncount = 19;
 				//level += 1;
 				stopspawn = false;
 				currentstage += 1;
@@ -1049,6 +1047,7 @@
 			else if (currentstage == 2){
 				level = 1;
 				zombieskilled = 0;
+				endfog();//stop fog
 				trace ("Stage 2");
 				environment.gotoAndStop(2);
 				ground.gotoAndStop(2);
@@ -1637,7 +1636,8 @@
 			//This function moves both the images to left. If the first and second 
 			//images goes pass the left stage boundary then it gets moved to 
 			//the other side of the stage. 
-			function moveScroll(e:Event):void{
+	}
+	public function moveScroll(e:Event):void{
 				s1.x -= scrollSpeed;  
 				s2.x -= scrollSpeed;  
 				
@@ -1647,7 +1647,14 @@
 				s2.x = s2.width;
 				}
 			}
-	};
+	public function endfog():void{		
+	//start fog
+			ground.removeChild(s1); 
+			ground.removeChild(s2);
+			
+			//Adds an event listener to the stage.
+			removeEventListener(Event.ENTER_FRAME, moveScroll); 
+	}
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //					RESTART GAME
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
