@@ -4,7 +4,8 @@
 	import flash.events.*;
 	import flash.filters.*;
 	import flash.net.*;
-	import flash.utils.Timer;
+	import flash.utils.*;
+	import flash.system.System;
 	
 	public class survival extends Sprite {
 		//global variables
@@ -31,6 +32,7 @@
 		public var ammocrate:ammocrate_mc = new ammocrate_mc();
 		public var medpack:medpack_mc = new medpack_mc();
 		public var speedpack:speedpack_mc = new speedpack_mc();
+		public var torch:torch_mc= new torch_mc();
 		//weapons
 		public var pistol:pistol_mc = new pistol_mc();
 		public var uzi:uzi_mc = new uzi_mc();
@@ -38,17 +40,21 @@
 		public var bulletproofvest:bulletproofvest_mc = new bulletproofvest_mc();
 		public var flamethrower:flamethrower_mc = new flamethrower_mc();
 		public var flamethrowerflames:flamethrowerflames_mc = new flamethrowerflames_mc();
-		public var playerhitobject:Boolean = false; // has player hit a object
-		
 		public var isusingpistol:Boolean = true;//
 		public var isusinguzi:Boolean = false;
-		public var isusingshotgun:Boolean = false;;
-		public var isusingflamethrower:Boolean = false;;
+		public var isusingshotgun:Boolean = false;
+		public var isusingflamethrower:Boolean = false;
+		public var haspistol:Boolean = true;
+		public var hasuzi:Boolean = false;
+		public var hasshotgun:Boolean = false;
+		public var hasflamethrower:Boolean = false;
+		
 		public var ammoempty:Boolean;//ammo empty check
 		public var dooropening:Boolean = false;//door moving check
-		
+		public var playerhitobject:Boolean = false; // has player hit a object
 		public var door2opening:Boolean = false;//door2 moving check
 		public var stopspawn:Boolean= false;//zombie spawn control
+		
 		public var key_pressed:int=0;
 		public var radius:int=8;//players "size" (sphere)
 		public var up,down,left,right:Boolean=false;
@@ -62,6 +68,7 @@
 		public var uziammo:int = 0;
 		public var shotgunammo:int = 0;
 		public var flamethrowerammo:int = 0;
+		
 		public var hasarmour:Boolean = true;
 		public var armour:int = 25;//starting armour
 		public var health:int = 100;//starting health
@@ -79,12 +86,8 @@
 		public var UiTimer10:Timer = new Timer(1000, 10);
 		public var collectedSpeedPack:Boolean = false;
 		public var level:int = 1;//set start level
-		public var currentcash:int = 25000;//cash
-		//CHEATS AND DEBUG
-		public var haspistol:Boolean = true;
-		public var hasuzi:Boolean = false;
-		public var hasshotgun:Boolean = false;
-		public var hasflamethrower:Boolean = false;
+		public var currentcash:int = 0;//cash
+
 		//what stage to start on
 		public var currentstage:int = 1;
 		//cheats
@@ -93,9 +96,7 @@
 		public var infinteammo:Boolean = false;
 		public var infintehealth:Boolean = false;
 		public var player_speed:int = 2;//player movement speed (Default is 2)
-		public var gamewasloaded:Boolean = false;
 		public var playerhastorch:Boolean = false;
-		public var torch:torch_mc= new torch_mc();
 		public static var ispaused:Boolean = false;
 		public var currentrank:int = 0;
 		public var experience:int = 0;		
@@ -122,18 +123,38 @@
 		public static var rank18:rank18_mc = new rank18_mc();
 		public static var rank19:rank19_mc = new rank19_mc();
 		
-					//The speed of the scroll movement.
-		public var scrollSpeed:Number = 0.5;
+		public var globalpistolbullets:int;
+		public var globaluzibullets:int;
+		public var globalshotgunbullets:int;
+		public var globalflamethrowerbullets:int;
+					
+		public var scrollSpeed:Number = 0.5;//The speed of the fog.
 			
 			//This adds two instances of the movie clip onto the stage.
 		public var s1:fogbg_mc = new fogbg_mc();
 		public var s2:fogbg_mc = new fogbg_mc();
 		
+		var frames:int=0;
+		var FPS:int=0;
+		var prevTimer:Number=0;
+		var curTimer:Number=0;
 		
 		//Intilize game code
 		public function survival():void {
 			addChild(intro);
 			intro.startgame.addEventListener(MouseEvent.CLICK, startgame);
+		}
+		public function debugstuff():void{
+			frames+=1;
+			curTimer=getTimer();
+				if(curTimer-prevTimer>=1000){
+					FPS = Math.round(frames*1000/(curTimer-prevTimer));
+					
+					prevTimer=curTimer;
+					frames=0;
+				}
+			debugmemorytext.text = ((System.totalMemory / 1024 / 1024).toFixed(2)).toString() + "MB";
+			debugfpstext.text = FPS.toString();
 		}
 		//START GAME
 		public function startgame(event:MouseEvent):void {
@@ -143,7 +164,7 @@
 			}
 			stopspawn = false;//zombie spawn control
 			
-			startfog(); //start ground
+			processfog(); //start ground
 
 			//environment
 			addChild(environment);
@@ -200,6 +221,9 @@
 		}
 		//MAIN GAME LOOP
 		public function mainloop(e:Event):void {
+			//debug fps + mem
+			debugstuff();
+			
 			
 			var dist_x:Number=player.x-mouseX;
 			var dist_y:Number=player.y-mouseY;
@@ -255,16 +279,19 @@
 				if(delayCounter == delayMax){
 					if ((isusingpistol == true) && (pistolammo >= 1) && (infinteammo == false)){
 						pistolammo -= 1;
+						globalpistolbullets += 1;
 						shootBullet(); //shoot a bullet
 						delayCounter = 0; //reset the delay counter so there is a pause between bullets
 					}
 					if ((isusingshotgun == true) && (shotgunammo >= 1) && (infinteammo == false)){
 						shotgunammo -= 1;
+						globalshotgunbullets += 1;
 						shootShotgun(); //shoot a bullet
 						delayCounter = 0; //reset the delay counter so there is a pause between bullets
 					}
 					if ((isusinguzi == true) && (uziammo >= 1) && (infinteammo == false)){
 						uziammo -= 1;
+						globaluzibullets += 1;
 						shootBullet(); //shoot a bullet
 						delayCounter = 0; //reset the delay counter so there is a pause between bullets
 					}
@@ -272,6 +299,7 @@
 						delayCounter = 0;
 						shootFlames();
 						flamethrowerammo -= 1;
+						globalflamethrowerbullets += 1;
 					}
 				}
 			}
@@ -281,7 +309,6 @@
 				}
 			}
 		}
-
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //					SCRIPTS / MODULES
@@ -300,6 +327,7 @@
 			checkarmour();
 			lighting();
 			ProcessXP();
+			processfog();
 		}
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //							ACHIVEMENTS
@@ -1654,6 +1682,14 @@
 			
 			//Adds an event listener to the stage.
 			removeEventListener(Event.ENTER_FRAME, moveScroll); 
+	}
+	public function processfog():void{		
+			if (currentstage == 1) {
+				startfog();
+			}
+			if (currentstage == 2) {
+				endfog();
+			}
 	}
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //					RESTART GAME
