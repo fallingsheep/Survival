@@ -5,8 +5,6 @@
 	import flash.filters.*;
 	import flash.net.*;
 	import flash.utils.Timer;
-	import flash.events.KeyboardEvent;
-	import flash.events.MouseEvent;
 	
 	public class survival extends Sprite {
 		//global variables
@@ -15,12 +13,14 @@
 		public static var player:player_mc = new player_mc();
 		public static var door:door_mc = new door_mc();
 		public static var door2:door_mc = new door_mc();
+		
 		public var pausescreen:pausescreen_mc = new pausescreen_mc();
 		public var gameoverscreen:gameoverscreen_mc = new gameoverscreen_mc();
 		public var rankscreen:rankscreen_mc = new rankscreen_mc();
 		public var confirmrestartgame:confirmrestartgame_mc = new confirmrestartgame_mc();
 		public var achivementscreen:achivementscreen_mc = new achivementscreen_mc();
 		public var shopscreen:shopscreen_mc = new shopscreen_mc();
+		
 		public var light:light_mc= new light_mc();
 		public var details:details_mc= new details_mc();
 		public var ground:ground_mc = new ground_mc();
@@ -39,12 +39,14 @@
 		public var flamethrower:flamethrower_mc = new flamethrower_mc();
 		public var flamethrowerflames:flamethrowerflames_mc = new flamethrowerflames_mc();
 		public var playerhitobject:Boolean = false; // has player hit a object
+		
 		public var isusingpistol:Boolean = true;//
 		public var isusinguzi:Boolean = false;
 		public var isusingshotgun:Boolean = false;;
 		public var isusingflamethrower:Boolean = false;;
 		public var ammoempty:Boolean;//ammo empty check
 		public var dooropening:Boolean = false;//door moving check
+		
 		public var door2opening:Boolean = false;//door2 moving check
 		public var stopspawn:Boolean= false;//zombie spawn control
 		public var key_pressed:int=0;
@@ -258,7 +260,7 @@
 					}
 					if ((isusingshotgun == true) && (shotgunammo >= 1) && (infinteammo == false)){
 						shotgunammo -= 1;
-						shootBullet(); //shoot a bullet
+						shootShotgun(); //shoot a bullet
 						delayCounter = 0; //reset the delay counter so there is a pause between bullets
 					}
 					if ((isusinguzi == true) && (uziammo >= 1) && (infinteammo == false)){
@@ -887,7 +889,7 @@
 					//flamerthrower
 					if(flamethrowerflames.hitTestPoint(zombie1.x,zombie1.y, true)){
 						if (this.contains(zombie1)){
-							zombie1.zombiehitpoints -= 10;
+							zombie1.zombiehitpoints -= 5;// damage per second (roughly)
 						}
 						if(zombie1.zombiehitpoints <= 0){
 									
@@ -918,10 +920,10 @@
 							if (enemycontainer.contains(zombie1)){
 								//remove zombie and bullet
 								if(isusingshotgun == true){
-									zombie1.zombiehitpoints -= 250;
+									zombie1.zombiehitpoints -= 30;// damage per pellet
 									enemycontainer.removeChild(bullet1);
 								} else {
-									zombie1.zombiehitpoints -= 100;
+									zombie1.zombiehitpoints -= 100;//damage per bullet
 									enemycontainer.removeChild(bullet1);
 								}
 
@@ -1067,6 +1069,33 @@
 			bulletList.push(bullet);
 			//add bullet to stage
 			enemycontainer.addChild(bullet);
+			//reduce ammo by 1
+		}
+		public function shootShotgun():void {
+			//create new bullet based on players X/Y and Rotation
+			var bullet:Bullet = new Bullet(stage, player.x, player.y, player.rotation - 10);
+			var bullet1:Bullet = new Bullet(stage, player.x, player.y, player.rotation + 10);
+			var bullet2:Bullet = new Bullet(stage, player.x, player.y, player.rotation);
+			var bullet3:Bullet = new Bullet(stage, player.x, player.y, player.rotation + 20);
+			var bullet4:Bullet = new Bullet(stage, player.x, player.y, player.rotation - 20);
+			//Add event to bullets to remove them from array when removed from stage
+			bullet.addEventListener(Event.REMOVED_FROM_STAGE, bulletRemoved, false, 0, true);
+			bullet1.addEventListener(Event.REMOVED_FROM_STAGE, bulletRemoved, false, 0, true);
+			bullet2.addEventListener(Event.REMOVED_FROM_STAGE, bulletRemoved, false, 0, true);
+			bullet3.addEventListener(Event.REMOVED_FROM_STAGE, bulletRemoved, false, 0, true);
+			bullet4.addEventListener(Event.REMOVED_FROM_STAGE, bulletRemoved, false, 0, true);
+			//add bullet to array
+			bulletList.push(bullet);
+			bulletList.push(bullet1);
+			bulletList.push(bullet2);
+			bulletList.push(bullet3);
+			bulletList.push(bullet4);
+			//add bullet to stage
+			enemycontainer.addChild(bullet);
+			enemycontainer.addChild(bullet1);
+			enemycontainer.addChild(bullet2);
+			enemycontainer.addChild(bullet3);
+			enemycontainer.addChild(bullet4);
 			//reduce ammo by 1
 		}
 		//removes bullet from array
