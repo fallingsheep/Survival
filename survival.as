@@ -122,11 +122,6 @@
 		public static var rank17:rank17_mc = new rank17_mc();
 		public static var rank18:rank18_mc = new rank18_mc();
 		public static var rank19:rank19_mc = new rank19_mc();
-		
-		public var globalpistolbullets:int;
-		public var globaluzibullets:int;
-		public var globalshotgunbullets:int;
-		public var globalflamethrowerbullets:int;
 					
 		public var scrollSpeed:Number = 0.5;//The speed of the fog.
 			
@@ -163,6 +158,9 @@
 			removeChild(intro);
 			}
 			stopspawn = false;//zombie spawn control
+			
+			//load achivement data
+			loadachiveData();
 			
 			processfog(); //start ground
 
@@ -321,13 +319,18 @@
 			collectItem();
 			//openDoor();
 			finishlevel();
+			//player animations
 			playerMoving();
+			//remove flame thrower flames
 			removeFlames();
 			checkhealth();
 			checkarmour();
 			lighting();
 			ProcessXP();
 			processfog();
+			//achivements
+			processAchivements();
+			saveachiveData();// save achivement data to disk
 		}
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //							ACHIVEMENTS
@@ -335,12 +338,186 @@
 		public function showachivementscreen(event:MouseEvent):void {
 			pausescreen.addChild(achivementscreen);
 			achivementscreen.exitachivementscreen.addEventListener(MouseEvent.CLICK, closeachivementscreen);
+			updateachivementtext();
 		}
 		public function closeachivementscreen(event:MouseEvent):void {
 			pausescreen.gotoachivementscreen.addEventListener(MouseEvent.CLICK, showachivementscreen);
 			if(pausescreen.contains(achivementscreen)){
 				pausescreen.removeChild(achivementscreen);
 			}
+		}
+		public function updateachivementtext():void{
+			achivementscreen.globalcashearnttext.text = ("$" + globalcashearnt.toString());
+			achivementscreen.globalcashspenttext.text = ("$" + globalcashspent.toString());
+			
+			achivementscreen.globalzombiekillstext.text = globalzombiekills.toString();
+			
+			achivementscreen.globalpistolbulletstext.text = globalpistolbullets.toString();
+			achivementscreen.globaluzibulletstext.text = globaluzibullets.toString();
+			achivementscreen.globalshotgunbulletstext.text = globalshotgunbullets.toString();
+			achivementscreen.globalflamethrowerbulletstext.text = globalflamethrowerbullets.toString();
+			
+		}
+		
+		public var saveAchivementDataObject:SharedObject;
+		//ADD NEW ACHIVES TO BOTTOM !!
+		//cash
+		public var globalcashearnt:int;
+		public var globalcashspent:int;
+		
+		//weapons
+		public var globalpistolbullets:int;
+		public var globaluzibullets:int;
+		public var globalshotgunbullets:int;
+		public var globalflamethrowerbullets:int;
+				
+		//zombies
+		public var globalzombiekills:int;
+		
+		//achivements
+		public var achive1,achive2,achive3,achive4,achive5,achive6,achive7,achive8,achive9,achive10:Boolean;
+		public var achive11,achive12,achive13,achive14,achive15,achive16,achive17,achive18,achive19,achive20:Boolean;
+		public var achive21,achive22,achive23,achive24,achive25,achive26,achive27,achive28,achive29,achive30:Boolean;
+		public var achive31,achive32,achive33,achive34,achive35:Boolean;
+		
+		public function processAchivements():void{
+			//CASH EARNT
+			if( globalcashearnt >= 1000){
+				achive1 = true;
+			}
+			if( globalcashearnt >= 5000){
+				achive2 = true;
+			}
+			if( globalcashearnt >= 10000){
+				achive3 = true;
+			}
+			if( globalcashearnt >= 100000){
+				achive4 = true;
+			}
+			if( globalcashearnt >= 1000000){
+				achive5 = true;
+			}
+			//CASH SPENT
+			if( globalcashspent>= 1000){
+				achive6 = true;
+			}
+			if( globalcashspent >= 5000){
+				achive7 = true;
+			}
+			if( globalcashspent >= 10000){
+				achive8 = true;
+			}
+			if( globalcashspent >= 100000){
+				achive9 = true;
+			}
+			if( globalcashspent >= 1000000){
+				achive10 = true;
+			}
+			//ZOMBIES KILLED
+			if( globalzombiekills >= 1000){
+				achive11 = true;
+			}
+			if( globalzombiekills >= 5000){
+				achive12 = true;
+			}
+			if( globalzombiekills >= 10000){
+				achive13 = true;
+			}
+			if( globalzombiekills >= 100000){
+				achive14 = true;
+			}
+			if( globalzombiekills >= 1000000){
+				achive15 = true;
+			}
+			//PISTOL
+			if( globalpistolbullets >= 1000){
+				achive16 = true;
+			}
+			if( globalpistolbullets >= 5000){
+				achive17 = true;
+			}
+			if( globalpistolbullets >= 10000){
+				achive18 = true;
+			}
+			if( globalpistolbullets >= 100000){
+				achive19 = true;
+			}
+			if( globalpistolbullets >= 1000000){
+				achive20 = true;
+			}
+			//UZI
+			if( globaluzibullets >= 1000){
+				achive21 = true;
+			}
+			if( globaluzibullets >= 5000){
+				achive22 = true;
+			}
+			if( globaluzibullets >= 10000){
+				achive23 = true;
+			}
+			if( globaluzibullets >= 100000){
+				achive24 = true;
+			}
+			if( globaluzibullets >= 1000000){
+				achive25 = true;
+			}
+			//SHOTGUN
+	
+			if( globalpistolbullets >= 1000){
+				achive26 = true;
+			}
+			if( globalpistolbullets >= 5000){
+				achive27 = true;
+			}
+			if( globalpistolbullets >= 10000){
+				achive28 = true;
+			}
+			if( globalpistolbullets >= 100000){
+				achive29 = true;
+			}
+			if( globalpistolbullets >= 1000000){
+				achive30 = true;
+			}
+			//FLAMETHROWER
+			
+			if( globalflamethrowerbullets >= 1000){
+				achive31 = true;
+			}
+			if( globalflamethrowerbullets >= 5000){
+				achive32 = true;
+			}
+			if( globalflamethrowerbullets >= 10000){
+				achive33 = true;
+			}
+			if( globalflamethrowerbullets >= 100000){
+				achive34 = true;
+			}
+			if( globalflamethrowerbullets >= 1000000){
+				achive35 = true;
+			}
+		}
+		public function saveachiveData():void{
+				saveAchivementDataObject = SharedObject.getLocal("achivement"); 
+				saveAchivementDataObject.data.savedglobalcashearnt = globalcashearnt;
+				saveAchivementDataObject.data.savedsglobalcashspent = globalcashspent;
+				saveAchivementDataObject.data.savedglobalpistolbullets = globalpistolbullets;
+				saveAchivementDataObject.data.savedglobaluzibullets = globaluzibullets;
+				saveAchivementDataObject.data.savedglobalshotgunbullets = globalshotgunbullets;
+				saveAchivementDataObject.data.savedglobalflamethrowerbullets = globalflamethrowerbullets;
+				saveAchivementDataObject.data.savedglobalzombiekills = globalzombiekills;
+				
+				saveAchivementDataObject.flush(); // immediately save to the local drive
+		}
+		public function loadachiveData():void{
+			saveAchivementDataObject = SharedObject.getLocal("achivement"); 
+			
+			globalcashearnt = saveAchivementDataObject.data.savedglobalcashearnt;
+			globalcashspent = saveAchivementDataObject.data.savedsglobalcashspent;
+			globalpistolbullets = saveAchivementDataObject.data.savedglobalpistolbullets;
+			globaluzibullets = saveAchivementDataObject.data.savedglobaluzibullets;
+			globalshotgunbullets = saveAchivementDataObject.data.savedglobalshotgunbullets;
+			globalflamethrowerbullets = saveAchivementDataObject.data.savedglobalflamethrowerbullets;
+			globalzombiekills = saveAchivementDataObject.data.savedglobalzombiekills;
 		}
 		
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -557,6 +734,7 @@
 			hasuzi = true;
 			uziammo = 200;
 			currentcash -= 1000;//cost of uzi
+			globalcashspent += 1000;
 			shopscreen.shopmessage.text = "Bought UZI!";//shop message
 			}else{
 				shopscreen.shopmessage.text = "Not enough cash!";//shop message
@@ -580,6 +758,7 @@
 			hasshotgun = true;
 			shotgunammo = 200;
 			currentcash -= 500;//cost of uzi
+			globalcashspent += 500;
 			shopscreen.shopmessage.text = "Bought Shotgun!";//shop message
 			}else{
 				shopscreen.shopmessage.text = "Not enough cash!";//shop message
@@ -603,6 +782,7 @@
 			hasflamethrower = true;
 			flamethrowerammo = 300;
 			currentcash -= 2500;//cost of uzi
+			globalcashspent += 2500;
 			shopscreen.shopmessage.text = "Bought Flamethrower!";//shop message
 			}else{
 				shopscreen.shopmessage.text = "Not enough cash!";//shop message
@@ -627,6 +807,7 @@
 			hasarmour = true;
 			armour += 40;
 			currentcash -= 2000;//cost of armour
+			globalcashspent += 2000;
 			updatetext();//update armour display
 			shopscreen.shopmessage.text = "Bought Armour!";//shop message
 			}else{
@@ -652,6 +833,7 @@
 			hasarmour = true;
 			collectMedshot();
 			currentcash -= 1500;//cost of medshot
+			globalcashspent += 1500;
 			updatetext();//update display
 			shopscreen.shopmessage.text = "Bought Medkit!";//shop message
 			}else{
@@ -677,6 +859,7 @@
 			hasarmour = true;
 			collectMedpack();
 			currentcash -= 2500;//cost of medkit
+			globalcashspent += 2500;
 			updatetext();//update display
 			shopscreen.shopmessage.text = "Bought Medkit!";//shop message
 			}else{
@@ -701,6 +884,7 @@
 			if (currentcash >= 2500){
 			collectTorch();
 			currentcash -= 2500;//cost of torch
+			globalcashspent += 2500;
 			shopscreen.shopmessage.text = "Bought Torch!";//shop message
 			}else{
 				shopscreen.shopmessage.text = "Not enough cash!";//shop message
@@ -724,6 +908,7 @@
 			if (currentcash >= 50){
 			pistolammo = 100;
 			currentcash -= 50;//cost of uzi
+			globalcashspent += 50;
 			shopscreen.shopmessage.text = "Bought Pistol Ammo!";//shop message
 			}else{
 				shopscreen.shopmessage.text = "Not enough cash!";//shop message
@@ -746,6 +931,7 @@
 			if (currentcash >= 500){
 			uziammo = 500;
 			currentcash -= 500;//cost of uzi
+			globalcashspent += 500;
 			shopscreen.shopmessage.text = "Bought UZI Ammo!";//shop message
 			}else{
 				shopscreen.shopmessage.text = "Not enough cash!";//shop message
@@ -767,6 +953,7 @@
 			if (currentcash >= 150){
 			shotgunammo = 50;
 			currentcash -= 150;//cost of shotgun ammo
+			globalcashspent += 150;
 			shopscreen.shopmessage.text = "Bought Shotgun Ammo!";//shop message
 			}else{
 				shopscreen.shopmessage.text = "Not enough cash!";//shop message
@@ -789,6 +976,7 @@
 			if (currentcash >= 500){
 			flamethrowerammo = 250;
 			currentcash -= 500;//cost of flaethrower ammo
+			globalcashspent += 500;
 			shopscreen.shopmessage.text = "Bought Flamethrower Ammo!";//shop message
 			}else{
 				shopscreen.shopmessage.text = "Not enough cash!";//shop message
@@ -811,6 +999,7 @@
 			if (currentcash >= 1000){
 			collectSpeedpack();
 			currentcash -= 1000;//cost of speedboost
+			globalcashspent += 1000;
 			shopscreen.shopmessage.text = "Bought Speed Boost!";//shop message
 			}else{
 				shopscreen.shopmessage.text = "Not enough cash!";//shop message
@@ -908,34 +1097,62 @@
 							}
 						}
 					}
-					var numOfClips:Number = 500;
+					var numOfClips:Number = 1;
 					var deadzombieArray:Array = new Array();
 					var deadzombie:deadzombie_mc = new deadzombie_mc();
+					var deadzombie1:deadzombie1_mc = new deadzombie1_mc();
+					var deadzombieRandom:int;
 					
 					//flamerthrower
 					if(flamethrowerflames.hitTestPoint(zombie1.x,zombie1.y, true)){
 						if (this.contains(zombie1)){
 							zombie1.zombiehitpoints -= 5;// damage per second (roughly)
 						}
+						
 						if(zombie1.zombiehitpoints <= 0){
+							deadzombieRandom = randomRange(0,2);
 									
 									for(var ii=0; ii<numOfClips; ii++)
 									{
-										ground.addChild(deadzombie);
-										ground.setChildIndex(deadzombie,1);
-										deadzombieArray.push(deadzombie);
+										if(zombie1.zombieType == 0){
+											
+											if (deadzombieRandom == 0){
+												ground.addChild(deadzombie);
+												ground.setChildIndex(deadzombie,1);
+												deadzombieArray.push(deadzombie);
+												deadzombie.x = zombie1.x;
+												deadzombie.y = zombie1.y;
+												deadzombie.gotoAndStop(1);
+												deadzombie.rotation = zombie1.rotation  - 180;
+											} 
+											if (deadzombieRandom == 1){
+												ground.addChild(deadzombie1);
+												ground.setChildIndex(deadzombie1,2);
+												deadzombieArray.push(deadzombie1);
+												deadzombie1.x = zombie1.x;
+												deadzombie1.y = zombie1.y;
+												deadzombie1.gotoAndStop(1);
+												deadzombie1.rotation = zombie1.rotation  - 180;
+											}
+											if (deadzombieRandom == 2){
+												ground.addChild(deadzombie);
+												ground.setChildIndex(deadzombie,1);
+												deadzombieArray.push(deadzombie);
+												deadzombie.x = zombie1.x;
+												deadzombie.y = zombie1.y;
+												deadzombie.gotoAndStop(1);
+												deadzombie.rotation = zombie1.rotation  - 180;
+											}
+										}
 									}
-									deadzombie.x = zombie1.x;
-									deadzombie.y = zombie1.y;
-									deadzombie.gotoAndStop(15);
-									enemycontainer.removeChild(zombie1);
-									if(zombie1.zombieType == 0){
+								if(zombie1.zombieType == 0){
 										experience += 100;
-									}
-									if(zombie1.zombieType == 1){
-										experience += 500;
-									}
 								}
+								if(zombie1.zombieType == 1){
+										experience += 500;
+								}
+							enemycontainer.removeChild(zombie1);
+						}
 					}
 					//bullets
 					for (var bidx:int = bulletList.length - 1; bidx >= 0; bidx--){
@@ -954,24 +1171,48 @@
 								}
 
 								if(zombie1.zombiehitpoints <= 0){
-									
+							deadzombieRandom = randomRange(0,2);
 									
 									for(var i=0; i<numOfClips; i++)
 									{
-									  ground.addChild(deadzombie);
-									 ground.setChildIndex(deadzombie,2);
-									  deadzombieArray.push(deadzombie);
+										if(zombie1.zombieType == 0){
+											
+											if (deadzombieRandom == 0){
+												ground.addChild(deadzombie);
+												ground.setChildIndex(deadzombie,1);//blood goes under bodys
+												deadzombieArray.push(deadzombie);
+												deadzombie.x = zombie1.x;
+												deadzombie.y = zombie1.y;
+												deadzombie.gotoAndStop(1);
+												deadzombie.rotation = zombie1.rotation  - 180;
+											} 
+											if (deadzombieRandom == 1){
+												ground.addChild(deadzombie1);
+												//ground.setChildIndex(deadzombie1,2);//dont set so bodys stay on top
+												deadzombieArray.push(deadzombie1);
+												deadzombie1.x = zombie1.x;
+												deadzombie1.y = zombie1.y;
+												deadzombie1.gotoAndStop(1);
+												deadzombie1.rotation = zombie1.rotation  - 180;
+											}
+											if (deadzombieRandom == 2){
+												ground.addChild(deadzombie);
+												ground.setChildIndex(deadzombie,1);//blood goes under bodys
+												deadzombieArray.push(deadzombie);
+												deadzombie.x = zombie1.x;
+												deadzombie.y = zombie1.y;
+												deadzombie.gotoAndStop(1);
+												deadzombie.rotation = zombie1.rotation  - 180;
+											}
+										}
 									}
-									deadzombie.x = zombie1.x;
-									deadzombie.y = zombie1.y;
-									deadzombie.gotoAndStop(15);
+								if(zombie1.zombieType == 0){
+										experience += 100;
+								}
+								if(zombie1.zombieType == 1){
+										experience += 500;
+								}
 									enemycontainer.removeChild(zombie1);
-									if(zombie1.zombieType == 0){
-									experience += 100;
-									}
-									if(zombie1.zombieType == 1){
-									experience += 500;
-									}
 								}
 								
 							}
@@ -991,10 +1232,10 @@
 			zombiecount -= 1;
 			//count xombie kill
 			zombieskilled += 1;
-			//global total zombies
+			//total zombies
 			totalzombieskilled += 1;
-			//give cash
-			currentcash += 5;
+			//globalzombiekills
+			globalzombiekills +=1;
 			trace ("Zombie Removed");
 		}
 		public function deadzombieRemoved(ee:Event):void{
@@ -1421,9 +1662,6 @@
 				rank2.y = 387;
 				if (this.contains(rank1)){
 				removeChild(rank1);
-				
-				
-
 				}
 			}
 			if (experience >= 5000){
@@ -1433,9 +1671,6 @@
 				rank3.y = 387;
 				if (this.contains(rank2)){
 				removeChild(rank2);
-				
-				
-
 				}
 			}
 			if (experience >= 10000){
@@ -1445,9 +1680,6 @@
 				rank4.y = 387;
 				if (this.contains(rank3)){
 				removeChild(rank3);
-				
-				
-
 				}
 			}
 			if (experience >= 20000){
@@ -1457,9 +1689,6 @@
 				rank5.y = 387;
 				if (this.contains(rank4)){
 				removeChild(rank4);
-				
-				
-
 				}
 			}
 			if (experience >= 40000){
@@ -1469,9 +1698,6 @@
 				rank6.y = 387;
 				if (this.contains(rank5)){
 				removeChild(rank5);
-				
-				
-
 				}
 			}
 			if (experience >= 80000){
@@ -1481,9 +1707,6 @@
 				rank7.y = 387;
 				if (this.contains(rank6)){
 				removeChild(rank6);
-				
-				
-
 				}
 			}
 			if (experience >= 160000){
@@ -1493,9 +1716,6 @@
 				rank8.y = 387;
 				if (this.contains(rank7)){
 				removeChild(rank7);
-				
-				
-
 				}
 			}
 			if (experience >= 320000){
@@ -1505,9 +1725,6 @@
 				rank9.y = 387;
 				if (this.contains(rank8)){
 				removeChild(rank8);
-				
-				
-
 				}
 			}
 			if (experience >= 640000){
@@ -1517,9 +1734,6 @@
 				rank10.y = 387;
 				if (this.contains(rank9)){
 				removeChild(rank9);
-				
-				
-
 				}
 			}
 			if (experience >= 1200000){
@@ -1529,9 +1743,6 @@
 				rank11.y = 387;
 				if (this.contains(rank10)){
 				removeChild(rank10);
-				
-				
-
 				}
 			}
 			if (experience >= 2400000){
@@ -1541,9 +1752,6 @@
 				rank12.y = 387;
 				if (this.contains(rank11)){
 				removeChild(rank11);
-				
-				
-
 				}
 			}
 			if (experience >= 4800000){
@@ -1553,9 +1761,6 @@
 				rank13.y = 387;
 				if (this.contains(rank12)){
 				removeChild(rank12);
-				
-				
-
 				}
 			}
 			if (experience >= 9600000){
@@ -1565,9 +1770,6 @@
 				rank14.y = 387;
 				if (this.contains(rank13)){
 				removeChild(rank13);
-				
-				
-
 				}
 			}
 			if (experience >= 19200000){
@@ -1577,9 +1779,6 @@
 				rank15.y = 387;
 				if (this.contains(rank14)){
 				removeChild(rank14);
-				
-				
-
 				}
 			}
 			if (experience >= 38400000){
@@ -1589,9 +1788,6 @@
 				rank16.y = 387;
 				if (this.contains(rank15)){
 				removeChild(rank15);
-				
-				
-
 				}
 			}
 			if (experience >= 76800000){
@@ -1601,9 +1797,6 @@
 				rank17.y = 387;
 				if (this.contains(rank16)){
 				removeChild(rank16);
-				
-				
-
 				}
 			}
 			if (experience >= 153600000){
@@ -1613,9 +1806,6 @@
 				rank18.y = 387;
 				if (this.contains(rank17)){
 				removeChild(rank17);
-				
-				
-
 				}
 			}
 			if (experience >= 307200000){
@@ -1625,9 +1815,6 @@
 				rank19.y = 387;
 				if (this.contains(rank18)){
 				removeChild(rank18);
-				
-				
-
 				}
 			}
 		}
@@ -1758,8 +1945,6 @@
 
 			trace("Game Saved!");//replace with conformation screen later
 			
-			//SAVE ACHIVEMENT DATA 
-			
 			saveDataObject.flush(); // immediately save to the local drive
 			trace(saveDataObject.size); // this will show the size of the save file, in bytes
 	}
@@ -1832,6 +2017,6 @@
 		public function randomRange(minNum:Number, maxNum:Number):Number {
 			return (Math.floor(Math.random() * (maxNum - minNum + 1)) + minNum);
 		}
-		
+
 	}//end class
 }//end package
