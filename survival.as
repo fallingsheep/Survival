@@ -716,7 +716,7 @@
 		}
 		public function confirmBUYUZIAMMO(event:MouseEvent):void {
 			if (currentcash >= 500){
-			uziammo = 350;
+			uziammo = 500;
 			currentcash -= 500;//cost of uzi
 			shopscreen.shopmessage.text = "Bought UZI Ammo!";//shop message
 			}else{
