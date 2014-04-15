@@ -489,7 +489,7 @@
 			shopscreen.buyuziammo.addEventListener(MouseEvent.CLICK, buyUZIAMMO);
 			shopscreen.buyshotgunammo.addEventListener(MouseEvent.CLICK, buySHOTGUNAMMO);
 			shopscreen.buyflamethrowerammo.addEventListener(MouseEvent.CLICK, buyFLAMETHROWERAMMO);
-			
+			shopscreen.buymedshot.addEventListener(MouseEvent.CLICK, buyMEDSHOT);
 			shopscreen.buyspeedboost.addEventListener(MouseEvent.CLICK, buySPEEDBOOST);
 			
 			shopscreen.exitshop.addEventListener(MouseEvent.CLICK, closeshop);
@@ -511,6 +511,7 @@
 		public var confirmarmour:confirmarmour_mc = new confirmarmour_mc();
 		public var confirmtorch:confirmtorch_mc = new confirmtorch_mc();
 		public var confirmspeedboost:confirmspeedboost_mc = new confirmspeedboost_mc();
+		public var confirmmedshot:confirmmedshot_mc = new confirmmedshot_mc();
 
 		//WEAPONS
 		public function buyUZI(event:MouseEvent):void {
@@ -607,6 +608,31 @@
 				shopscreen.removeChild(confirmarmour);
 			}
 		}
+		//MEDSHOT
+		public function buyMEDSHOT(event:MouseEvent):void {
+			shopscreen.addChild(confirmmedshot);
+			confirmmedshot.yesmedshot.addEventListener(MouseEvent.CLICK, confirmBUYMEDSHOT);
+			confirmmedshot.nomedshot.addEventListener(MouseEvent.CLICK, cancelBUYMEDSHOT);
+		}
+		public function cancelBUYMEDSHOT(event:MouseEvent):void {
+			if(shopscreen.contains(confirmmedshot)){
+				shopscreen.removeChild(confirmmedshot);
+			}
+		}
+		public function confirmBUYMEDSHOT(event:MouseEvent):void {
+			if (currentcash >= 1500){
+			hasarmour = true;
+			collectMedshot();
+			currentcash -= 1500;//cost of medshot
+			updatetext();//update display
+			shopscreen.shopmessage.text = "Bought Medkit!";//shop message
+			}else{
+				shopscreen.shopmessage.text = "Not enough cash!";//shop message
+			}
+			if(shopscreen.contains(confirmmedshot)){
+				shopscreen.removeChild(confirmmedshot);
+			}
+		}
 		//MEDKIT
 		public function buyMEDKIT(event:MouseEvent):void {
 			shopscreen.addChild(confirmmedkit);
@@ -619,11 +645,11 @@
 			}
 		}
 		public function confirmBUYMEDKIT(event:MouseEvent):void {
-			if (currentcash >= 1500){
+			if (currentcash >= 2500){
 			hasarmour = true;
 			collectMedpack();
-			currentcash -= 1500;//cost of armour
-			updatetext();//update armour display
+			currentcash -= 2500;//cost of medkit
+			updatetext();//update display
 			shopscreen.shopmessage.text = "Bought Medkit!";//shop message
 			}else{
 				shopscreen.shopmessage.text = "Not enough cash!";//shop message
@@ -645,7 +671,7 @@
 		}
 		public function confirmBUYTORCH(event:MouseEvent):void {
 			if (currentcash >= 2500){
-			playerhastorch = true;
+			collectTorch();
 			currentcash -= 2500;//cost of torch
 			shopscreen.shopmessage.text = "Bought Torch!";//shop message
 			}else{
@@ -1119,20 +1145,12 @@
 		}
 		//torch
 		public function collectTorch():void {
-			if (this.contains(torch)){
-				//remove item from stage
-				removeChild(torch);
 				playerhastorch = true;
 				//update lighting
 				lighting();
-			}
 		}
 		//AMMO
 		public function collectAmmo():void {
-			//check if item exists
-			if (this.contains(ammocrate)){
-				//remove item from stage
-				removeChild(ammocrate);
 				//add ammo to current ammo count
 				pistolammo += 100;
 				uziammo += 100;
@@ -1141,22 +1159,32 @@
 				//reset ammo
 				ammoempty = false;
 				trace ("Collected Ammo Pack");
+
+		}
+		//MEDSHOT
+		public function collectMedshot():void {
+			//check if item exists
+			//Check if health is less than 90
+			if (health <= 80){
+				//add 10 health to current health count
+				health += 20;
 			}
+			//check if health is greater than 90
+			else if(health > 80){
+				//set current health to 100
+				health = 100;
+			}
+			trace ("Collected Medshot");
 		}
 		//MEDPACK
 		public function collectMedpack():void {
-			//check if item exists
-			if (this.contains(medpack)){
-				//remove item from stage
-				removeChild(medpack);
-			}
 			//Check if health is less than 90
-			if (health <= 90){
+			if (health <= 50){
 				//add 10 health to current health count
 				health += 50;
 			}
 			//check if health is greater than 90
-			else if(health > 90){
+			else if(health > 50){
 				//set current health to 100
 				health = 100;
 			}
@@ -1165,9 +1193,6 @@
 		
 		//SPEEDPACK
 		public function collectSpeedpack():void {
-			if (this.contains(speedpack)){
-					removeChild(speedpack);
-				}
 				//adds timer listener event when speed pack is collected
 				addEventListener(TimerEvent.TIMER, checkSpeedPackTimer);
 				//check if item exists
@@ -1320,29 +1345,26 @@
 		public function ProcessXP():void{
 			if (experience < 1000){
 				currentrank = 0;
-				stage.addChild(rank0);
+				addChild(rank0);
 				rank0.x = 66;
 				rank0.y = 387;
 			}
 			if (experience >= 1000){
 				currentrank = 1;
-				stage.addChild(rank1);
+				addChild(rank1);
 				rank1.x = 66;
 				rank1.y = 387;
-				if (stage.contains(rank0)){
-				stage.removeChild(rank0);
-				
-				
-
+				if (this.contains(rank0)){
+				removeChild(rank0);
 				}
 			}
 			if (experience >= 2500){
 				currentrank = 2;
-				stage.addChild(rank2);
+				addChild(rank2);
 				rank2.x = 66;
 				rank2.y = 387;
-				if (stage.contains(rank1)){
-				stage.removeChild(rank1);
+				if (this.contains(rank1)){
+				removeChild(rank1);
 				
 				
 
@@ -1353,8 +1375,8 @@
 				addChild(rank3);
 				rank3.x = 66;
 				rank3.y = 387;
-				if (stage.contains(rank2)){
-				stage.removeChild(rank2);
+				if (this.contains(rank2)){
+				removeChild(rank2);
 				
 				
 
@@ -1365,8 +1387,8 @@
 				addChild(rank4);
 				rank4.x = 66;
 				rank4.y = 387;
-				if (stage.contains(rank3)){
-				stage.removeChild(rank3);
+				if (this.contains(rank3)){
+				removeChild(rank3);
 				
 				
 
@@ -1377,8 +1399,8 @@
 				addChild(rank5);
 				rank5.x = 66;
 				rank5.y = 387;
-				if (stage.contains(rank4)){
-				stage.removeChild(rank4);
+				if (this.contains(rank4)){
+				removeChild(rank4);
 				
 				
 
@@ -1389,8 +1411,8 @@
 				addChild(rank6);
 				rank6.x = 66;
 				rank6.y = 387;
-				if (stage.contains(rank5)){
-				stage.removeChild(rank5);
+				if (this.contains(rank5)){
+				removeChild(rank5);
 				
 				
 
@@ -1401,8 +1423,8 @@
 				addChild(rank7);
 				rank7.x = 66;
 				rank7.y = 387;
-				if (stage.contains(rank6)){
-				stage.removeChild(rank6);
+				if (this.contains(rank6)){
+				removeChild(rank6);
 				
 				
 
@@ -1413,8 +1435,8 @@
 				addChild(rank8);
 				rank8.x = 66;
 				rank8.y = 387;
-				if (stage.contains(rank7)){
-				stage.removeChild(rank7);
+				if (this.contains(rank7)){
+				removeChild(rank7);
 				
 				
 
@@ -1425,8 +1447,8 @@
 				addChild(rank9);
 				rank9.x = 66;
 				rank9.y = 387;
-				if (stage.contains(rank8)){
-				stage.removeChild(rank8);
+				if (this.contains(rank8)){
+				removeChild(rank8);
 				
 				
 
@@ -1437,8 +1459,8 @@
 				addChild(rank10);
 				rank10.x = 66;
 				rank10.y = 387;
-				if (stage.contains(rank9)){
-				stage.removeChild(rank9);
+				if (this.contains(rank9)){
+				removeChild(rank9);
 				
 				
 
@@ -1449,8 +1471,8 @@
 				addChild(rank11);
 				rank11.x = 66;
 				rank11.y = 387;
-				if (stage.contains(rank10)){
-				stage.removeChild(rank10);
+				if (this.contains(rank10)){
+				removeChild(rank10);
 				
 				
 
@@ -1461,8 +1483,8 @@
 				addChild(rank12);
 				rank12.x = 66;
 				rank12.y = 387;
-				if (stage.contains(rank11)){
-				stage.removeChild(rank11);
+				if (this.contains(rank11)){
+				removeChild(rank11);
 				
 				
 
@@ -1473,8 +1495,8 @@
 				addChild(rank13);
 				rank13.x = 66;
 				rank13.y = 387;
-				if (stage.contains(rank12)){
-				stage.removeChild(rank12);
+				if (this.contains(rank12)){
+				removeChild(rank12);
 				
 				
 
@@ -1485,8 +1507,8 @@
 				addChild(rank14);
 				rank14.x = 66;
 				rank14.y = 387;
-				if (stage.contains(rank13)){
-				stage.removeChild(rank13);
+				if (this.contains(rank13)){
+				removeChild(rank13);
 				
 				
 
@@ -1497,8 +1519,8 @@
 				addChild(rank0);
 				rank15.x = 66;
 				rank15.y = 387;
-				if (stage.contains(rank14)){
-				stage.removeChild(rank14);
+				if (this.contains(rank14)){
+				removeChild(rank14);
 				
 				
 
@@ -1509,8 +1531,8 @@
 				addChild(rank0);
 				rank16.x = 66;
 				rank16.y = 387;
-				if (stage.contains(rank15)){
-				stage.removeChild(rank15);
+				if (this.contains(rank15)){
+				removeChild(rank15);
 				
 				
 
@@ -1521,8 +1543,8 @@
 				addChild(rank17);
 				rank17.x = 66;
 				rank17.y = 387;
-				if (stage.contains(rank16)){
-				stage.removeChild(rank16);
+				if (this.contains(rank16)){
+				removeChild(rank16);
 				
 				
 
@@ -1533,8 +1555,8 @@
 				addChild(rank18);
 				rank18.x = 66;
 				rank18.y = 387;
-				if (stage.contains(rank17)){
-				stage.removeChild(rank17);
+				if (this.contains(rank17)){
+				removeChild(rank17);
 				
 				
 
@@ -1545,8 +1567,8 @@
 				addChild(rank19);
 				rank19.x = 66;
 				rank19.y = 387;
-				if (stage.contains(rank18)){
-				stage.removeChild(rank18);
+				if (this.contains(rank18)){
+				removeChild(rank18);
 				
 				
 
