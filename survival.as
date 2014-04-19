@@ -35,6 +35,7 @@
 		public var torch:torch_mc= new torch_mc();
 		//weapons
 		public var pistol:pistol_mc = new pistol_mc();
+		public var chaingun:chaingun_mc = new chaingun_mc();
 		public var uzi:uzi_mc = new uzi_mc();
 		public var shotgun:shotgun_mc = new shotgun_mc();
 		public var bulletproofvest:bulletproofvest_mc = new bulletproofvest_mc();
@@ -44,6 +45,8 @@
 		public var isusinguzi:Boolean = false;
 		public var isusingshotgun:Boolean = false;
 		public var isusingflamethrower:Boolean = false;
+		public var isusingchaingun:Boolean = false;//
+		public var haschaingun:Boolean = true;//
 		public var haspistol:Boolean = true;
 		public var hasuzi:Boolean = false;
 		public var hasshotgun:Boolean = false;
@@ -58,7 +61,7 @@
 		public var key_pressed:int=0;
 		public var radius:int=8;//players "size" (sphere)
 		public var up,down,left,right:Boolean=false;
-		public var weapon1,weapon2,weapon3,weapon4:Boolean=false;//switch weapon keys 1,2,3
+		public var weapon1,weapon2,weapon3,weapon4,weapon5:Boolean=false;//switch weapon keys 1,2,3
 		public var mousePressed:Boolean = false; //keeps track of whether the mouse is currently pressed down
 		//shooting speed
 		public var delayCounter:int = 0; //we use this to add delay between the shots
@@ -68,6 +71,7 @@
 		public var uziammo:int = 0;
 		public var shotgunammo:int = 0;
 		public var flamethrowerammo:int = 0;
+		public var chaingunammo:int = 1000;
 		
 		public var hasarmour:Boolean = true;
 		public var armour:int = 25;//starting armour
@@ -248,28 +252,38 @@
 			if (walkthruwalls == false){
 				while (environment.hitTestPoint(player.x, player.y+radius, true)) {
 					player.y--;
+					playerMoving();
 				}
 				while (environment.hitTestPoint(player.x, player.y-radius, true)) {
 					player.y++;
+					playerMoving();
 				}
 				while (environment.hitTestPoint(player.x-radius, player.y, true)) {
 					player.x++;
+					playerMoving();
 				}
 				while (environment.hitTestPoint(player.x+radius, player.y, true)) {
 					player.x--;
+					playerMoving();
 				}
+				/* TEMP DISABLE DOOR CODE TILL NEEDED
 				while ((door.hitTestPoint(player.x, player.y+radius, true))||(door2.hitTestPoint(player.x, player.y+radius, true))) {
 					player.y--;
+					playerMoving();
 				}
 				while ((door.hitTestPoint(player.x, player.y-radius, true))||(door2.hitTestPoint(player.x, player.y-radius, true))) {
 					player.y++;
+					playerMoving();
 				}
 				while ((door.hitTestPoint(player.x-radius, player.y, true))||(door2.hitTestPoint(player.x-radius, player.y, true))) {
 					player.x++;
+					playerMoving();
 				}
 				while ((door.hitTestPoint(player.x+radius, player.y, true))||(door2.hitTestPoint(player.x+radius, player.y, true))) {
 					player.x--;
+					playerMoving();
 				}
+				*/
 			}
 			//SHOOTING
 			if(mousePressed == true){
@@ -299,6 +313,12 @@
 						flamethrowerammo -= 1;
 						globalflamethrowerbullets += 1;
 					}
+					if ((isusingchaingun == true) && (chaingunammo >= 1) && (infinteammo == false)){
+						chaingunammo -= 1;
+						globalchaingunbullets += 1;
+						shootChaingunBullet(); //shoot a bullet
+						delayCounter = 0; //reset the delay counter so there is a pause between bullets
+					}
 				}
 			}
 			if(bulletList.length > 0){
@@ -314,22 +334,30 @@
 		public function processScripts(e:Event):void{
 			updatetext();
 			checkSpeedPackTimer();
+			
 			createZombies();
 			checkzombieHit();
+			
 			collectItem();
 			//openDoor();
-			finishlevel();
-			//player animations
+			//Moved to 
+			
 			playerMoving();
 			//remove flame thrower flames
 			removeFlames();
-			checkhealth();
-			checkarmour();
+			//moved to zombie hit detection
+			//checkhealth();
+			//checkarmour();
 			lighting();
-			ProcessXP();
 			processfog();
-			//achivements
-			processAchivements();
+			//only process when when zombie dies
+			//ProcessXP();
+			//finishlevel();
+			
+			//moved to pause screen achivements
+			//processAchivements();
+			
+			//dont save every frame FPS issue on mobiles
 			saveachiveData();// save achivement data to disk
 		}
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -356,7 +384,7 @@
 			achivementscreen.globaluzibulletstext.text = globaluzibullets.toString();
 			achivementscreen.globalshotgunbulletstext.text = globalshotgunbullets.toString();
 			achivementscreen.globalflamethrowerbulletstext.text = globalflamethrowerbullets.toString();
-			
+			achivementscreen.globalchaingunbullets.text = globalchaingunbullets.toString();
 		}
 		
 		public var saveAchivementDataObject:SharedObject;
@@ -370,6 +398,7 @@
 		public var globaluzibullets:int;
 		public var globalshotgunbullets:int;
 		public var globalflamethrowerbullets:int;
+		public var globalchaingunbullets:int;
 				
 		//zombies
 		public var globalzombiekills:int;
@@ -378,7 +407,7 @@
 		public var achive1,achive2,achive3,achive4,achive5,achive6,achive7,achive8,achive9,achive10:Boolean;
 		public var achive11,achive12,achive13,achive14,achive15,achive16,achive17,achive18,achive19,achive20:Boolean;
 		public var achive21,achive22,achive23,achive24,achive25,achive26,achive27,achive28,achive29,achive30:Boolean;
-		public var achive31,achive32,achive33,achive34,achive35:Boolean;
+		public var achive31,achive32,achive33,achive34,achive35,achive36,achive37,achive38,achive39,achive40:Boolean;
 		
 		public function processAchivements():void{
 			//CASH EARNT
@@ -495,6 +524,23 @@
 			if( globalflamethrowerbullets >= 1000000){
 				achive35 = true;
 			}
+			//CHAINGUN
+			
+			if( globalchaingunbullets >= 1000){
+				achive36 = true;
+			}
+			if( globalchaingunbullets >= 5000){
+				achive37 = true;
+			}
+			if( globalchaingunbullets >= 10000){
+				achive38 = true;
+			}
+			if( globalchaingunbullets >= 100000){
+				achive39 = true;
+			}
+			if( globalchaingunbullets >= 1000000){
+				achive40 = true;
+			}
 		}
 		public function saveachiveData():void{
 				saveAchivementDataObject = SharedObject.getLocal("achivement"); 
@@ -504,6 +550,7 @@
 				saveAchivementDataObject.data.savedglobaluzibullets = globaluzibullets;
 				saveAchivementDataObject.data.savedglobalshotgunbullets = globalshotgunbullets;
 				saveAchivementDataObject.data.savedglobalflamethrowerbullets = globalflamethrowerbullets;
+				saveAchivementDataObject.data.savedglobalchaingunbullets = globalchaingunbullets;
 				saveAchivementDataObject.data.savedglobalzombiekills = globalzombiekills;
 				
 				saveAchivementDataObject.flush(); // immediately save to the local drive
@@ -517,6 +564,7 @@
 			globaluzibullets = saveAchivementDataObject.data.savedglobaluzibullets;
 			globalshotgunbullets = saveAchivementDataObject.data.savedglobalshotgunbullets;
 			globalflamethrowerbullets = saveAchivementDataObject.data.savedglobalflamethrowerbullets;
+			globalchaingunbullets = saveAchivementDataObject.data.savedglobalchaingunbullets;
 			globalzombiekills = saveAchivementDataObject.data.savedglobalzombiekills;
 		}
 		
@@ -524,6 +572,8 @@
 //							PAUSE GAME
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////		
 		public function openpausescreen(e:MouseEvent):void{
+					//process achivements
+					processAchivements();
 					ispaused = true;
 					stage.removeEventListener(Event.ENTER_FRAME,mainloop);
 					stage.removeEventListener(Event.ENTER_FRAME,processScripts);
@@ -535,9 +585,11 @@
 					pausescreen.restartgame.addEventListener(MouseEvent.CLICK, restartGame);
 					pausescreen.exitpausescreen.addEventListener(MouseEvent.CLICK, closepausescreen);
 					pausescreen.savegamebutton.addEventListener(MouseEvent.CLICK, saveData);
-								pausescreen.loadgamebutton.addEventListener(MouseEvent.CLICK, loadgame);
+					pausescreen.loadgamebutton.addEventListener(MouseEvent.CLICK, loadgame);
 		}
 		public function closepausescreen(e:MouseEvent):void{
+					//process achivements
+					processAchivements();
 					ispaused = false;
 					stage.addEventListener(Event.ENTER_FRAME,mainloop);
 					stage.addEventListener(Event.ENTER_FRAME,processScripts);
@@ -574,6 +626,8 @@
 					weapon2 = false;
 					weapon3 = false;
 					weapon4 = false;
+					weapon5 = false;
+					isusingchaingun = false;
 					isusingpistol = true;
 					isusinguzi = false;
 					isusingshotgun = false;
@@ -589,6 +643,8 @@
 					weapon1 = false;
 					weapon3 = false;
 					weapon4 = false;
+					weapon5 = false;
+					isusingchaingun = false;
 					isusingpistol = false;
 					isusinguzi = true;
 					isusingshotgun = false;
@@ -609,6 +665,8 @@
 					isusinguzi = false;
 					isusingshotgun = true;
 					isusingflamethrower = false;
+					weapon5 = false;
+					isusingchaingun = false;
 					delayMax = 20; //try changing this number to shoot more or less rapidly
 					delayCounter = 0;
 					trace ("Switched to shotgun:" + delayMax);
@@ -624,9 +682,28 @@
 					isusinguzi = false;
 					isusingshotgun = false;
 					isusingflamethrower = true;
+					weapon5 = false;
+					isusingchaingun = false;
 					delayMax = 2; //try changing this number to shoot more or less rapidly
 					delayCounter = 0;
 					trace ("Switched to flamethrower:" + delayMax);
+				}
+				break;
+				case 53 : // 5
+				if (haschaingun == true){
+					weapon3 = false;
+					weapon1 = false;
+					weapon2 = false;
+					weapon4 = false;
+					isusingpistol = false;
+					isusinguzi = false;
+					isusingshotgun = false;
+					isusingflamethrower = false;
+					weapon5 = true;
+					isusingchaingun = true;
+					delayMax = 4; //try changing this number to shoot more or less rapidly
+					delayCounter = 0;
+					trace ("Switched to chaingun:" + delayMax);
 				}
 				break;
 			}
@@ -689,6 +766,7 @@
 			shopscreen.buyuzi.addEventListener(MouseEvent.CLICK, buyUZI);
 			shopscreen.buyshotgun.addEventListener(MouseEvent.CLICK, buySHOTGUN);
 			shopscreen.buyflamethrower.addEventListener(MouseEvent.CLICK, buyFLAMETHROWER);
+			shopscreen.buychaingun.addEventListener(MouseEvent.CLICK, buyCHAINGUN);
 			
 			shopscreen.buypistolammo.addEventListener(MouseEvent.CLICK, buyPISTOLAMMO);
 			shopscreen.buyuziammo.addEventListener(MouseEvent.CLICK, buyUZIAMMO);
@@ -717,8 +795,33 @@
 		public var confirmtorch:confirmtorch_mc = new confirmtorch_mc();
 		public var confirmspeedboost:confirmspeedboost_mc = new confirmspeedboost_mc();
 		public var confirmmedshot:confirmmedshot_mc = new confirmmedshot_mc();
+		public var confirmchaingun:confirmchaingun_mc = new confirmchaingun_mc();
 
 		//WEAPONS
+		public function buyCHAINGUN(event:MouseEvent):void {
+			shopscreen.addChild(confirmchaingun);
+			confirmchaingun.yesuzi.addEventListener(MouseEvent.CLICK, confirmBUYCHAINGUN);
+			confirmchaingun.nouzi.addEventListener(MouseEvent.CLICK, cancelBUYCHAINGUN);
+		}
+		public function cancelBUYCHAINGUN(event:MouseEvent):void {
+			if(shopscreen.contains(confirmchaingun)){
+				shopscreen.removeChild(confirmchaingun);
+			}
+		}
+		public function confirmBUYCHAINGUN(event:MouseEvent):void {
+			if (currentcash >= 5000){
+			haschaingun = true;
+			chaingunammo = 1500;
+			currentcash -= 5000;//cost of uzi
+			globalcashspent += 5000;
+			shopscreen.shopmessage.text = "Bought CHAINGUN!";//shop message
+			}else{
+				shopscreen.shopmessage.text = "Not enough cash!";//shop message
+			}
+			if(shopscreen.contains(confirmchaingun)){
+				shopscreen.removeChild(confirmchaingun);
+			}
+		}
 		public function buyUZI(event:MouseEvent):void {
 			shopscreen.addChild(confirmuzi);
 			confirmuzi.yesuzi.addEventListener(MouseEvent.CLICK, confirmBUYUZI);
@@ -1062,6 +1165,8 @@
 							}else if (hasarmour == true){
 								armour -= zombie1.zombiedamage;
 							}
+							checkhealth();
+							checkarmour();
 						}
 					}
 					if (zombie1.hitTestPoint(player.x, player.y-radius, true)){
@@ -1073,6 +1178,8 @@
 							}else if (hasarmour == true){
 								armour -= zombie1.zombiedamage;
 							}
+							checkhealth();
+							checkarmour();
 						}
 					}
 					if (zombie1.hitTestPoint(player.x-radius, player.y, true)){
@@ -1084,6 +1191,8 @@
 							}else if (hasarmour == true){
 								armour -= zombie1.zombiedamage;
 							}
+							checkhealth();
+							checkarmour();
 						}
 					}
 					if (zombie1.hitTestPoint(player.x, player.y+radius, true)){
@@ -1095,9 +1204,11 @@
 							}else if (hasarmour == true){
 								armour -= zombie1.zombiedamage;
 							}
+							checkhealth();
+							checkarmour();
 						}
 					}
-					var numOfClips:Number = 1;
+					var numOfClips:Number = 10;
 					var deadzombieArray:Array = new Array();
 					var deadzombie:deadzombie_mc = new deadzombie_mc();
 					var deadzombie1:deadzombie1_mc = new deadzombie1_mc();
@@ -1171,7 +1282,7 @@
 								}
 
 								if(zombie1.zombiehitpoints <= 0){
-							deadzombieRandom = randomRange(0,2);
+									deadzombieRandom = randomRange(0,2);
 									
 									for(var i=0; i<numOfClips; i++)
 									{
@@ -1236,6 +1347,11 @@
 			totalzombieskilled += 1;
 			//globalzombiekills
 			globalzombiekills +=1;
+			
+			//Process XP
+			ProcessXP();
+			//check next level requirments
+			finishlevel();
 			trace ("Zombie Removed");
 		}
 		public function deadzombieRemoved(ee:Event):void{
@@ -1337,6 +1453,49 @@
 			bulletList.push(bullet);
 			//add bullet to stage
 			enemycontainer.addChild(bullet);
+			//reduce ammo by 1
+		}
+		public function shootChaingunBullet():void {
+			//create new bullet based on players X/Y and Rotation
+			var bullet:Bullet = new Bullet(stage, player.x, player.y, player.rotation - 10);
+			var bullet1:Bullet = new Bullet(stage, player.x, player.y, player.rotation + 10);
+			var bullet2:Bullet = new Bullet(stage, player.x, player.y, player.rotation);
+			var bullet3:Bullet = new Bullet(stage, player.x, player.y, player.rotation + 20);
+			var bullet4:Bullet = new Bullet(stage, player.x, player.y, player.rotation - 20);
+			var bullet5:Bullet = new Bullet(stage, player.x, player.y, player.rotation + 5);
+			var bullet6:Bullet = new Bullet(stage, player.x, player.y, player.rotation - 5);
+			var bullet7:Bullet = new Bullet(stage, player.x, player.y, player.rotation + 25);
+			var bullet8:Bullet = new Bullet(stage, player.x, player.y, player.rotation - 25);
+			//Add event to bullets to remove them from array when removed from stage
+			bullet.addEventListener(Event.REMOVED_FROM_STAGE, bulletRemoved, false, 0, true);
+			bullet1.addEventListener(Event.REMOVED_FROM_STAGE, bulletRemoved, false, 0, true);
+			bullet2.addEventListener(Event.REMOVED_FROM_STAGE, bulletRemoved, false, 0, true);
+			bullet3.addEventListener(Event.REMOVED_FROM_STAGE, bulletRemoved, false, 0, true);
+			bullet4.addEventListener(Event.REMOVED_FROM_STAGE, bulletRemoved, false, 0, true);
+			bullet5.addEventListener(Event.REMOVED_FROM_STAGE, bulletRemoved, false, 0, true);
+			bullet6.addEventListener(Event.REMOVED_FROM_STAGE, bulletRemoved, false, 0, true);
+			bullet7.addEventListener(Event.REMOVED_FROM_STAGE, bulletRemoved, false, 0, true);
+			bullet8.addEventListener(Event.REMOVED_FROM_STAGE, bulletRemoved, false, 0, true);
+			//add bullet to array
+			bulletList.push(bullet);
+			bulletList.push(bullet1);
+			bulletList.push(bullet2);
+			bulletList.push(bullet3);
+			bulletList.push(bullet4);
+			bulletList.push(bullet5);
+			bulletList.push(bullet6);
+			bulletList.push(bullet7);
+			bulletList.push(bullet8);
+			//add bullet to stage
+			enemycontainer.addChild(bullet);
+			enemycontainer.addChild(bullet1);
+			enemycontainer.addChild(bullet2);
+			enemycontainer.addChild(bullet3);
+			enemycontainer.addChild(bullet4);
+			enemycontainer.addChild(bullet5);
+			enemycontainer.addChild(bullet6);
+			enemycontainer.addChild(bullet7);
+			enemycontainer.addChild(bullet8);
 			//reduce ammo by 1
 		}
 		public function shootShotgun():void {
@@ -1591,6 +1750,7 @@
 				ui.icon_uzi.visible = false;
 				ui.icon_shotgun.visible = false;
 				ui.icon_flamethrower.visible = false;
+				ui.icon_chaingun.visible = false;
 			}
 			//uzi
 			if (isusinguzi == true){
@@ -1598,6 +1758,7 @@
 				ui.icon_uzi.visible = true;
 				ui.icon_shotgun.visible = false;
 				ui.icon_flamethrower.visible = false;
+				ui.icon_chaingun.visible = false;
 			}
 			//shotgun
 			if (isusingshotgun == true){
@@ -1605,6 +1766,7 @@
 				ui.icon_uzi.visible = false;
 				ui.icon_shotgun.visible = true;
 				ui.icon_flamethrower.visible = false;
+				ui.icon_chaingun.visible = false;
 			}
 			//flamethrower
 			if (isusingflamethrower == true){
@@ -1612,6 +1774,15 @@
 				ui.icon_uzi.visible = false;
 				ui.icon_shotgun.visible = false;
 				ui.icon_flamethrower.visible = true;
+				ui.icon_chaingun.visible = false;
+			}
+			//chaingun
+			if (isusingchaingun == true){
+				ui.icon_pistol.visible = false;
+				ui.icon_uzi.visible = false;
+				ui.icon_shotgun.visible = false;
+				ui.icon_flamethrower.visible = false;
+				ui.icon_chaingun.visible = true;
 			}
 		}
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
