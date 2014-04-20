@@ -165,6 +165,11 @@
 			}
 			stopspawn = false;//zombie spawn control
 			
+			//TImer
+			timer.start();
+		timer.addEventListener(TimerEvent.TIMER, timerTickHandler);
+			
+			
 			//load achivement data
 			loadachiveData();
 			
@@ -350,6 +355,37 @@
 
 			saveachiveData();// save achivement data to disk
 		}
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//							Time Played
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////		
+		public var timer:Timer = new Timer(100);
+		
+		public var timerCount:int = 0;
+		
+		function timerTickHandler(Event:TimerEvent):void
+		{
+			timerCount += 100;
+			toTimeCode(timerCount);
+		}
+		function toTimeCode(milliseconds:int) : void
+		{
+			//creating a date object using the elapsed milliseconds
+			var time:Date = new Date(milliseconds);
+		
+			//define minutes/seconds/mseconds
+			var minutes:String = String(time.minutes);
+			var seconds:String = String(time.seconds);
+			var miliseconds:String = String(Math.round(time.milliseconds)/100);
+		
+			//add zero if neccecary, for example: 2:3.5 becomes 02:03.5
+			minutes = (minutes.length != 2) ? '0'+minutes : minutes;
+			seconds = (seconds.length != 2) ? '0'+seconds : seconds;
+		
+			//display elapsed time on in a textfield on stage
+			statsscreen.timeplayedtext.text = minutes + ":" + seconds+"." + miliseconds;
+		
+		}
+		
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //							STATS
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////		
