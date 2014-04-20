@@ -21,6 +21,7 @@
 		public var confirmrestartgame:confirmrestartgame_mc = new confirmrestartgame_mc();
 		public var achivementscreen:achivementscreen_mc = new achivementscreen_mc();
 		public var shopscreen:shopscreen_mc = new shopscreen_mc();
+		public var statsscreen:statsscreen_mc = new statsscreen_mc();
 		
 		public var light:light_mc= new light_mc();
 		public var details:details_mc= new details_mc();
@@ -91,6 +92,7 @@
 		public var collectedSpeedPack:Boolean = false;
 		public var level:int = 1;//set start level
 		public var currentcash:int = 0;//cash
+		public var deaths:int = 0;
 
 		//what stage to start on
 		public var currentstage:int = 1;
@@ -349,30 +351,46 @@
 			saveachiveData();// save achivement data to disk
 		}
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//							STATS
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////		
+		public function showstatsscreen(event:MouseEvent):void {
+			pausescreen.addChild(statsscreen);
+			statsscreen.exitstatsscreen.addEventListener(MouseEvent.CLICK, closestatsscreen);
+			updateStats();
+		}
+		public function closestatsscreen(event:MouseEvent):void {
+			pausescreen.gotostatsscreen.addEventListener(MouseEvent.CLICK, showstatsscreen);
+			if(pausescreen.contains(statsscreen)){
+				pausescreen.removeChild(statsscreen);
+			}
+		}
+		public function updateStats():void{
+			statsscreen.globalcashearnttext.text = ("$" + globalcashearnt.toString());
+			statsscreen.globalcashspenttext.text = ("$" + globalcashspent.toString());
+			
+			statsscreen.globalzombiekillstext.text = globalzombiekills.toString();
+			
+			statsscreen.globalpistolbulletstext.text = globalpistolbullets.toString();
+			statsscreen.globaluzibulletstext.text = globaluzibullets.toString();
+			statsscreen.globalshotgunbulletstext.text = globalshotgunbullets.toString();
+			statsscreen.globalflamethrowerbulletstext.text = globalflamethrowerbullets.toString();
+			statsscreen.globalchaingunbulletstext.text = globalchaingunbullets.toString();
+		}
+		
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //							ACHIVEMENTS
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////		
 		public function showachivementscreen(event:MouseEvent):void {
 			pausescreen.addChild(achivementscreen);
 			achivementscreen.exitachivementscreen.addEventListener(MouseEvent.CLICK, closeachivementscreen);
-			updateachivementtext();
+			//updateachivementtext();
+			showAchivements();
 		}
 		public function closeachivementscreen(event:MouseEvent):void {
 			pausescreen.gotoachivementscreen.addEventListener(MouseEvent.CLICK, showachivementscreen);
 			if(pausescreen.contains(achivementscreen)){
 				pausescreen.removeChild(achivementscreen);
 			}
-		}
-		public function updateachivementtext():void{
-			achivementscreen.globalcashearnttext.text = ("$" + globalcashearnt.toString());
-			achivementscreen.globalcashspenttext.text = ("$" + globalcashspent.toString());
-			
-			achivementscreen.globalzombiekillstext.text = globalzombiekills.toString();
-			
-			achivementscreen.globalpistolbulletstext.text = globalpistolbullets.toString();
-			achivementscreen.globaluzibulletstext.text = globaluzibullets.toString();
-			achivementscreen.globalshotgunbulletstext.text = globalshotgunbullets.toString();
-			achivementscreen.globalflamethrowerbulletstext.text = globalflamethrowerbullets.toString();
-			achivementscreen.globalchaingunbulletstext.text = globalchaingunbullets.toString();
 		}
 		
 		public var saveAchivementDataObject:SharedObject;
@@ -396,6 +414,220 @@
 		public var achive11,achive12,achive13,achive14,achive15,achive16,achive17,achive18,achive19,achive20:Boolean;
 		public var achive21,achive22,achive23,achive24,achive25,achive26,achive27,achive28,achive29,achive30:Boolean;
 		public var achive31,achive32,achive33,achive34,achive35,achive36,achive37,achive38,achive39,achive40:Boolean;
+		
+		public function showAchivements():void{
+			//cash earnt
+			if (achive1 == true){
+				achivementscreen.cashearnt1.visible = true;
+			} else {
+				achivementscreen.cashearnt1.visible = false;
+			}
+			if (achive2 == true){
+				achivementscreen.cashearnt2.visible = true;
+			} else {
+				achivementscreen.cashearnt2.visible = false;
+			}
+			if (achive3 == true){
+				achivementscreen.cashearnt3.visible = true;
+			} else {
+				achivementscreen.cashearnt3.visible = false;
+			}
+			if (achive4 == true){
+				achivementscreen.cashearnt4.visible = true;
+			} else {
+				achivementscreen.cashearnt4.visible = false;
+			}
+			if (achive5 == true){
+				achivementscreen.cashearnt5.visible = true;
+			} else {
+				achivementscreen.cashearnt5.visible = false;
+			}
+			//cash spent
+			if (achive6 == true){
+				achivementscreen.cashspent1.visible = true;
+			} else {
+				achivementscreen.cashspent1.visible = false;
+			}
+			if (achive7 == true){
+				achivementscreen.cashspent2.visible = true;
+			} else {
+				achivementscreen.cashspent2.visible = false;
+			}
+			if (achive8 == true){
+				achivementscreen.cashspent3.visible = true;
+			} else {
+				achivementscreen.cashspent3.visible = false;
+			}
+			if (achive9 == true){
+				achivementscreen.cashspent4.visible = true;
+			} else {
+				achivementscreen.cashspent4.visible = false;
+			}
+			if (achive10 == true){
+				achivementscreen.cashspent5.visible = true;
+			} else {
+				achivementscreen.cashspent5.visible = false;
+			}
+			//zombie kills
+			if (achive11 == true){
+				achivementscreen.zombiekills1.visible = true;
+			} else {
+				achivementscreen.zombiekills1.visible = false;
+			}
+			if (achive12 == true){
+				achivementscreen.zombiekills2.visible = true;
+			} else {
+				achivementscreen.zombiekills2.visible = false;
+			}
+			if (achive13 == true){
+				achivementscreen.zombiekills3.visible = true;
+			} else {
+				achivementscreen.zombiekills3.visible = false;
+			}
+			if (achive14 == true){
+				achivementscreen.zombiekills4.visible = true;
+			} else {
+				achivementscreen.zombiekills4.visible = false;
+			}
+			if (achive15 == true){
+				achivementscreen.zombiekills5.visible = true;
+			} else {
+				achivementscreen.zombiekills5.visible = false;
+			}
+			//pistol bullets
+			if (achive16 == true){
+				achivementscreen.pistolbullets1.visible = true;
+			} else {
+				achivementscreen.pistolbullets1.visible = false;
+			}
+			if (achive17 == true){
+				achivementscreen.pistolbullets2.visible = true;
+			} else {
+				achivementscreen.pistolbullets2.visible = false;
+			}
+			if (achive18 == true){
+				achivementscreen.pistolbullets3.visible = true;
+			} else {
+				achivementscreen.pistolbullets3.visible = false;
+			}
+			if (achive19 == true){
+				achivementscreen.pistolbullets4.visible = true;
+			} else {
+				achivementscreen.pistolbullets4.visible = false;
+			}
+			if (achive20 == true){
+				achivementscreen.pistolbullets5.visible = true;
+			} else {
+				achivementscreen.pistolbullets5.visible = false;
+			}
+			
+			//uzi bullets
+			if (achive21 == true){
+				achivementscreen.uzibullets1.visible = true;
+			} else {
+				achivementscreen.uzibullets1.visible = false;
+			}
+			if (achive22 == true){
+				achivementscreen.uzibullets2.visible = true;
+			} else {
+				achivementscreen.uzibullets2.visible = false;
+			}
+			if (achive23 == true){
+				achivementscreen.uzibullets3.visible = true;
+			} else {
+				achivementscreen.uzibullets3.visible = false;
+			}
+			if (achive24 == true){
+				achivementscreen.uzibullets4.visible = true;
+			} else {
+				achivementscreen.uzibullets4.visible = false;
+			}
+			if (achive25 == true){
+				achivementscreen.uzibullets5.visible = true;
+			} else {
+				achivementscreen.uzibullets5.visible = false;
+			}
+			//shotgun bullets
+			if (achive26 == true){
+				achivementscreen.shotgunbullets1.visible = true;
+			} else {
+				achivementscreen.shotgunbullets1.visible = false;
+			}
+			if (achive27 == true){
+				achivementscreen.shotgunbullets2.visible = true;
+			} else {
+				achivementscreen.shotgunbullets2.visible = false;
+			}
+			if (achive28 == true){
+				achivementscreen.shotgunbullets3.visible = true;
+			} else {
+				achivementscreen.shotgunbullets3.visible = false;
+			}
+			if (achive29 == true){
+				achivementscreen.shotgunbullets4.visible = true;
+			} else {
+				achivementscreen.shotgunbullets4.visible = false;
+			}
+			if (achive30 == true){
+				achivementscreen.shotgunbullets5.visible = true;
+			} else {
+				achivementscreen.shotgunbullets5.visible = false;
+			}
+			//flamethrower bullets
+			if (achive31 == true){
+				achivementscreen.flamethrowerbullets1.visible = true;
+			} else {
+				achivementscreen.flamethrowerbullets1.visible = false;
+			}
+			if (achive32 == true){
+				achivementscreen.flamethrowerbullets2.visible = true;
+			} else {
+				achivementscreen.flamethrowerbullets2.visible = false;
+			}
+			if (achive33 == true){
+				achivementscreen.flamethrowerbullets3.visible = true;
+			} else {
+				achivementscreen.flamethrowerbullets3.visible = false;
+			}
+			if (achive34 == true){
+				achivementscreen.flamethrowerbullets4.visible = true;
+			} else {
+				achivementscreen.flamethrowerbullets4.visible = false;
+			}
+			if (achive35 == true){
+				achivementscreen.flamethrowerbullets5.visible = true;
+			} else {
+				achivementscreen.flamethrowerbullets5.visible = false;
+			}
+			//pistol bullets
+			if (achive36 == true){
+				achivementscreen.chaingunbullets1.visible = true;
+			} else {
+				achivementscreen.chaingunbullets1.visible = false;
+			}
+			if (achive37 == true){
+				achivementscreen.chaingunbullets2.visible = true;
+			} else {
+				achivementscreen.chaingunbullets2.visible = false;
+			}
+			if (achive38 == true){
+				achivementscreen.chaingunbullets3.visible = true;
+			} else {
+				achivementscreen.chaingunbullets3.visible = false;
+			}
+			if (achive39 == true){
+				achivementscreen.chaingunbullets4.visible = true;
+			} else {
+				achivementscreen.chaingunbullets4.visible = false;
+			}
+			if (achive40 == true){
+				achivementscreen.chaingunbullets5.visible = true;
+			} else {
+				achivementscreen.chaingunbullets5.visible = false;
+			}
+
+			
+		}
 		
 		public function processAchivements():void{
 			//CASH EARNT
@@ -480,19 +712,19 @@
 			}
 			//SHOTGUN
 	
-			if( globalpistolbullets >= 1000){
+			if( globalshotgunbullets >= 1000){
 				achive26 = true;
 			}
-			if( globalpistolbullets >= 5000){
+			if( globalshotgunbullets >= 5000){
 				achive27 = true;
 			}
-			if( globalpistolbullets >= 10000){
+			if( globalshotgunbullets >= 10000){
 				achive28 = true;
 			}
-			if( globalpistolbullets >= 100000){
+			if( globalshotgunbullets >= 100000){
 				achive29 = true;
 			}
-			if( globalpistolbullets >= 1000000){
+			if( globalshotgunbullets >= 1000000){
 				achive30 = true;
 			}
 			//FLAMETHROWER
@@ -531,7 +763,7 @@
 			}
 		}
 		public function saveachiveData():void{
-				saveAchivementDataObject = SharedObject.getLocal("achivement"); 
+				saveAchivementDataObject = SharedObject.getLocal("achivements"); 
 				saveAchivementDataObject.data.savedglobalcashearnt = globalcashearnt;
 				saveAchivementDataObject.data.savedsglobalcashspent = globalcashspent;
 				saveAchivementDataObject.data.savedglobalpistolbullets = globalpistolbullets;
@@ -540,11 +772,12 @@
 				saveAchivementDataObject.data.savedglobalflamethrowerbullets = globalflamethrowerbullets;
 				saveAchivementDataObject.data.savedglobalchaingunbullets = globalchaingunbullets;
 				saveAchivementDataObject.data.savedglobalzombiekills = globalzombiekills;
+				saveAchivementDataObject.data.saveddeaths = deaths;
 				
 				saveAchivementDataObject.flush(); // immediately save to the local drive
 		}
 		public function loadachiveData():void{
-			saveAchivementDataObject = SharedObject.getLocal("achivement"); 
+			saveAchivementDataObject = SharedObject.getLocal("achivements"); 
 			
 			globalcashearnt = saveAchivementDataObject.data.savedglobalcashearnt;
 			globalcashspent = saveAchivementDataObject.data.savedsglobalcashspent;
@@ -554,6 +787,7 @@
 			globalflamethrowerbullets = saveAchivementDataObject.data.savedglobalflamethrowerbullets;
 			globalchaingunbullets = saveAchivementDataObject.data.savedglobalchaingunbullets;
 			globalzombiekills = saveAchivementDataObject.data.savedglobalzombiekills;
+			deaths = saveAchivementDataObject.data.saveddeaths;
 		}
 		
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -576,6 +810,7 @@
 					pausescreen.exitpausescreen.addEventListener(MouseEvent.CLICK, closepausescreen);
 					pausescreen.savegamebutton.addEventListener(MouseEvent.CLICK, saveData);
 					pausescreen.loadgamebutton.addEventListener(MouseEvent.CLICK, loadgame);
+					pausescreen.gotostatsscreen.addEventListener(MouseEvent.CLICK, showstatsscreen);
 		}
 		public function closepausescreen(e:MouseEvent):void{
 					//process achivements
@@ -1797,6 +2032,7 @@
 					stage.removeEventListener(Event.ENTER_FRAME,processScripts);
 					trace("GAME OVER");
 					stage.addChild(gameoverscreen);
+					deaths += 1;
 					gameoverscreen.restartgame.addEventListener(MouseEvent.CLICK, restartGame);
 		
 	}
