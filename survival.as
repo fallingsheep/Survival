@@ -166,7 +166,7 @@
 			//load achivement data
 			loadachiveData();
 			
-			processfog(); //start ground
+			processfog(); //start fog
 
 			//environment
 			addChild(environment);
@@ -225,7 +225,7 @@
 		public function mainloop(e:Event):void {
 			//debug fps + mem
 			debugstuff();
-			
+			processfog();
 			
 			var dist_x:Number=player.x-mouseX;
 			var dist_y:Number=player.y-mouseY;
@@ -314,8 +314,8 @@
 						globalflamethrowerbullets += 1;
 					}
 					if ((isusingchaingun == true) && (chaingunammo >= 1) && (infinteammo == false)){
-						chaingunammo -= 1;
-						globalchaingunbullets += 1;
+						chaingunammo -= 2;
+						globalchaingunbullets += 2;
 						shootChaingunBullet(); //shoot a bullet
 						delayCounter = 0; //reset the delay counter so there is a pause between bullets
 					}
@@ -340,24 +340,12 @@
 			
 			collectItem();
 			//openDoor();
-			//Moved to 
 			
 			playerMoving();
 			//remove flame thrower flames
 			removeFlames();
-			//moved to zombie hit detection
-			//checkhealth();
-			//checkarmour();
 			lighting();
-			processfog();
-			//only process when when zombie dies
-			//ProcessXP();
-			//finishlevel();
-			
-			//moved to pause screen achivements
-			//processAchivements();
-			
-			//dont save every frame FPS issue on mobiles
+
 			saveachiveData();// save achivement data to disk
 		}
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -384,7 +372,7 @@
 			achivementscreen.globaluzibulletstext.text = globaluzibullets.toString();
 			achivementscreen.globalshotgunbulletstext.text = globalshotgunbullets.toString();
 			achivementscreen.globalflamethrowerbulletstext.text = globalflamethrowerbullets.toString();
-			achivementscreen.globalchaingunbullets.text = globalchaingunbullets.toString();
+			achivementscreen.globalchaingunbulletstext.text = globalchaingunbullets.toString();
 		}
 		
 		public var saveAchivementDataObject:SharedObject;
@@ -573,7 +561,9 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////		
 		public function openpausescreen(e:MouseEvent):void{
 					//process achivements
+					saveachiveData();
 					processAchivements();
+					
 					ispaused = true;
 					stage.removeEventListener(Event.ENTER_FRAME,mainloop);
 					stage.removeEventListener(Event.ENTER_FRAME,processScripts);
@@ -590,6 +580,8 @@
 		public function closepausescreen(e:MouseEvent):void{
 					//process achivements
 					processAchivements();
+					saveachiveData();
+					
 					ispaused = false;
 					stage.addEventListener(Event.ENTER_FRAME,mainloop);
 					stage.addEventListener(Event.ENTER_FRAME,processScripts);
@@ -701,7 +693,7 @@
 					isusingflamethrower = false;
 					weapon5 = true;
 					isusingchaingun = true;
-					delayMax = 4; //try changing this number to shoot more or less rapidly
+					delayMax = 2; //try changing this number to shoot more or less rapidly
 					delayCounter = 0;
 					trace ("Switched to chaingun:" + delayMax);
 				}
@@ -782,6 +774,8 @@
 			if(pausescreen.contains(shopscreen)){
 				pausescreen.removeChild(shopscreen);
 			}
+			//save achive data
+			saveachiveData();
 		}
 		public var confirmpistolammo:confirmpistolammo_mc = new confirmpistolammo_mc();
 		public var confirmshotgun:confirmshotgun_mc = new confirmshotgun_mc();
@@ -1150,7 +1144,12 @@
 				}
 			}
 		}
-		
+		var numOfClips:Number = 10;
+					//var deadzombieArray:Array = new Array();
+					//var deadzombie:deadzombie_mc = new deadzombie_mc();
+		var deadzombie1:deadzombie1_mc = new deadzombie1_mc();
+		var deadzombieRandom:int;
+		var currentdead:int;
 		public function checkzombieHit():void{
 			for (var idx:int = zombieArray.length - 1; idx >= 0; idx--){
 						var zombie1:Zombie = zombieArray[idx];
@@ -1208,11 +1207,7 @@
 							checkarmour();
 						}
 					}
-					var numOfClips:Number = 10;
-					var deadzombieArray:Array = new Array();
-					var deadzombie:deadzombie_mc = new deadzombie_mc();
-					var deadzombie1:deadzombie1_mc = new deadzombie1_mc();
-					var deadzombieRandom:int;
+					
 					
 					//flamerthrower
 					if(flamethrowerflames.hitTestPoint(zombie1.x,zombie1.y, true)){
@@ -1235,6 +1230,7 @@
 												deadzombie.y = zombie1.y;
 												deadzombie.gotoAndStop(1);
 												deadzombie.rotation = zombie1.rotation  - 180;
+												deadzombie.addEventListener(Event.REMOVED_FROM_STAGE, deadzombieRemoved, false, 0, true);
 											} 
 											if (deadzombieRandom == 1){
 												ground.addChild(deadzombie1);
@@ -1244,6 +1240,7 @@
 												deadzombie1.y = zombie1.y;
 												deadzombie1.gotoAndStop(1);
 												deadzombie1.rotation = zombie1.rotation  - 180;
+												deadzombie.addEventListener(Event.REMOVED_FROM_STAGE, deadzombieRemoved, false, 0, true);
 											}
 											if (deadzombieRandom == 2){
 												ground.addChild(deadzombie);
@@ -1253,16 +1250,28 @@
 												deadzombie.y = zombie1.y;
 												deadzombie.gotoAndStop(1);
 												deadzombie.rotation = zombie1.rotation  - 180;
+												deadzombie.addEventListener(Event.REMOVED_FROM_STAGE, deadzombieRemoved, false, 0, true);
 											}
+										}
+									}
+									if (currentdead >= 5){
+										if (this.parent.contains(deadzombie1)){
+											this.parent.removeChild(deadzombie1);
+											currentdead -= 1;
 										}
 									}
 								if(zombie1.zombieType == 0){
 										experience += 100;
+										currentcash += 10;
+										globalcashearnt += 10;
 								}
 								if(zombie1.zombieType == 1){
 										experience += 500;
+										currentcash += 50;
+										globalcashearnt += 50;
 								}
-							enemycontainer.removeChild(zombie1);
+								enemycontainer.removeChild(zombie1);
+								currentdead += 1;
 						}
 					}
 					//bullets
@@ -1291,11 +1300,12 @@
 											if (deadzombieRandom == 0){
 												ground.addChild(deadzombie);
 												ground.setChildIndex(deadzombie,1);//blood goes under bodys
-												deadzombieArray.push(deadzombie);
+												//deadzombieArray.push(deadzombie);
 												deadzombie.x = zombie1.x;
 												deadzombie.y = zombie1.y;
 												deadzombie.gotoAndStop(1);
 												deadzombie.rotation = zombie1.rotation  - 180;
+												deadzombie.addEventListener(Event.REMOVED_FROM_STAGE, deadzombieRemoved, false, 0, true);
 											} 
 											if (deadzombieRandom == 1){
 												ground.addChild(deadzombie1);
@@ -1305,6 +1315,7 @@
 												deadzombie1.y = zombie1.y;
 												deadzombie1.gotoAndStop(1);
 												deadzombie1.rotation = zombie1.rotation  - 180;
+												deadzombie.addEventListener(Event.REMOVED_FROM_STAGE, deadzombieRemoved, false, 0, true);
 											}
 											if (deadzombieRandom == 2){
 												ground.addChild(deadzombie);
@@ -1314,16 +1325,22 @@
 												deadzombie.y = zombie1.y;
 												deadzombie.gotoAndStop(1);
 												deadzombie.rotation = zombie1.rotation  - 180;
+												deadzombie.addEventListener(Event.REMOVED_FROM_STAGE, deadzombieRemoved, false, 0, true);
 											}
 										}
 									}
-								if(zombie1.zombieType == 0){
-										experience += 100;
-								}
-								if(zombie1.zombieType == 1){
-										experience += 500;
-								}
+									if(zombie1.zombieType == 0){
+											experience += 100;
+											currentcash += 10;
+											globalcashearnt += 10;
+									}
+									if(zombie1.zombieType == 1){
+											experience += 500;
+											currentcash += 50;
+											globalcashearnt += 50;
+									}
 									enemycontainer.removeChild(zombie1);
+									currentdead += 1;
 								}
 								
 							}
@@ -1347,18 +1364,20 @@
 			totalzombieskilled += 1;
 			//globalzombiekills
 			globalzombiekills +=1;
-			
+												
 			//Process XP
 			ProcessXP();
 			//check next level requirments
 			finishlevel();
+			//save achive
+			saveachiveData();
 			trace ("Zombie Removed");
 		}
 		public function deadzombieRemoved(ee:Event):void{
 			//remove the event listner from current zombie
 			ee.currentTarget.removeEventListener(Event.REMOVED_FROM_STAGE, deadzombieRemoved);
 			//remove current zombie from array
-			deadzombieArray.splice(zombieArray.indexOf(ee.currentTarget),1);
+			deadzombieArray.splice(deadzombieArray.indexOf(ee.currentTarget),1);
 			trace ("Dead Zombie Removed");
 		}
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1402,7 +1421,7 @@
 				stopspawn = false;
 				trace ("Level:" + level);
 			}
-			else if ((level == 7)&&(zombieskilled >= 1300)){
+			else if ((level == 7)&&(zombieskilled >= 130)){
 				zombiespawncount = 19;
 				level += 1;
 				stopspawn = false;
@@ -1428,12 +1447,14 @@
 				trace ("Stage 1");
 				environment.gotoAndStop(1);
 				ground.gotoAndStop(1);
+				processfog();
 			}
 			else if (currentstage == 2){
 				level = 1;
 				zombieskilled = 0;
 				endfog();//stop fog
 				trace ("Stage 2");
+				processfog();
 				environment.gotoAndStop(2);
 				ground.gotoAndStop(2);
 			}
@@ -1455,47 +1476,26 @@
 			enemycontainer.addChild(bullet);
 			//reduce ammo by 1
 		}
+		var chaingunRandom:int;
+		
 		public function shootChaingunBullet():void {
+			chaingunRandom = randomRange(0,25);
 			//create new bullet based on players X/Y and Rotation
-			var bullet:Bullet = new Bullet(stage, player.x, player.y, player.rotation - 10);
-			var bullet1:Bullet = new Bullet(stage, player.x, player.y, player.rotation + 10);
-			var bullet2:Bullet = new Bullet(stage, player.x, player.y, player.rotation);
-			var bullet3:Bullet = new Bullet(stage, player.x, player.y, player.rotation + 20);
-			var bullet4:Bullet = new Bullet(stage, player.x, player.y, player.rotation - 20);
-			var bullet5:Bullet = new Bullet(stage, player.x, player.y, player.rotation + 5);
-			var bullet6:Bullet = new Bullet(stage, player.x, player.y, player.rotation - 5);
-			var bullet7:Bullet = new Bullet(stage, player.x, player.y, player.rotation + 25);
-			var bullet8:Bullet = new Bullet(stage, player.x, player.y, player.rotation - 25);
+			var bullet:Bullet = new Bullet(stage, player.x, player.y, player.rotation - chaingunRandom);
 			//Add event to bullets to remove them from array when removed from stage
 			bullet.addEventListener(Event.REMOVED_FROM_STAGE, bulletRemoved, false, 0, true);
-			bullet1.addEventListener(Event.REMOVED_FROM_STAGE, bulletRemoved, false, 0, true);
-			bullet2.addEventListener(Event.REMOVED_FROM_STAGE, bulletRemoved, false, 0, true);
-			bullet3.addEventListener(Event.REMOVED_FROM_STAGE, bulletRemoved, false, 0, true);
-			bullet4.addEventListener(Event.REMOVED_FROM_STAGE, bulletRemoved, false, 0, true);
-			bullet5.addEventListener(Event.REMOVED_FROM_STAGE, bulletRemoved, false, 0, true);
-			bullet6.addEventListener(Event.REMOVED_FROM_STAGE, bulletRemoved, false, 0, true);
-			bullet7.addEventListener(Event.REMOVED_FROM_STAGE, bulletRemoved, false, 0, true);
-			bullet8.addEventListener(Event.REMOVED_FROM_STAGE, bulletRemoved, false, 0, true);
 			//add bullet to array
 			bulletList.push(bullet);
-			bulletList.push(bullet1);
-			bulletList.push(bullet2);
-			bulletList.push(bullet3);
-			bulletList.push(bullet4);
-			bulletList.push(bullet5);
-			bulletList.push(bullet6);
-			bulletList.push(bullet7);
-			bulletList.push(bullet8);
 			//add bullet to stage
 			enemycontainer.addChild(bullet);
+			
+			var bullet1:Bullet = new Bullet(stage, player.x, player.y, player.rotation + chaingunRandom);
+			//Add event to bullets to remove them from array when removed from stage
+			bullet1.addEventListener(Event.REMOVED_FROM_STAGE, bulletRemoved, false, 0, true);
+			//add bullet to array
+			bulletList.push(bullet1);
+			//add bullet to stage
 			enemycontainer.addChild(bullet1);
-			enemycontainer.addChild(bullet2);
-			enemycontainer.addChild(bullet3);
-			enemycontainer.addChild(bullet4);
-			enemycontainer.addChild(bullet5);
-			enemycontainer.addChild(bullet6);
-			enemycontainer.addChild(bullet7);
-			enemycontainer.addChild(bullet8);
 			//reduce ammo by 1
 		}
 		public function shootShotgun():void {
@@ -1735,6 +1735,9 @@
 			}
 			if (isusingflamethrower == true){
 				ui.ammotext.text = flamethrowerammo.toString();
+			}
+			if (isusingchaingun == true){
+				ui.ammotext.text = chaingunammo.toString();
 			}
 			ui.uipausegame.addEventListener(MouseEvent.CLICK, openpausescreen);
 			ui.healthbar.width = health;
@@ -2007,39 +2010,11 @@
 	public function startfog():void{		
 	//start fog
 			ground.addChild(s1); 
-			ground.addChild(s2);
-			//ground.setChildIndex(s1,3);
-			//ground.setChildIndex(s2,3);
 			s1.alpha = 0.5;
-			s2.alpha = 0.5;
-			//This positions the second movieclip next to the first one.
-			s1.x = 0;
-			s2.x = s1.width;
-			
-			//Adds an event listener to the stage.
-			addEventListener(Event.ENTER_FRAME, moveScroll); 
-			
-			//This function moves both the images to left. If the first and second 
-			//images goes pass the left stage boundary then it gets moved to 
-			//the other side of the stage. 
 	}
-	public function moveScroll(e:Event):void{
-				s1.x -= scrollSpeed;  
-				s2.x -= scrollSpeed;  
-				
-				if(s1.x < -s1.width){
-				s1.x = s1.width;
-				}else if(s2.x < -s2.width){
-				s2.x = s2.width;
-				}
-			}
 	public function endfog():void{		
 	//start fog
 			ground.removeChild(s1); 
-			ground.removeChild(s2);
-			
-			//Adds an event listener to the stage.
-			removeEventListener(Event.ENTER_FRAME, moveScroll); 
 	}
 	public function processfog():void{		
 			if (currentstage == 1) {
