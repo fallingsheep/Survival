@@ -375,6 +375,7 @@
 			statsscreen.globalshotgunbulletstext.text = globalshotgunbullets.toString();
 			statsscreen.globalflamethrowerbulletstext.text = globalflamethrowerbullets.toString();
 			statsscreen.globalchaingunbulletstext.text = globalchaingunbullets.toString();
+			statsscreen.deathstext.text = deaths.toString();
 		}
 		
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
