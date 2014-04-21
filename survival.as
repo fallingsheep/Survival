@@ -28,7 +28,7 @@
 		public var ground:ground_mc = new ground_mc();
 		public var ui:ui_mc = new ui_mc();
 		public var deadzombie:deadzombie_mc = new deadzombie_mc();
-		public var enemycontainer:enemycontainer_mc = new enemycontainer_mc();
+		public static var enemycontainer:enemycontainer_mc = new enemycontainer_mc();
 		//items
 		public var ammocrate:ammocrate_mc = new ammocrate_mc();
 		public var medpack:medpack_mc = new medpack_mc();
@@ -41,12 +41,15 @@
 		public var shotgun:shotgun_mc = new shotgun_mc();
 		public var bulletproofvest:bulletproofvest_mc = new bulletproofvest_mc();
 		public var flamethrower:flamethrower_mc = new flamethrower_mc();
+		
 		public var flamethrowerflames:flamethrowerflames_mc = new flamethrowerflames_mc();
+		
 		public var isusingpistol:Boolean = true;//
 		public var isusinguzi:Boolean = false;
 		public var isusingshotgun:Boolean = false;
 		public var isusingflamethrower:Boolean = false;
 		public var isusingchaingun:Boolean = false;//
+		
 		public var haschaingun:Boolean = true;//
 		public var haspistol:Boolean = true;
 		public var hasuzi:Boolean = false;
@@ -89,7 +92,9 @@
 		public var UiSecondsElapsed:Number = 1;
 		public var Timer10:Timer = new Timer(1000, 10);
 		public var UiTimer10:Timer = new Timer(1000, 10);
+		
 		public var collectedSpeedPack:Boolean = false;
+		
 		public var level:int = 1;//set start level
 		public var currentcash:int = 0;//cash
 		public var deaths:int = 0;
@@ -101,8 +106,10 @@
 		public var walkthruwalls:Boolean = false;
 		public var infinteammo:Boolean = false;
 		public var infintehealth:Boolean = false;
+		
 		public var player_speed:int = 2;//player movement speed (Default is 2)
 		public var playerhastorch:Boolean = false;
+		
 		public static var ispaused:Boolean = false;
 		public var currentrank:int = 0;
 		public var experience:int = 0;		
@@ -128,12 +135,8 @@
 		public static var rank17:rank17_mc = new rank17_mc();
 		public static var rank18:rank18_mc = new rank18_mc();
 		public static var rank19:rank19_mc = new rank19_mc();
-					
-		public var scrollSpeed:Number = 0.5;//The speed of the fog.
-			
-			//This adds two instances of the movie clip onto the stage.
+
 		public var s1:fogbg_mc = new fogbg_mc();
-		public var s2:fogbg_mc = new fogbg_mc();
 		
 		var frames:int=0;
 		var FPS:int=0;
@@ -210,6 +213,10 @@
 			myBlur.blurX = 50;
 			myBlur.blurY = 50;
 			light.filters = [myBlur];
+			//set up light
+			light.x = player.x;
+			light.y = player.y;
+			light.gotoAndStop(2);
 			
 			//add UI
 			addChild(ui);
@@ -260,18 +267,22 @@
 				while (environment.hitTestPoint(player.x, player.y+radius, true)) {
 					player.y--;
 					playerMoving();
+					light.y--;
 				}
 				while (environment.hitTestPoint(player.x, player.y-radius, true)) {
 					player.y++;
 					playerMoving();
+					light.y++;
 				}
 				while (environment.hitTestPoint(player.x-radius, player.y, true)) {
 					player.x++;
 					playerMoving();
+					light.x++;
 				}
 				while (environment.hitTestPoint(player.x+radius, player.y, true)) {
 					player.x--;
 					playerMoving();
+					light.x--;
 				}
 				/* TEMP DISABLE DOOR CODE TILL NEEDED
 				while ((door.hitTestPoint(player.x, player.y+radius, true))||(door2.hitTestPoint(player.x, player.y+radius, true))) {
@@ -351,9 +362,9 @@
 			playerMoving();
 			//remove flame thrower flames
 			removeFlames();
-			lighting();
-
-			saveachiveData();// save achivement data to disk
+			
+			//dont save every frame need tofigure out when to save
+			//saveachiveData();// save achivement data to disk
 		}
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //							Time Played
@@ -1110,11 +1121,13 @@
 		public function checkhealth():void{
 			if (health <=0){
 				gameover();
+				saveachiveData();
 			}
 		}
 		public function checkarmour():void{
 			if (armour <=0){
 				hasarmour = false;
+				saveachiveData();
 			}
 		}
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1496,6 +1509,9 @@
 							zombie.addEventListener(Event.REMOVED_FROM_STAGE, zombieRemoved, false, 0, true);
 							//add zombie to array
 							zombieArray.push(zombie);
+							
+							
+							
 							//TEMP FIX LAYER ISSUE
 							//Add the background
 							enemycontainer.addChild(ground);
@@ -1516,12 +1532,8 @@
 				}
 			}
 		}
-		var numOfClips:Number = 10;
-					//var deadzombieArray:Array = new Array();
-					//var deadzombie:deadzombie_mc = new deadzombie_mc();
-		var deadzombie1:deadzombie1_mc = new deadzombie1_mc();
-		var deadzombieRandom:int;
-		var currentdead:int;
+		public var deadzombie1:deadzombie1_mc = new deadzombie1_mc();
+		public var currentdead:int;
 		public function checkzombieHit():void{
 			for (var idx:int = zombieArray.length - 1; idx >= 0; idx--){
 						var zombie1:Zombie = zombieArray[idx];
@@ -1588,62 +1600,29 @@
 						}
 						
 						if(zombie1.zombiehitpoints <= 0){
-							deadzombieRandom = randomRange(0,2);
-									
-									for(var ii=0; ii<numOfClips; ii++)
-									{
-										if(zombie1.zombieType == 0){
-											
-											if (deadzombieRandom == 0){
-												ground.addChild(deadzombie);
-												ground.setChildIndex(deadzombie,1);
-												deadzombieArray.push(deadzombie);
-												deadzombie.x = zombie1.x;
-												deadzombie.y = zombie1.y;
-												deadzombie.gotoAndStop(1);
-												deadzombie.rotation = zombie1.rotation  - 180;
-												deadzombie.addEventListener(Event.REMOVED_FROM_STAGE, deadzombieRemoved, false, 0, true);
-											} 
-											if (deadzombieRandom == 1){
+								if(zombie1.zombiehitpoints <= 0){
+									if(zombie1.zombieType == 0){
 												ground.addChild(deadzombie1);
-												ground.setChildIndex(deadzombie1,2);
 												deadzombieArray.push(deadzombie1);
 												deadzombie1.x = zombie1.x;
 												deadzombie1.y = zombie1.y;
 												deadzombie1.gotoAndStop(1);
 												deadzombie1.rotation = zombie1.rotation  - 180;
-												deadzombie.addEventListener(Event.REMOVED_FROM_STAGE, deadzombieRemoved, false, 0, true);
-											}
-											if (deadzombieRandom == 2){
-												ground.addChild(deadzombie);
-												ground.setChildIndex(deadzombie,1);
-												deadzombieArray.push(deadzombie);
-												deadzombie.x = zombie1.x;
-												deadzombie.y = zombie1.y;
-												deadzombie.gotoAndStop(1);
-												deadzombie.rotation = zombie1.rotation  - 180;
-												deadzombie.addEventListener(Event.REMOVED_FROM_STAGE, deadzombieRemoved, false, 0, true);
-											}
-										}
+												deadzombie1.addEventListener(Event.REMOVED_FROM_STAGE, deadzombieRemoved, false, 0, true);
 									}
-									if (currentdead >= 5){
-										if (this.parent.contains(deadzombie1)){
-											this.parent.removeChild(deadzombie1);
-											currentdead -= 1;
-										}
+									if(zombie1.zombieType == 0){
+											experience += 100;
+											currentcash += 10;
+											globalcashearnt += 10;
 									}
-								if(zombie1.zombieType == 0){
-										experience += 100;
-										currentcash += 10;
-										globalcashearnt += 10;
-								}
-								if(zombie1.zombieType == 1){
-										experience += 500;
-										currentcash += 50;
-										globalcashearnt += 50;
-								}
-								enemycontainer.removeChild(zombie1);
-								currentdead += 1;
+									if(zombie1.zombieType == 1){
+											experience += 500;
+											currentcash += 50;
+											globalcashearnt += 50;
+									}
+									enemycontainer.removeChild(zombie1);
+									currentdead += 1;
+							}
 						}
 					}
 					//bullets
@@ -1663,44 +1642,16 @@
 								}
 
 								if(zombie1.zombiehitpoints <= 0){
-									deadzombieRandom = randomRange(0,2);
-									
-									for(var i=0; i<numOfClips; i++)
-									{
 										if(zombie1.zombieType == 0){
-											
-											if (deadzombieRandom == 0){
-												ground.addChild(deadzombie);
-												ground.setChildIndex(deadzombie,1);//blood goes under bodys
-												//deadzombieArray.push(deadzombie);
-												deadzombie.x = zombie1.x;
-												deadzombie.y = zombie1.y;
-												deadzombie.gotoAndStop(1);
-												deadzombie.rotation = zombie1.rotation  - 180;
-												deadzombie.addEventListener(Event.REMOVED_FROM_STAGE, deadzombieRemoved, false, 0, true);
-											} 
-											if (deadzombieRandom == 1){
 												ground.addChild(deadzombie1);
-												//ground.setChildIndex(deadzombie1,2);//dont set so bodys stay on top
 												deadzombieArray.push(deadzombie1);
 												deadzombie1.x = zombie1.x;
 												deadzombie1.y = zombie1.y;
-												deadzombie1.gotoAndStop(1);
+												//deadzombie1.gotoAndStop(1);
 												deadzombie1.rotation = zombie1.rotation  - 180;
-												deadzombie.addEventListener(Event.REMOVED_FROM_STAGE, deadzombieRemoved, false, 0, true);
-											}
-											if (deadzombieRandom == 2){
-												ground.addChild(deadzombie);
-												ground.setChildIndex(deadzombie,1);//blood goes under bodys
-												deadzombieArray.push(deadzombie);
-												deadzombie.x = zombie1.x;
-												deadzombie.y = zombie1.y;
-												deadzombie.gotoAndStop(1);
-												deadzombie.rotation = zombie1.rotation  - 180;
-												deadzombie.addEventListener(Event.REMOVED_FROM_STAGE, deadzombieRemoved, false, 0, true);
-											}
+												//deadzombie1.addEventListener(Event.REMOVED_FROM_STAGE, deadzombieRemoved, false, 0, true);
 										}
-									}
+										
 									if(zombie1.zombieType == 0){
 											experience += 100;
 											currentcash += 10;
@@ -1819,16 +1770,37 @@
 				trace ("Stage 1");
 				environment.gotoAndStop(1);
 				ground.gotoAndStop(1);
-				processfog();
 			}
-			else if (currentstage == 2){
+			if (currentstage == 2){
+				level = 1;
+				zombieskilled = 0;
+				trace ("Stage 2");
+				environment.gotoAndStop(2);
+				ground.gotoAndStop(2);
+			}
+			if (currentstage == 3){
 				level = 1;
 				zombieskilled = 0;
 				endfog();//stop fog
-				trace ("Stage 2");
+				trace ("Stage 3");
+				environment.gotoAndStop(3);
+				ground.gotoAndStop(3);
+			}
+			if (currentstage == 4){
+				level = 1;
+				zombieskilled = 0;
+				trace ("Stage 4");
+				environment.gotoAndStop(4);
+				ground.gotoAndStop(4);
+			}
+			//BOSS STAGE 1
+			if (currentstage == 5){
+				level = 1;
+				zombieskilled = 0;
+				trace ("Stage 5");
 				processfog();
-				environment.gotoAndStop(2);
-				ground.gotoAndStop(2);
+				environment.gotoAndStop(5);
+				ground.gotoAndStop(5);
 			}
 		}
 
@@ -2370,13 +2342,9 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////		
 	public function lighting():void{		
 		if (playerhastorch == true){
-			light.x = player.x;
-			light.y = player.y;
 			light.gotoAndStop(1);
 		}
 		if (playerhastorch == false){
-			light.x = player.x;
-			light.y = player.y;
 			light.gotoAndStop(2);
 		}			
 	}
@@ -2423,7 +2391,6 @@
 
 	public function saveData(e:MouseEvent):void{
 			saveDataObject = SharedObject.getLocal("test"); 
-			saveDataObject.data.savedscrollSpeed = scrollSpeed;
 			saveDataObject.data.savedisusingpistol = isusingpistol;
 			saveDataObject.data.savedisusinguzi = isusinguzi;
 			saveDataObject.data.savedisusingshotgun = isusingshotgun;
@@ -2470,7 +2437,6 @@
  
 	public function loadData():void{
 		saveDataObject = SharedObject.getLocal("test"); 
-		  	scrollSpeed = saveDataObject.data.savedscrollSpeed;
 			isusingpistol = saveDataObject.data.savedisusingpistol;
 			isusinguzi = saveDataObject.data.savedisusinguzi;
 			isusingshotgun = saveDataObject.data.savedisusingshotgun;

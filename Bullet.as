@@ -29,7 +29,9 @@
 			x += xVel;
 			y += yVel;
 			//remove bullet if it goes off stage
-			
+			if(this.x > 800 || this.x < 0 || this.y > 368 || this.y < 0) {
+					survival.enemycontainer.removeChild(this);
+				}
         }
     }
 }
