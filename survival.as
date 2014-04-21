@@ -172,7 +172,6 @@
 			
 			//load achivement data
 			loadachiveData();
-			setupSavedTime();
 			
 			processfog(); //start fog
 
@@ -361,19 +360,21 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////		
 		public var timer:Timer = new Timer(100);
 		public var timerCount:int = 0;
+		public var globaltimerCount:int = 0;
+		
 		public function timerTickHandler(Event:TimerEvent):void
 		{
 			timerCount += 100;
+			globaltimerCount += 100;
 			timePlayed(timerCount);
 		}
+		
 		public var currentseconds:int;
 		public var currentminutes:int;
 		public var globalseconds:int;
 		public var globalminutes:int;
-		public function setupSavedTime():void{
-			globalminutes = globalminutes;
-			globalseconds = globalseconds;
-		}
+		public var totalTimeplayed:int;
+		
 		public function timePlayed(milliseconds:int):void{
 			var time:Date = new Date(milliseconds);
 			var minutes:int = time.minutes;
@@ -383,10 +384,8 @@
 			var displayglobalminutes:String = globalminutes.toString();
 			var displayglobalseconds:String = globalseconds.toString();
 			
-			currentminutes = minutes;
-			currentseconds = seconds;
-			globalminutes = minutes;
-			globalseconds = seconds;
+			displayglobalseconds = ((globaltimerCount /1000).toFixed(0)).toString();
+			displayglobalminutes = (globalminutes).toString();
 			
 			displayminutes = (displayminutes.length != 2) ? '0'+displayminutes : displayminutes;
 			displayseconds = (displayseconds.length != 2) ? '0'+displayseconds : displayseconds;
@@ -394,8 +393,9 @@
 			displayglobalminutes = (displayglobalminutes.length != 2) ? '0'+displayglobalminutes : displayglobalminutes;
 			displayglobalseconds = (displayglobalseconds.length != 2) ? '0'+displayglobalseconds : displayglobalseconds;
 			
-			statsscreen.currenttimeplayedtext.text = displayminutes + ":" + displayseconds;
-			statsscreen.timeplayedtext.text = displayglobalminutes + ":" + displayglobalseconds;
+			statsscreen.currenttimeplayedtext.text = displayglobalminutes + ":" + displayglobalseconds;//current time played
+			statsscreen.timeplayedtext.text = displayminutes + ":" + displayseconds; //toatal time played
+			totalTimeplayed = minutes;
 		}
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //							STATS
@@ -462,7 +462,7 @@
 		public var achive11,achive12,achive13,achive14,achive15,achive16,achive17,achive18,achive19,achive20:Boolean;
 		public var achive21,achive22,achive23,achive24,achive25,achive26,achive27,achive28,achive29,achive30:Boolean;
 		public var achive31,achive32,achive33,achive34,achive35,achive36,achive37,achive38,achive39,achive40:Boolean;
-		public var achive41,achive42,achive43,achive44,achive45:Boolean;
+		public var achive41,achive42,achive43,achive44,achive45,achive46,achive47,achive48,achive49,achive50:Boolean;
 		
 		public function showAchivements():void{
 			//cash earnt
@@ -700,6 +700,32 @@
 			} else {
 				achivementscreen.deaths5.visible = false;
 			}
+			//timeplayed
+			if (achive46 == true){
+				achivementscreen.time1.visible = true;
+			} else {
+				achivementscreen.time1.visible = false;
+			}
+			if (achive47 == true){
+				achivementscreen.time2.visible = true;
+			} else {
+				achivementscreen.time2.visible = false;
+			}
+			if (achive48 == true){
+				achivementscreen.time3.visible = true;
+			} else {
+				achivementscreen.time3.visible = false;
+			}
+			if (achive49 == true){
+				achivementscreen.time4.visible = true;
+			} else {
+				achivementscreen.time4.visible = false;
+			}
+			if (achive50 == true){
+				achivementscreen.time5.visible = true;
+			} else {
+				achivementscreen.time5.visible = false;
+			}
 		}
 		
 		public function processAchivements():void{
@@ -850,6 +876,22 @@
 			if( deaths >= 10000){
 				achive45 = true;
 			}
+			//DEATHS
+			if( totalTimeplayed >= 1){
+				achive46 = true;
+			}
+			if( totalTimeplayed >= 60){
+				achive47 = true;
+			}
+			if( totalTimeplayed >= 120){
+				achive48 = true;
+			}
+			if( totalTimeplayed >= 300){
+				achive49 = true;
+			}
+			if( totalTimeplayed >= 600){
+				achive50 = true;
+			}
 		}
 		public function saveachiveData():void{
 				saveAchivementDataObject = SharedObject.getLocal("achivements"); 
@@ -862,7 +904,7 @@
 				saveAchivementDataObject.data.savedglobalchaingunbullets = globalchaingunbullets;
 				saveAchivementDataObject.data.savedglobalzombiekills = globalzombiekills;
 				saveAchivementDataObject.data.saveddeaths = deaths;
-				//saveAchivementDataObject.data.savedtimerCount = timerCount;
+				saveAchivementDataObject.data.savedtimerCount = timerCount;
 				saveAchivementDataObject.data.savedglobalseconds = globalseconds;
 				saveAchivementDataObject.data.savedglobalminutes = globalminutes;
 				
@@ -880,7 +922,7 @@
 			globalchaingunbullets = saveAchivementDataObject.data.savedglobalchaingunbullets;
 			globalzombiekills = saveAchivementDataObject.data.savedglobalzombiekills;
 			deaths = saveAchivementDataObject.data.saveddeaths;
-			//timerCount = saveAchivementDataObject.data.savedtimerCount;
+			timerCount = saveAchivementDataObject.data.savedtimerCount;
 			globalseconds = saveAchivementDataObject.data.savedglobalseconds;
 			globalminutes = saveAchivementDataObject.data.savedglobalminutes;
 		}
