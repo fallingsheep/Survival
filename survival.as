@@ -24,7 +24,6 @@
 		public var statsscreen:statsscreen_mc = new statsscreen_mc();
 		
 		public var light:light_mc= new light_mc();
-		public var details:details_mc= new details_mc();
 		public var ground:ground_mc = new ground_mc();
 		public var ui:ui_mc = new ui_mc();
 		public var deadzombie:deadzombie_mc = new deadzombie_mc();
@@ -198,16 +197,9 @@
 			player.x = stage.width / 2;
             player.y = stage.height / 2;
 			
-			//details 
-			addChild(details);
-			setChildIndex(details,3);
-			details.x = 0;
-            details.y = 0;
-			details.gotoAndStop(1);//go to first stage
-			
 			//lighting
             addChild(light);
-			setChildIndex(light,4);
+			setChildIndex(light,3);
 			var myBlur:BlurFilter = new BlurFilter();
 			myBlur.quality = 5;
 			myBlur.blurX = 50;
@@ -220,7 +212,7 @@
 			
 			//add UI
 			addChild(ui);
-			setChildIndex(ui,5);
+			setChildIndex(ui,4);
 			ui.x=315;
 			ui.y=346;
 			
@@ -363,6 +355,9 @@
 			//remove flame thrower flames
 			removeFlames();
 			
+			if(boss1spawned == true){
+				checkbosszombieHit();
+			}
 			//dont save every frame need tofigure out when to save
 			//saveachiveData();// save achivement data to disk
 		}
@@ -1493,9 +1488,9 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //						ZOMBIES
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
-		var zombieArray:Array = [];//holds all zombies
+		var zombieArray:Array = [];//holds zombies
+		var bosszombieArray:Array = [];//holds all boss zombie
 		var deadzombieArray:Array = [];//holds all deadzombies
-		
 		//create new zombie from Zombie class and place on stage at spawn point
 		public function createZombies():void {
 			//check how many zombies have been spawned
@@ -1637,7 +1632,7 @@
 									zombie1.zombiehitpoints -= 30;// damage per pellet
 									enemycontainer.removeChild(bullet1);
 								} else {
-									zombie1.zombiehitpoints -= 100;//damage per bullet
+									zombie1.zombiehitpoints -= 10;//damage per bullet
 									enemycontainer.removeChild(bullet1);
 								}
 
@@ -1653,12 +1648,12 @@
 										}
 										
 									if(zombie1.zombieType == 0){
-											experience += 100;
+											experience += 10;
 											currentcash += 10;
 											globalcashearnt += 10;
 									}
 									if(zombie1.zombieType == 1){
-											experience += 500;
+											experience += 50;
 											currentcash += 50;
 											globalcashearnt += 50;
 									}
@@ -1702,6 +1697,159 @@
 			//remove current zombie from array
 			deadzombieArray.splice(deadzombieArray.indexOf(ee.currentTarget),1);
 			trace ("Dead Zombie Removed");
+		}
+		var boss1spawned:Boolean = false;
+		public function spawnboss1():void{
+			if ((level == 5)&&(boss1spawned == false)){
+				var bosszombie:BossZombie = new BossZombie(stage, BossZombie.bossZombieX, BossZombie.bossZombieY);
+				//add boss zombie to stage
+				bosszombieArray.push(bosszombie);
+				enemycontainer.addChild(bosszombie);
+				enemycontainer.setChildIndex(bosszombie,0);
+				bosszombie.addEventListener(Event.REMOVED_FROM_STAGE, bosszombieRemoved, false, 0, true);
+				totalzomibes += 1;
+				boss1spawned = true;
+			}
+		}
+		public function checkbosszombieHit():void{
+			for (var idxbb:int = bosszombieArray.length - 1; idxbb >= 0; idxbb--){
+				var bosszombie1:BossZombie = bosszombieArray[idxbb];
+						
+					//normal push player
+					if (bosszombie1.hitTestPoint(player.x+radius, player.y, true)){
+						player.x -= 5;
+						bosszombie1.x += 1;
+						if (infintehealth == false){
+							if (hasarmour == false){
+								health -= bosszombie1.zombiedamage;
+							}else if (hasarmour == true){
+								armour -= bosszombie1.zombiedamage;
+							}
+							checkhealth();
+							checkarmour();
+						}
+					}
+					if (bosszombie1.hitTestPoint(player.x, player.y-radius, true)){
+						player.y += 5;
+						bosszombie1.y -= 1;
+						if (infintehealth == false){
+							if (hasarmour == false){
+								health -= bosszombie1.zombiedamage;
+							}else if (hasarmour == true){
+								armour -= bosszombie1.zombiedamage;
+							}
+							checkhealth();
+							checkarmour();
+						}
+					}
+					if (bosszombie1.hitTestPoint(player.x-radius, player.y, true)){
+						player.x += 5;
+						bosszombie1.x -= 1;
+						if (infintehealth == false){
+							if (hasarmour == false){
+								health -= bosszombie1.zombiedamage;
+							}else if (hasarmour == true){
+								armour -= bosszombie1.zombiedamage;
+							}
+							checkhealth();
+							checkarmour();
+						}
+					}
+					if (bosszombie1.hitTestPoint(player.x, player.y+radius, true)){
+						player.y -= 5;
+						bosszombie1.y += 1;
+						if (infintehealth == false){
+							if (hasarmour == false){
+								health -= bosszombie1.zombiedamage;
+							}else if (hasarmour == true){
+								armour -= bosszombie1.zombiedamage;
+							}
+							checkhealth();
+							checkarmour();
+						}
+					}
+					
+					
+					//flamerthrower
+					if(flamethrowerflames.hitTestPoint(bosszombie1.x,bosszombie1.y, true)){
+						if (this.contains(bosszombie1)){
+							bosszombie1.bosszombiehitpoints -= 5;// damage per second (roughly)
+						}
+						
+						if(bosszombie1.bosszombiehitpoints <= 0){
+									ground.addChild(deadzombie1);
+									deadzombieArray.push(deadzombie1);
+									deadzombie1.x = bosszombie1.x;
+									deadzombie1.y = bosszombie1.y;
+									//deadzombie1.gotoAndStop(1);
+									deadzombie1.rotation = bosszombie1.rotation  - 180;
+									//deadzombie1.addEventListener(Event.REMOVED_FROM_STAGE, deadzombieRemoved, false, 0, true);
+									experience += 1000;
+									currentcash += 1000;
+									globalcashearnt += 1000;
+									enemycontainer.removeChild(bosszombie1);
+									currentdead += 1;
+						}
+					}
+					//bullets
+					for (var bidx:int = bulletList.length - 1; bidx >= 0; bidx--){
+						var bullet1:Bullet = bulletList[bidx];
+						//check if bullet hits zombie
+						
+						if (bullet1.hitTestObject(bosszombie1)){
+							if (enemycontainer.contains(bosszombie1)){
+								//remove zombie and bullet
+								if(isusingshotgun == true){
+									bosszombie1.bosszombiehitpoints -= 30;// damage per pellet
+									enemycontainer.removeChild(bullet1);
+								} else {
+									bosszombie1.bosszombiehitpoints -= 10;//damage per bullet
+									enemycontainer.removeChild(bullet1);
+								}
+
+								if(bosszombie1.bosszombiehitpoints <= 0){
+									ground.addChild(deadzombie1);
+									deadzombieArray.push(deadzombie1);
+									deadzombie1.x = bosszombie1.x;
+									deadzombie1.y = bosszombie1.y;
+									//deadzombie1.gotoAndStop(1);
+									deadzombie1.rotation = bosszombie1.rotation  - 180;
+									//deadzombie1.addEventListener(Event.REMOVED_FROM_STAGE, deadzombieRemoved, false, 0, true);
+									experience += 1000;
+									currentcash += 1000;
+									globalcashearnt += 1000;
+									enemycontainer.removeChild(bosszombie1);
+									currentdead += 1;
+								}
+							}
+						
+						}
+					}
+			 }
+		}
+		public function bosszombieRemoved(ee:Event):void{
+			//remove the event listner from current zombie
+			ee.currentTarget.removeEventListener(Event.REMOVED_FROM_STAGE, bosszombieRemoved);
+			bosszombieArray.splice(bosszombieArray.indexOf(ee.currentTarget),1);
+			//count xombie kill
+			//fix possible next level bug
+			if (zombieskilled <= 90){
+				zombieskilled = 91;
+			}else{
+				zombieskilled += 1;
+			}
+			//total zombies
+			totalzombieskilled += 1;
+			globalzombiekills +=1;
+			//globalzombiekills
+			//Process XP
+			ProcessXP();
+			//check next level requirments
+			finishlevel();
+			//save achive
+			saveachiveData();
+			boss1spawned = false;
+			trace ("Boss Zombie Removed");
 		}
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //						LEVELS
