@@ -167,11 +167,12 @@
 			
 			//TImer
 			timer.start();
-		timer.addEventListener(TimerEvent.TIMER, timerTickHandler);
+			timer.addEventListener(TimerEvent.TIMER, timerTickHandler);
 			
 			
 			//load achivement data
 			loadachiveData();
+			setupSavedTime();
 			
 			processfog(); //start fog
 
@@ -359,33 +360,43 @@
 //							Time Played
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////		
 		public var timer:Timer = new Timer(100);
-		
 		public var timerCount:int = 0;
-		
-		function timerTickHandler(Event:TimerEvent):void
+		public function timerTickHandler(Event:TimerEvent):void
 		{
 			timerCount += 100;
-			toTimeCode(timerCount);
+			timePlayed(timerCount);
 		}
-		function toTimeCode(milliseconds:int) : void
-		{
-			//creating a date object using the elapsed milliseconds
+		public var currentseconds:int;
+		public var currentminutes:int;
+		public var globalseconds:int;
+		public var globalminutes:int;
+		public function setupSavedTime():void{
+			globalminutes = globalminutes;
+			globalseconds = globalseconds;
+		}
+		public function timePlayed(milliseconds:int):void{
 			var time:Date = new Date(milliseconds);
-		
-			//define minutes/seconds/mseconds
-			var minutes:String = String(time.minutes);
-			var seconds:String = String(time.seconds);
-			var miliseconds:String = String(Math.round(time.milliseconds)/100);
-		
-			//add zero if neccecary, for example: 2:3.5 becomes 02:03.5
-			minutes = (minutes.length != 2) ? '0'+minutes : minutes;
-			seconds = (seconds.length != 2) ? '0'+seconds : seconds;
-		
-			//display elapsed time on in a textfield on stage
-			statsscreen.timeplayedtext.text = minutes + ":" + seconds+"." + miliseconds;
-		
+			var minutes:int = time.minutes;
+			var seconds:int = time.seconds;
+			var displayminutes:String = minutes.toString();
+			var displayseconds:String = seconds.toString();
+			var displayglobalminutes:String = globalminutes.toString();
+			var displayglobalseconds:String = globalseconds.toString();
+			
+			currentminutes = minutes;
+			currentseconds = seconds;
+			globalminutes = minutes;
+			globalseconds = seconds;
+			
+			displayminutes = (displayminutes.length != 2) ? '0'+displayminutes : displayminutes;
+			displayseconds = (displayseconds.length != 2) ? '0'+displayseconds : displayseconds;
+			
+			displayglobalminutes = (displayglobalminutes.length != 2) ? '0'+displayglobalminutes : displayglobalminutes;
+			displayglobalseconds = (displayglobalseconds.length != 2) ? '0'+displayglobalseconds : displayglobalseconds;
+			
+			statsscreen.currenttimeplayedtext.text = displayminutes + ":" + displayseconds;
+			statsscreen.timeplayedtext.text = displayglobalminutes + ":" + displayglobalseconds;
 		}
-		
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //							STATS
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////		
@@ -451,6 +462,7 @@
 		public var achive11,achive12,achive13,achive14,achive15,achive16,achive17,achive18,achive19,achive20:Boolean;
 		public var achive21,achive22,achive23,achive24,achive25,achive26,achive27,achive28,achive29,achive30:Boolean;
 		public var achive31,achive32,achive33,achive34,achive35,achive36,achive37,achive38,achive39,achive40:Boolean;
+		public var achive41,achive42,achive43,achive44,achive45:Boolean;
 		
 		public function showAchivements():void{
 			//cash earnt
@@ -636,7 +648,7 @@
 			} else {
 				achivementscreen.flamethrowerbullets5.visible = false;
 			}
-			//pistol bullets
+			//chaingun bullets
 			if (achive36 == true){
 				achivementscreen.chaingunbullets1.visible = true;
 			} else {
@@ -662,8 +674,32 @@
 			} else {
 				achivementscreen.chaingunbullets5.visible = false;
 			}
-
-			
+			//deaths
+			if (achive41 == true){
+				achivementscreen.deaths1.visible = true;
+			} else {
+				achivementscreen.deaths1.visible = false;
+			}
+			if (achive42 == true){
+				achivementscreen.deaths2.visible = true;
+			} else {
+				achivementscreen.deaths2.visible = false;
+			}
+			if (achive43 == true){
+				achivementscreen.deaths3.visible = true;
+			} else {
+				achivementscreen.deaths3.visible = false;
+			}
+			if (achive44 == true){
+				achivementscreen.deaths4.visible = true;
+			} else {
+				achivementscreen.deaths4.visible = false;
+			}
+			if (achive45 == true){
+				achivementscreen.deaths5.visible = true;
+			} else {
+				achivementscreen.deaths5.visible = false;
+			}
 		}
 		
 		public function processAchivements():void{
@@ -798,6 +834,22 @@
 			if( globalchaingunbullets >= 1000000){
 				achive40 = true;
 			}
+			//DEATHS
+			if( deaths >= 100){
+				achive41 = true;
+			}
+			if( deaths >= 1000){
+				achive42 = true;
+			}
+			if( deaths >= 2000){
+				achive43 = true;
+			}
+			if( deaths >= 5000){
+				achive44 = true;
+			}
+			if( deaths >= 10000){
+				achive45 = true;
+			}
 		}
 		public function saveachiveData():void{
 				saveAchivementDataObject = SharedObject.getLocal("achivements"); 
@@ -810,6 +862,9 @@
 				saveAchivementDataObject.data.savedglobalchaingunbullets = globalchaingunbullets;
 				saveAchivementDataObject.data.savedglobalzombiekills = globalzombiekills;
 				saveAchivementDataObject.data.saveddeaths = deaths;
+				//saveAchivementDataObject.data.savedtimerCount = timerCount;
+				saveAchivementDataObject.data.savedglobalseconds = globalseconds;
+				saveAchivementDataObject.data.savedglobalminutes = globalminutes;
 				
 				saveAchivementDataObject.flush(); // immediately save to the local drive
 		}
@@ -825,6 +880,9 @@
 			globalchaingunbullets = saveAchivementDataObject.data.savedglobalchaingunbullets;
 			globalzombiekills = saveAchivementDataObject.data.savedglobalzombiekills;
 			deaths = saveAchivementDataObject.data.saveddeaths;
+			//timerCount = saveAchivementDataObject.data.savedtimerCount;
+			globalseconds = saveAchivementDataObject.data.savedglobalseconds;
+			globalminutes = saveAchivementDataObject.data.savedglobalminutes;
 		}
 		
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
