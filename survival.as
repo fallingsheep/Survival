@@ -226,6 +226,10 @@
 			stage.addEventListener(MouseEvent.MOUSE_DOWN, mouseDownHandler, false, 0, true);
 			stage.addEventListener(MouseEvent.MOUSE_UP, mouseUpHandler, false, 0, true);
 			trace ("Game Intialised");
+			
+			
+			//TEMP BOSS SPAWN TEST
+			spawnboss1();
 		}
 		//MAIN GAME LOOP
 		public function mainloop(e:Event):void {
@@ -1700,15 +1704,16 @@
 		}
 		var boss1spawned:Boolean = false;
 		public function spawnboss1():void{
-			if ((level == 5)&&(boss1spawned == false)){
+			if ((level == 1)&&(boss1spawned == false)){
 				var bosszombie:BossZombie = new BossZombie(stage, BossZombie.bossZombieX, BossZombie.bossZombieY);
 				//add boss zombie to stage
 				bosszombieArray.push(bosszombie);
 				enemycontainer.addChild(bosszombie);
-				enemycontainer.setChildIndex(bosszombie,0);
+				//enemycontainer.setChildIndex(bosszombie,1);
 				bosszombie.addEventListener(Event.REMOVED_FROM_STAGE, bosszombieRemoved, false, 0, true);
 				totalzomibes += 1;
 				boss1spawned = true;
+				trace ("Boss Spawned");
 			}
 		}
 		public function checkbosszombieHit():void{
