@@ -25,6 +25,7 @@
 		
 		public var light:light_mc= new light_mc();
 		public var ground:ground_mc = new ground_mc();
+		public var groundtop:groundtop_mc = new groundtop_mc();
 		public var ui:ui_mc = new ui_mc();
 		public var deadzombie:deadzombie_mc = new deadzombie_mc();
 		public static var enemycontainer:enemycontainer_mc = new enemycontainer_mc();
@@ -191,6 +192,20 @@
 			enemycontainer.x=0;
 			enemycontainer.y=0;
 			
+										
+			//Add the background
+			enemycontainer.addChild(ground);
+			enemycontainer.setChildIndex(ground,0);
+			ground.x=0;
+			ground.y=0;
+			ground.gotoAndStop(1);//go to first stage
+			
+			addChild(groundtop);
+			setChildIndex(groundtop,2);
+			groundtop.x=0;
+			groundtop.y=0;
+			groundtop.gotoAndStop(1);//go to first stage
+			
 			//add the player
 			addChild(player);
 			setChildIndex(player,2);
@@ -199,7 +214,7 @@
 			
 			//lighting
             addChild(light);
-			setChildIndex(light,3);
+			setChildIndex(light,4);
 			var myBlur:BlurFilter = new BlurFilter();
 			myBlur.quality = 5;
 			myBlur.blurX = 50;
@@ -212,7 +227,7 @@
 			
 			//add UI
 			addChild(ui);
-			setChildIndex(ui,4);
+			setChildIndex(ui,5);
 			ui.x=315;
 			ui.y=346;
 			
@@ -354,7 +369,7 @@
 			
 			collectItem();
 			//openDoor();
-			
+			lighting();
 			playerMoving();
 			//remove flame thrower flames
 			removeFlames();
@@ -1508,21 +1523,9 @@
 							zombie.addEventListener(Event.REMOVED_FROM_STAGE, zombieRemoved, false, 0, true);
 							//add zombie to array
 							zombieArray.push(zombie);
-							
-							
-							
-							//TEMP FIX LAYER ISSUE
-							//Add the background
-							enemycontainer.addChild(ground);
-							enemycontainer.setChildIndex(ground,0);
-							ground.x=0;
-							ground.y=0;
-							ground.gotoAndStop(1);//go to first stage
-							
-							
 							//add zombie to stage
 							enemycontainer.addChild(zombie);
-							enemycontainer.setChildIndex(zombie,0);
+							//enemycontainer.setChildIndex(zombie,1);
 							//increase zombie counters
 							zombiecount += 1;
 							totalzomibes += 1;
@@ -1531,6 +1534,22 @@
 				}
 			}
 		}
+		public function playerDamaged():void{
+			hasbeenhit = true;
+			//TImer
+			hasbeenhittimer.start();
+			hasbeenhittimer.addEventListener(TimerEvent.TIMER, hasbeenhittimerTickHandler);
+		}
+		public var hasbeenhittimer:Timer = new Timer(100);
+		public var hasbeenhittimerCount:int = 0;
+		public var hasbeenhit:Boolean;
+		
+		public function hasbeenhittimerTickHandler(Event:TimerEvent):void
+		{
+			hasbeenhittimerCount += 100;
+		}
+
+			
 		public var deadzombie1:deadzombie1_mc = new deadzombie1_mc();
 		public var currentdead:int;
 		public function checkzombieHit():void{
@@ -1541,55 +1560,42 @@
 					if (zombie1.hitTestPoint(player.x+radius, player.y, true)){
 						player.x -= 1;
 						zombie1.x += 1;
-						if (infintehealth == false){
-							if (hasarmour == false){
-								health -= zombie1.zombiedamage;
-							}else if (hasarmour == true){
-								armour -= zombie1.zombiedamage;
-							}
-							checkhealth();
-							checkarmour();
-						}
+						playerDamaged();
 					}
 					if (zombie1.hitTestPoint(player.x, player.y-radius, true)){
 						player.y += 1;
 						zombie1.y -= 1;
-						if (infintehealth == false){
-							if (hasarmour == false){
-								health -= zombie1.zombiedamage;
-							}else if (hasarmour == true){
-								armour -= zombie1.zombiedamage;
-							}
-							checkhealth();
-							checkarmour();
-						}
+						playerDamaged();
 					}
 					if (zombie1.hitTestPoint(player.x-radius, player.y, true)){
 						player.x += 1;
 						zombie1.x -= 1;
-						if (infintehealth == false){
-							if (hasarmour == false){
-								health -= zombie1.zombiedamage;
-							}else if (hasarmour == true){
-								armour -= zombie1.zombiedamage;
-							}
-							checkhealth();
-							checkarmour();
-						}
+						playerDamaged();
 					}
 					if (zombie1.hitTestPoint(player.x, player.y+radius, true)){
 						player.y -= 1;
 						zombie1.y += 1;
-						if (infintehealth == false){
+						playerDamaged();
+					}
+					
+					if ((infintehealth == false)&&(hasbeenhit == true)){
+						if(hasbeenhittimerCount >=100){
+							checkhealth();
+							checkarmour();
+							hasbeenhittimerCount = 0;
+							hasbeenhittimer.stop();
+							hasbeenhittimer.removeEventListener(TimerEvent.TIMER, hasbeenhittimerTickHandler);
 							if (hasarmour == false){
 								health -= zombie1.zombiedamage;
 							}else if (hasarmour == true){
 								armour -= zombie1.zombiedamage;
 							}
-							checkhealth();
-							checkarmour();
+							trace("player hit");
+						}else{
+							hasbeenhit = false;
 						}
 					}
+					
 					
 					
 					//flamerthrower
@@ -1722,55 +1728,41 @@
 						
 					//normal push player
 					if (bosszombie1.hitTestPoint(player.x+radius, player.y, true)){
-						player.x -= 5;
+						player.x -= 1;
 						bosszombie1.x += 1;
-						if (infintehealth == false){
-							if (hasarmour == false){
-								health -= bosszombie1.zombiedamage;
-							}else if (hasarmour == true){
-								armour -= bosszombie1.zombiedamage;
-							}
-							checkhealth();
-							checkarmour();
-						}
+						playerDamaged();
 					}
 					if (bosszombie1.hitTestPoint(player.x, player.y-radius, true)){
-						player.y += 5;
+						player.y += 1;
 						bosszombie1.y -= 1;
-						if (infintehealth == false){
-							if (hasarmour == false){
-								health -= bosszombie1.zombiedamage;
-							}else if (hasarmour == true){
-								armour -= bosszombie1.zombiedamage;
-							}
-							checkhealth();
-							checkarmour();
-						}
+						playerDamaged();
 					}
 					if (bosszombie1.hitTestPoint(player.x-radius, player.y, true)){
-						player.x += 5;
+						player.x += 1;
 						bosszombie1.x -= 1;
-						if (infintehealth == false){
-							if (hasarmour == false){
-								health -= bosszombie1.zombiedamage;
-							}else if (hasarmour == true){
-								armour -= bosszombie1.zombiedamage;
-							}
-							checkhealth();
-							checkarmour();
-						}
+						playerDamaged();
 					}
 					if (bosszombie1.hitTestPoint(player.x, player.y+radius, true)){
-						player.y -= 5;
+						player.y -= 1;
 						bosszombie1.y += 1;
-						if (infintehealth == false){
+						playerDamaged();
+					}
+					
+					if ((infintehealth == false)&&(hasbeenhit == true)){
+						if(hasbeenhittimerCount >=100){
+							checkhealth();
+							checkarmour();
+							hasbeenhittimerCount = 0;
+							hasbeenhittimer.stop();
+							hasbeenhittimer.removeEventListener(TimerEvent.TIMER, hasbeenhittimerTickHandler);
 							if (hasarmour == false){
 								health -= bosszombie1.zombiedamage;
 							}else if (hasarmour == true){
 								armour -= bosszombie1.zombiedamage;
 							}
-							checkhealth();
-							checkarmour();
+							trace("player hit");
+						}else{
+							hasbeenhit = false;
 						}
 					}
 					
@@ -2239,6 +2231,9 @@
 			ui.uipausegame.addEventListener(MouseEvent.CLICK, openpausescreen);
 			ui.healthbar.width = health;
 			ui.armourbar.width = armour;
+			if (armour <= 0){
+				ui.armourbar.width = 0;
+			}
 			ui.stagetext.text = currentstage.toString();
 			ui.zombieskilledtext.text = totalzombieskilled.toString();
 			ui.cashtext.text = ("$"+currentcash.toString());
@@ -2499,7 +2494,9 @@
 		}
 		if (playerhastorch == false){
 			light.gotoAndStop(2);
-		}			
+		}
+		light.x = player.x;
+		light.y = player.y;
 	}
 	public function startfog():void{		
 	//start fog

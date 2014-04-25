@@ -20,8 +20,8 @@
 		public var isAttacking:Boolean = false;
 		public var bosszombiehitpoints:int;
 		public var zombiedamage:int;
-		public var bossTimer:Timer = new Timer(1000, 10);
-		public var bosschargeTimer:Timer = new Timer(1000, 10);
+		public var bossTimer:Timer = new Timer(1000,0)
+		public var bosschargeTimer:Timer = new Timer(1000,0);
 		public var SecondsElapsed:Number = 1;
 		public var chargeSecondsElapsed:Number = 1;
 		
@@ -38,12 +38,13 @@
 					//remove timer listen event
 					removeEventListener(TimerEvent.TIMER, attackheck);
 					isAttacking = false;
+					trace("boss finished attacking");
 				}
 		}
 		public function chargeattackheck():void{
 			chargeSecondsElapsed++;
 				//check if timer has "ticked" 500 times
-				if (chargeSecondsElapsed >= 120){
+				if (chargeSecondsElapsed >= 5){
 					//stop timer
 					bosschargeTimer.stop();
 					//reset timer
@@ -75,47 +76,36 @@
 ///////////////////////////////////////////////////////
 //							Main Loop
 ///////////////////////////////////////////////////////
+
+		
 		public function bosszombieloop(e:Event):void {
 			if (survival.ispaused == false){
 				var Zdist_x:Number=this.x-survival.player.x;
 				var Zdist_y:Number=this.y-survival.player.y;
 				var Zangle:Number=- Math.atan2(Zdist_x,Zdist_y);
 				var distance:Number = Math.sqrt((Zdist_x)*(Zdist_x) + (Zdist_y)*(Zdist_y));
-
 				//stop zombies going thru walls
 				while (survival.environment.hitTestPoint(this.x, this.y+radius, true)) {
 					this.y--;
-					this.gotoAndStop(2);//walking
 				}
 				while (survival.environment.hitTestPoint(this.x, this.y-radius, true)) {
 					this.y++;
-					this.gotoAndStop(2);//walking
 				}
 				while (survival.environment.hitTestPoint(this.x-radius, this.y, true)) {
 					this.x++;
-					this.gotoAndStop(2);//walking
 				}
 				while (survival.environment.hitTestPoint(this.x+radius, this.y, true)) {
 					this.x--;
+				}
+				if((distance <= 50)&&(isAttacking == false)){
+					this.gotoAndStop(3);//attack 1 animation
+					zombiedamage = 10;//attack damage
+					isAttacking = true;
+					trace("boss attacking");
+					this.rotation=to_degrees(Zangle);
+					addEventListener(TimerEvent.TIMER, attackheck);
+				}else if ((distance < agrorange)&&(isAttacking == false)){
 					this.gotoAndStop(2);//walking
-				}
-				/*
-				//stop zombies going thru door
-				while (survival.door.hitTestPoint(this.x, this.y+radius, true)) {
-					this.y--;
-				}
-				while (survival.door.hitTestPoint(this.x, this.y-radius, true)) {
-					this.y++;
-				}
-				while (survival.door.hitTestPoint(this.x-radius, this.y, true)) {
-					this.x++;
-				}
-				while (survival.door.hitTestPoint(this.x+radius, this.y, true)) {
-					this.x--;
-				}
-				*/
-				//move zombie towards player
-				if (distance < agrorange){
 					//rotate zombie to face player
 					this.rotation=to_degrees(Zangle);
 					//move zombie towards player
@@ -131,26 +121,12 @@
 					if(this.x < survival.player.x){
 						this.x += zombieSpeed;//X RIGHT
 					}
-				}else if (isAttacking == true){
-					trace("boss attacking");
-					this.rotation=to_degrees(Zangle);
-					
-					this.gotoAndStop(1);//idle
-				}
-				
-
-				//if ((attackRandom == 0)&&(isAttacking == false)){
-					if(distance = 10){
-						this.gotoAndStop(2);//attack 1 animation
-						zombiedamage = 100;//attack damage
-						isAttacking = true;
-						trace("attack start");
-					}else if(distance > 10){
+				}else if (distance > 50){
 					isAttacking = false;
-					trace("attack end");
-					}
+				}
 			}
 		}
+				
 ///////////////////////////////////////////////////////
 //							MISC
 ///////////////////////////////////////////////////////
