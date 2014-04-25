@@ -1512,26 +1512,25 @@
 		var deadzombieArray:Array = [];//holds all deadzombies
 		//create new zombie from Zombie class and place on stage at spawn point
 		public function createZombies():void {
-			//check how many zombies have been spawned
-			if(zombiecount > zombiespawncount){
+			if(boss1spawned == true){
 				stopspawn = true;
-			}else{
-				if (stopspawn == false) {
-					//check how many zombies on stage
-							var zombie:Zombie = new Zombie(stage, Zombie.ZombieX, Zombie.ZombieY);
-							//Add event to zombie to remove them from array when removed from stage
-							zombie.addEventListener(Event.REMOVED_FROM_STAGE, zombieRemoved, false, 0, true);
-							//add zombie to array
-							zombieArray.push(zombie);
-							//add zombie to stage
-							enemycontainer.addChild(zombie);
-							//enemycontainer.setChildIndex(zombie,1);
-							//increase zombie counters
-							zombiecount += 1;
-							totalzomibes += 1;
-							
-							
-				}
+			}
+			//check how many zombies have been spawned
+			else if((zombiecount > zombiespawncount)){
+				stopspawn = true;
+			}else if (stopspawn == false) {
+				//check how many zombies on stage
+				var zombie:Zombie = new Zombie(stage, Zombie.ZombieX, Zombie.ZombieY);
+				//Add event to zombie to remove them from array when removed from stage
+				zombie.addEventListener(Event.REMOVED_FROM_STAGE, zombieRemoved, false, 0, true);
+				//add zombie to array
+				zombieArray.push(zombie);
+				//add zombie to stage
+				enemycontainer.addChild(zombie);
+				//enemycontainer.setChildIndex(zombie,1);
+				//increase zombie counters
+				zombiecount += 1;
+				totalzomibes += 1;
 			}
 		}
 		public function playerDamaged():void{
