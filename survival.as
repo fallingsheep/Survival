@@ -1553,8 +1553,7 @@
 		public var currentdead:int;
 		public function checkzombieHit():void{
 			for (var idx:int = zombieArray.length - 1; idx >= 0; idx--){
-						var zombie1:Zombie = zombieArray[idx];
-						
+					var zombie1:Zombie = zombieArray[idx];
 					//normal push player
 					if (zombie1.hitTestPoint(player.x+radius, player.y, true)){
 						player.x -= 1;
@@ -1724,7 +1723,9 @@
 		public function checkbosszombieHit():void{
 			for (var idxbb:int = bosszombieArray.length - 1; idxbb >= 0; idxbb--){
 				var bosszombie1:BossZombie = bosszombieArray[idxbb];
-						
+				
+					bosszombie1.hpbar.width = (bosszombie1.bosszombiehitpoints / 100);
+					
 					//normal push player
 					if (bosszombie1.hitTestPoint(player.x+radius, player.y, true)){
 						player.x -= 1;

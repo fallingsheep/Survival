@@ -77,7 +77,7 @@
 					this.gotoAndStop(1)
 					zombieSpeed = 0.5;
 					isbigzombie = false;
-					zombiehitpoints = 200;
+					zombiehitpoints = 100;
 					zombiedamage = 1;
 					agrorange = 400;//how far zombie can see
 				}else if((zombieType == 1) && (bigzombiechance == 1)){
