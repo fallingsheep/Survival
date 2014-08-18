@@ -22,6 +22,7 @@
 		public var achivementscreen:achivementscreen_mc = new achivementscreen_mc();
 		public var shopscreen:shopscreen_mc = new shopscreen_mc();
 		public var statsscreen:statsscreen_mc = new statsscreen_mc();
+		public var confirmsave:confirmsave_mc = new confirmsave_mc();
 		
 		public var light:light_mc= new light_mc();
 		public var ground:ground_mc = new ground_mc();
@@ -71,7 +72,7 @@
 		public var delayCounter:int = 0; //we use this to add delay between the shots
 		public var delayMax:int = 15; //default pistol delay
 		//ammo
-		public var pistolammo:int = 100;
+		public var pistolammo:int = 200;//starting pistol ammo
 		public var uziammo:int = 0;
 		public var shotgunammo:int = 0;
 		public var flamethrowerammo:int = 0;
@@ -209,8 +210,8 @@
 			//add the player
 			addChild(player);
 			setChildIndex(player,2);
-			player.x = stage.width / 2;
-            player.y = stage.height / 2;
+			player.x = 400;
+            player.y = 200;
 			
 			//lighting
             addChild(light);
@@ -244,7 +245,7 @@
 			
 			
 			//TEMP BOSS SPAWN TEST
-			spawnboss1();
+			//spawnboss1();
 		}
 		//MAIN GAME LOOP
 		public function mainloop(e:Event):void {
@@ -970,7 +971,7 @@
 					pausescreen.gotoachivementscreen.addEventListener(MouseEvent.CLICK, showachivementscreen);
 					pausescreen.restartgame.addEventListener(MouseEvent.CLICK, restartGame);
 					pausescreen.exitpausescreen.addEventListener(MouseEvent.CLICK, closepausescreen);
-					pausescreen.savegamebutton.addEventListener(MouseEvent.CLICK, saveData);
+					pausescreen.savegamebutton.addEventListener(MouseEvent.CLICK, confirmsavegame);
 					pausescreen.loadgamebutton.addEventListener(MouseEvent.CLICK, loadgame);
 					pausescreen.gotostatsscreen.addEventListener(MouseEvent.CLICK, showstatsscreen);
 		}
@@ -988,6 +989,29 @@
 						stage.removeChild(pausescreen);
 					}
 		}
+		//Confirm save game
+		public function confirmsavegame(e:MouseEvent):void{
+					pausescreen.addChild(confirmsave);
+					confirmsave.savegameYes.addEventListener(MouseEvent.CLICK, savegameYes);
+					confirmsave.savegameNo.addEventListener(MouseEvent.CLICK, savegameNo);
+		}
+		public function savegameYes(e:MouseEvent):void{
+					saveData();
+					processAchivements();
+					saveachiveData();
+					confirmsave.savegameYes.removeEventListener(MouseEvent.CLICK, saveData);
+					confirmsave.savegameNo.removeEventListener(MouseEvent.CLICK, savegameNo);
+					pausescreen.removeChild(confirmsave);
+					trace("GAME SAVED");
+		}
+		public function savegameNo(e:MouseEvent):void{
+					confirmsave.savegameYes.removeEventListener(MouseEvent.CLICK, saveData);
+					confirmsave.savegameNo.removeEventListener(MouseEvent.CLICK, savegameNo);
+					pausescreen.removeChild(confirmsave);
+					trace("SAVE ABORTED");
+		}
+		
+		
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //							PLAYER
@@ -1167,6 +1191,8 @@
 			shopscreen.buyspeedboost.addEventListener(MouseEvent.CLICK, buySPEEDBOOST);
 			
 			shopscreen.exitshop.addEventListener(MouseEvent.CLICK, closeshop);
+			shopscreen.shopcash.text = ("$"+currentcash.toString());
+			
 		}
 		public function closeshop(event:MouseEvent):void {
 			pausescreen.gotoshop.addEventListener(MouseEvent.CLICK, showshop);
@@ -2539,7 +2565,7 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////		
 	public var saveDataObject:SharedObject;
 
-	public function saveData(e:MouseEvent):void{
+	public function saveData(){
 			saveDataObject = SharedObject.getLocal("test"); 
 			saveDataObject.data.savedisusingpistol = isusingpistol;
 			saveDataObject.data.savedisusinguzi = isusinguzi;

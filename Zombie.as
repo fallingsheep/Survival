@@ -77,24 +77,24 @@
 					this.gotoAndStop(1)
 					zombieSpeed = 0.5;
 					isbigzombie = false;
-					zombiehitpoints = 100;
+					zombiehitpoints = 50;
 					zombiedamage = 1;
-					agrorange = 400;//how far zombie can see
+					agrorange = 350;//how far zombie can see
 				}else if((zombieType == 1) && (bigzombiechance == 1)){
 					radius = 9;//how big is the zombie in pixels (sphere)
 					this.gotoAndStop(2)
 					zombieSpeed = 0.2;
 					isbigzombie = true;
 					zombiedamage = 5;
-					zombiehitpoints = 1000;
-					agrorange = 400;
+					zombiehitpoints = 75;
+					agrorange = 200;
 				}else{
 					zombieType = 0;
 					radius = 19;
 					this.gotoAndStop(1)
 					zombieSpeed = 0.5;
 					isbigzombie = false;
-					zombiehitpoints = 200;
+					zombiehitpoints = 50;
 					agrorange = 350;//how far zombie can see
 					zombiedamage = 1;
 				}
