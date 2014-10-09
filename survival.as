@@ -81,7 +81,10 @@
 		public var hasarmour:Boolean = true;
 		public var armour:int = 25;//starting armour
 		public var health:int = 100;//starting health
+		
+		
 		//zombies
+		public var Zombiesspawnedtotal:int = 0;
 		public var zombieskilled:int = 0;//total zombies killed for current stage
 		public var totalzombieskilled:int = 0;//total zombies killed all up
 		public var zombiecount:int = 0;// how many zombies created
@@ -90,6 +93,7 @@
 		public var zomibeskilled:int = 0; // total zombies killed
 		//timers
 		public var SecondsElapsed:Number = 1;
+		public var SecondsElapsedRANK:Number = 1;
 		public var UiSecondsElapsed:Number = 1;
 		public var Timer10:Timer = new Timer(1000, 10);
 		public var UiTimer10:Timer = new Timer(1000, 10);
@@ -113,9 +117,12 @@
 		
 		public static var ispaused:Boolean = false;
 		public var currentrank:int = 0;
-		public var experience:int = 0;		
+		public var experience:int = 1;		
 		
 		//ranks
+		public var Rankedup:Boolean = false;
+		public static var rankup:rankup_mc = new rankup_mc();
+		
 		public static var rank0:rank0_mc = new rank0_mc();
 		public static var rank1:rank1_mc = new rank1_mc();
 		public static var rank2:rank2_mc = new rank2_mc();
@@ -160,6 +167,7 @@
 				}
 			debugmemorytext.text = ((System.totalMemory / 1024 / 1024).toFixed(2)).toString() + "MB";
 			debugfpstext.text = FPS.toString();
+			debugtotalzombies.text = Zombiesspawnedtotal.toString();
 		}
 		//START GAME
 		public function startgame(event:MouseEvent):void {
@@ -1557,6 +1565,7 @@
 				//increase zombie counters
 				zombiecount += 1;
 				totalzomibes += 1;
+				Zombiesspawnedtotal += 1;
 			}
 		}
 		public function playerDamaged():void{
@@ -1625,7 +1634,7 @@
 					//flamerthrower
 					if(flamethrowerflames.hitTestPoint(zombie1.x,zombie1.y, true)){
 						if (this.contains(zombie1)){
-							zombie1.zombiehitpoints -= 5;// damage per second (roughly)
+							zombie1.zombiehitpoints -= 1;// damage per second (roughly)
 						}
 						
 						if(zombie1.zombiehitpoints <= 0){
@@ -1663,10 +1672,10 @@
 							if (enemycontainer.contains(zombie1)){
 								//remove zombie and bullet
 								if(isusingshotgun == true){
-									zombie1.zombiehitpoints -= 30;// damage per pellet
+									zombie1.zombiehitpoints -= 10;// damage per pellet
 									enemycontainer.removeChild(bullet1);
 								} else {
-									zombie1.zombiehitpoints -= 10;//damage per bullet
+									zombie1.zombiehitpoints -= 5;//damage per bullet
 									enemycontainer.removeChild(bullet1);
 								}
 
@@ -1796,7 +1805,7 @@
 					//flamerthrower
 					if(flamethrowerflames.hitTestPoint(bosszombie1.x,bosszombie1.y, true)){
 						if (this.contains(bosszombie1)){
-							bosszombie1.bosszombiehitpoints -= 5;// damage per second (roughly)
+							bosszombie1.bosszombiehitpoints -= 1;// damage per second (roughly)
 						}
 						
 						if(bosszombie1.bosszombiehitpoints <= 0){
@@ -1823,10 +1832,10 @@
 							if (enemycontainer.contains(bosszombie1)){
 								//remove zombie and bullet
 								if(isusingshotgun == true){
-									bosszombie1.bosszombiehitpoints -= 30;// damage per pellet
+									bosszombie1.bosszombiehitpoints -= 10;// damage per pellet
 									enemycontainer.removeChild(bullet1);
 								} else {
-									bosszombie1.bosszombiehitpoints -= 10;//damage per bullet
+									bosszombie1.bosszombiehitpoints -= 5;//damage per bullet
 									enemycontainer.removeChild(bullet1);
 								}
 
@@ -2310,7 +2319,7 @@
 //							GAMEOVER
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	public function gameover():void{
-		ispaused = true;
+					ispaused = true;
 					stage.removeEventListener(Event.ENTER_FRAME,mainloop);
 					stage.removeEventListener(Event.ENTER_FRAME,processScripts);
 					trace("GAME OVER");
@@ -2332,21 +2341,56 @@
 			pausescreen.gotorankscreen.addEventListener(MouseEvent.CLICK, showrankscreen);
 			pausescreen.removeChild(rankscreen);
 		}
+		
+		
+		//Rank up timer checker
+		public function checkRankUpTimer():void{
+			
+			trace ("timerstarted");
+			//check if player has speedpack
+			if (Rankedup == true){
+				//increase timer
+				SecondsElapsedRANK++;
+				//check if timer has "ticked" 10 times
+				if (SecondsElapsedRANK >= 10){
+					//stop timer
+					Timer10.stop();
+					//reset timer
+					SecondsElapsedRANK = 0;
+					//remove timer listen event
+					removeEventListener(TimerEvent.TIMER, checkRankUpTimer);
+					//set collected speedpack back to false
+					Rankedup = false;
+					removeChild(rankup);
+				}
+			}
+		}
+		
 		public function ProcessXP():void{
-			if (experience < 1000){
+			if (experience == 1){
 				currentrank = 0;
 				addChild(rank0);
 				rank0.x = 66;
 				rank0.y = 387;
 			}
-			if (experience >= 1000){
+			if (experience >= 10){
 				currentrank = 1;
 				addChild(rank1);
 				rank1.x = 66;
 				rank1.y = 387;
 				if (this.contains(rank0)){
-				removeChild(rank0);
+					removeChild(rank0);
 				}
+				
+				//Rank up pop up
+				addEventListener(TimerEvent.TIMER, checkRankUpTimer);
+				Rankedup = true;
+				Timer10.start();
+				
+				addChild(rankup);
+				rankup.x = 400;
+				rankup.y = 200;
+				setChildIndex(rankup,6);
 			}
 			if (experience >= 2500){
 				currentrank = 2;
@@ -2356,6 +2400,7 @@
 				if (this.contains(rank1)){
 				removeChild(rank1);
 				}
+
 			}
 			if (experience >= 5000){
 				currentrank = 3;
@@ -2365,6 +2410,7 @@
 				if (this.contains(rank2)){
 				removeChild(rank2);
 				}
+
 			}
 			if (experience >= 10000){
 				currentrank = 4;
@@ -2374,6 +2420,7 @@
 				if (this.contains(rank3)){
 				removeChild(rank3);
 				}
+
 			}
 			if (experience >= 20000){
 				currentrank = 5;
@@ -2383,6 +2430,7 @@
 				if (this.contains(rank4)){
 				removeChild(rank4);
 				}
+
 			}
 			if (experience >= 40000){
 				currentrank = 6;
@@ -2392,6 +2440,7 @@
 				if (this.contains(rank5)){
 				removeChild(rank5);
 				}
+;
 			}
 			if (experience >= 80000){
 				currentrank = 7;
@@ -2401,6 +2450,7 @@
 				if (this.contains(rank6)){
 				removeChild(rank6);
 				}
+
 			}
 			if (experience >= 160000){
 				currentrank = 8;
@@ -2410,6 +2460,7 @@
 				if (this.contains(rank7)){
 				removeChild(rank7);
 				}
+
 			}
 			if (experience >= 320000){
 				currentrank = 9;
@@ -2419,6 +2470,7 @@
 				if (this.contains(rank8)){
 				removeChild(rank8);
 				}
+
 			}
 			if (experience >= 640000){
 				currentrank = 10;
@@ -2428,6 +2480,7 @@
 				if (this.contains(rank9)){
 				removeChild(rank9);
 				}
+
 			}
 			if (experience >= 1200000){
 				currentrank = 11;
@@ -2437,6 +2490,7 @@
 				if (this.contains(rank10)){
 				removeChild(rank10);
 				}
+
 			}
 			if (experience >= 2400000){
 				currentrank = 12;
@@ -2446,6 +2500,7 @@
 				if (this.contains(rank11)){
 				removeChild(rank11);
 				}
+
 			}
 			if (experience >= 4800000){
 				currentrank = 13;
@@ -2455,6 +2510,7 @@
 				if (this.contains(rank12)){
 				removeChild(rank12);
 				}
+
 			}
 			if (experience >= 9600000){
 				currentrank = 14;
@@ -2464,6 +2520,7 @@
 				if (this.contains(rank13)){
 				removeChild(rank13);
 				}
+
 			}
 			if (experience >= 19200000){
 				currentrank = 15;
@@ -2473,6 +2530,7 @@
 				if (this.contains(rank14)){
 				removeChild(rank14);
 				}
+
 			}
 			if (experience >= 38400000){
 				currentrank = 16;
@@ -2482,6 +2540,7 @@
 				if (this.contains(rank15)){
 				removeChild(rank15);
 				}
+
 			}
 			if (experience >= 76800000){
 				currentrank = 17;
@@ -2491,6 +2550,7 @@
 				if (this.contains(rank16)){
 				removeChild(rank16);
 				}
+
 			}
 			if (experience >= 153600000){
 				currentrank = 18;
@@ -2500,6 +2560,7 @@
 				if (this.contains(rank17)){
 				removeChild(rank17);
 				}
+
 			}
 			if (experience >= 307200000){
 				currentrank = 19;
@@ -2509,6 +2570,7 @@
 				if (this.contains(rank18)){
 				removeChild(rank18);
 				}
+
 			}
 		}
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -2594,6 +2656,7 @@
 			saveDataObject.data.savedtotalzomibes = totalzomibes;
 			saveDataObject.data.savedzomibeskilled = zomibeskilled;
 			saveDataObject.data.savedSecondsElapsed = SecondsElapsed;
+			saveDataObject.data.savedSecondsElapsed = SecondsElapsedRANK;
 			saveDataObject.data.savedUiSecondsElapsed = UiSecondsElapsed;
 			saveDataObject.data.savedcollectedSpeedPack = collectedSpeedPack;
 			saveDataObject.data.savedlevel = level;
@@ -2640,6 +2703,7 @@
 			totalzomibes = saveDataObject.data.savedtotalzomibes;
 			zomibeskilled = saveDataObject.data.savedzomibeskilled;
 			SecondsElapsed = saveDataObject.data.savedSecondsElapsed;
+			SecondsElapsedRANK = saveDataObject.data.savedSecondsElapsedRANK;
 			UiSecondsElapsed = saveDataObject.data.savedUiSecondsElapsed;
 			collectedSpeedPack = saveDataObject.data.savedcollectedSpeedPack;
 			level = saveDataObject.data.savedlevel;
