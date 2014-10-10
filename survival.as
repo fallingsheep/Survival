@@ -1241,6 +1241,7 @@
 			chaingunammo = 1500;
 			currentcash -= 5000;//cost of uzi
 			globalcashspent += 5000;
+			updatetext();//update cash display
 			shopscreen.shopmessage.text = "Bought CHAINGUN!";//shop message
 			}else{
 				shopscreen.shopmessage.text = "Not enough cash!";//shop message
@@ -1265,6 +1266,7 @@
 			uziammo = 200;
 			currentcash -= 1000;//cost of uzi
 			globalcashspent += 1000;
+			updatetext();//update cash display
 			shopscreen.shopmessage.text = "Bought UZI!";//shop message
 			}else{
 				shopscreen.shopmessage.text = "Not enough cash!";//shop message
@@ -1289,6 +1291,7 @@
 			shotgunammo = 200;
 			currentcash -= 500;//cost of uzi
 			globalcashspent += 500;
+			updatetext();//update cash display
 			shopscreen.shopmessage.text = "Bought Shotgun!";//shop message
 			}else{
 				shopscreen.shopmessage.text = "Not enough cash!";//shop message
@@ -1313,6 +1316,7 @@
 			flamethrowerammo = 300;
 			currentcash -= 2500;//cost of uzi
 			globalcashspent += 2500;
+			updatetext();//update cash display
 			shopscreen.shopmessage.text = "Bought Flamethrower!";//shop message
 			}else{
 				shopscreen.shopmessage.text = "Not enough cash!";//shop message
@@ -1338,6 +1342,7 @@
 			armour += 40;
 			currentcash -= 2000;//cost of armour
 			globalcashspent += 2000;
+			updatetext();//update cash display
 			updatetext();//update armour display
 			shopscreen.shopmessage.text = "Bought Armour!";//shop message
 			}else{
@@ -1364,6 +1369,7 @@
 			collectMedshot();
 			currentcash -= 1500;//cost of medshot
 			globalcashspent += 1500;
+			updatetext();//update cash display
 			updatetext();//update display
 			shopscreen.shopmessage.text = "Bought Medkit!";//shop message
 			}else{
@@ -1390,6 +1396,7 @@
 			collectMedpack();
 			currentcash -= 2500;//cost of medkit
 			globalcashspent += 2500;
+			updatetext();//update cash display
 			updatetext();//update display
 			shopscreen.shopmessage.text = "Bought Medkit!";//shop message
 			}else{
@@ -1415,6 +1422,7 @@
 			collectTorch();
 			currentcash -= 2500;//cost of torch
 			globalcashspent += 2500;
+			updatetext();//update cash display
 			shopscreen.shopmessage.text = "Bought Torch!";//shop message
 			}else{
 				shopscreen.shopmessage.text = "Not enough cash!";//shop message
@@ -1439,6 +1447,7 @@
 			pistolammo = 100;
 			currentcash -= 50;//cost of uzi
 			globalcashspent += 50;
+			updatetext();//update cash display
 			shopscreen.shopmessage.text = "Bought Pistol Ammo!";//shop message
 			}else{
 				shopscreen.shopmessage.text = "Not enough cash!";//shop message
@@ -1462,6 +1471,7 @@
 			uziammo = 500;
 			currentcash -= 500;//cost of uzi
 			globalcashspent += 500;
+			updatetext();//update cash display
 			shopscreen.shopmessage.text = "Bought UZI Ammo!";//shop message
 			}else{
 				shopscreen.shopmessage.text = "Not enough cash!";//shop message
@@ -1484,6 +1494,7 @@
 			shotgunammo = 50;
 			currentcash -= 150;//cost of shotgun ammo
 			globalcashspent += 150;
+			updatetext();//update cash display
 			shopscreen.shopmessage.text = "Bought Shotgun Ammo!";//shop message
 			}else{
 				shopscreen.shopmessage.text = "Not enough cash!";//shop message
@@ -1507,6 +1518,7 @@
 			flamethrowerammo = 250;
 			currentcash -= 500;//cost of flaethrower ammo
 			globalcashspent += 500;
+			updatetext();//update cash display
 			shopscreen.shopmessage.text = "Bought Flamethrower Ammo!";//shop message
 			}else{
 				shopscreen.shopmessage.text = "Not enough cash!";//shop message
@@ -1525,11 +1537,13 @@
 				shopscreen.removeChild(confirmspeedboost);
 			}
 		}
+		//Speed boost
 		public function confirmSPEEDBOOST(event:MouseEvent):void {
 			if (currentcash >= 1000){
-			collectSpeedpack();
+			collectSpeedpack();// turn speed boost on
 			currentcash -= 1000;//cost of speedboost
 			globalcashspent += 1000;
+			updatetext();//update cash display
 			shopscreen.shopmessage.text = "Bought Speed Boost!";//shop message
 			}else{
 				shopscreen.shopmessage.text = "Not enough cash!";//shop message
@@ -1542,10 +1556,13 @@
 //						ZOMBIES
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		var zombieArray:Array = [];//holds zombies
-		var bosszombieArray:Array = [];//holds all boss zombie
+		var bosszombieArray:Array = [];//holds all boss zombies
 		var deadzombieArray:Array = [];//holds all deadzombies
 		//create new zombie from Zombie class and place on stage at spawn point
 		public function createZombies():void {
+			
+
+			//check if boss is spawned
 			if(boss1spawned == true){
 				stopspawn = true;
 			}
