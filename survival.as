@@ -1194,6 +1194,7 @@
 			
 			shopscreen.exitshop.addEventListener(MouseEvent.CLICK, closeshop);
 			shopscreen.shopcash.text = ("$"+currentcash.toString());
+			shopscreen.shopmessage.text = "";//shop message
 			
 		}
 		public function closeshop(event:MouseEvent):void {
@@ -1220,9 +1221,9 @@
 
 		//WEAPONS
 		public function buyCHAINGUN(event:MouseEvent):void {
-			shopscreen.addChild(confirmchaingun);
-			confirmchaingun.yesuzi.addEventListener(MouseEvent.CLICK, confirmBUYCHAINGUN);
-			confirmchaingun.nouzi.addEventListener(MouseEvent.CLICK, cancelBUYCHAINGUN);
+				shopscreen.addChild(confirmchaingun);
+				confirmchaingun.yesuzi.addEventListener(MouseEvent.CLICK, confirmBUYCHAINGUN);
+				confirmchaingun.nouzi.addEventListener(MouseEvent.CLICK, cancelBUYCHAINGUN);
 		}
 		public function cancelBUYCHAINGUN(event:MouseEvent):void {
 			if(shopscreen.contains(confirmchaingun)){
@@ -1230,18 +1231,22 @@
 			}
 		}
 		public function confirmBUYCHAINGUN(event:MouseEvent):void {
-			if (currentcash >= 5000){
-			haschaingun = true;
-			chaingunammo = 1500;
-			currentcash -= 5000;//cost of uzi
-			globalcashspent += 5000;
-			updatetext();//update cash display
-			shopscreen.shopmessage.text = "Bought CHAINGUN!";//shop message
+			if (currentrank < 5){
+				shopscreen.shopmessage.text = "You Must be Rank 5 to purchase this!";//shop message
 			}else{
-				shopscreen.shopmessage.text = "Not enough cash!";//shop message
-			}
-			if(shopscreen.contains(confirmchaingun)){
-				shopscreen.removeChild(confirmchaingun);
+				if (currentcash >= 5000){
+				haschaingun = true;
+				chaingunammo = 1500;
+				currentcash -= 5000;//cost of uzi
+				globalcashspent += 5000;
+				updatetext();//update cash display
+				shopscreen.shopmessage.text = "Bought CHAINGUN!";//shop message
+				}else{
+					shopscreen.shopmessage.text = "Not enough cash!";//shop message
+				}
+				if(shopscreen.contains(confirmchaingun)){
+					shopscreen.removeChild(confirmchaingun);
+				}
 			}
 		}
 		public function buyUZI(event:MouseEvent):void {
@@ -1255,18 +1260,22 @@
 			}
 		}
 		public function confirmBUYUZI(event:MouseEvent):void {
-			if (currentcash >= 1000){
-			hasuzi = true;
-			uziammo = 200;
-			currentcash -= 1000;//cost of uzi
-			globalcashspent += 1000;
-			updatetext();//update cash display
-			shopscreen.shopmessage.text = "Bought UZI!";//shop message
+			if (currentrank < 5){
+				shopscreen.shopmessage.text = "You Must be Rank 5 to purchase this!";//shop message
 			}else{
-				shopscreen.shopmessage.text = "Not enough cash!";//shop message
-			}
-			if(shopscreen.contains(confirmuzi)){
-				shopscreen.removeChild(confirmuzi);
+				if (currentcash >= 1000){
+				hasuzi = true;
+				uziammo = 200;
+				currentcash -= 1000;//cost of uzi
+				globalcashspent += 1000;
+				updatetext();//update cash display
+				shopscreen.shopmessage.text = "Bought UZI!";//shop message
+				}else{
+					shopscreen.shopmessage.text = "Not enough cash!";//shop message
+				}
+				if(shopscreen.contains(confirmuzi)){
+					shopscreen.removeChild(confirmuzi);
+				}
 			}
 		}
 		public function buySHOTGUN(event:MouseEvent):void {
@@ -1280,18 +1289,22 @@
 			}
 		}
 		public function confirmBUYSHOTGUN(event:MouseEvent):void {
-			if (currentcash >= 500){
-			hasshotgun = true;
-			shotgunammo = 200;
-			currentcash -= 500;//cost of uzi
-			globalcashspent += 500;
-			updatetext();//update cash display
-			shopscreen.shopmessage.text = "Bought Shotgun!";//shop message
+			if (currentrank < 5){
+				shopscreen.shopmessage.text = "You Must be Rank 5 to purchase this!";//shop message
 			}else{
-				shopscreen.shopmessage.text = "Not enough cash!";//shop message
-			}
-			if(shopscreen.contains(confirmshotgun)){
-				shopscreen.removeChild(confirmshotgun);
+				if (currentcash >= 500){
+				hasshotgun = true;
+				shotgunammo = 200;
+				currentcash -= 500;//cost of uzi
+				globalcashspent += 500;
+				updatetext();//update cash display
+				shopscreen.shopmessage.text = "Bought Shotgun!";//shop message
+				}else{
+					shopscreen.shopmessage.text = "Not enough cash!";//shop message
+				}
+				if(shopscreen.contains(confirmshotgun)){
+					shopscreen.removeChild(confirmshotgun);
+				}
 			}
 		}
 		public function buyFLAMETHROWER(event:MouseEvent):void {
@@ -1305,18 +1318,22 @@
 			}
 		}
 		public function confirmBUYFLAMETHROWER(event:MouseEvent):void {
-			if (currentcash >= 2500){
-			hasflamethrower = true;
-			flamethrowerammo = 300;
-			currentcash -= 2500;//cost of uzi
-			globalcashspent += 2500;
-			updatetext();//update cash display
-			shopscreen.shopmessage.text = "Bought Flamethrower!";//shop message
+			if (currentrank < 5){
+				shopscreen.shopmessage.text = "You Must be Rank 5 to purchase this!";//shop message
 			}else{
-				shopscreen.shopmessage.text = "Not enough cash!";//shop message
-			}
-			if(shopscreen.contains(confirmflamethrower)){
-				shopscreen.removeChild(confirmflamethrower);
+				if (currentcash >= 2500){
+				hasflamethrower = true;
+				flamethrowerammo = 300;
+				currentcash -= 2500;//cost of uzi
+				globalcashspent += 2500;
+				updatetext();//update cash display
+				shopscreen.shopmessage.text = "Bought Flamethrower!";//shop message
+				}else{
+					shopscreen.shopmessage.text = "Not enough cash!";//shop message
+				}
+				if(shopscreen.contains(confirmflamethrower)){
+					shopscreen.removeChild(confirmflamethrower);
+				}
 			}
 		}
 		//ARMOUR
@@ -1331,19 +1348,23 @@
 			}
 		}
 		public function confirmBUYARMOUR(event:MouseEvent):void {
-			if (currentcash >= 2000){
-			hasarmour = true;
-			armour += 40;
-			currentcash -= 2000;//cost of armour
-			globalcashspent += 2000;
-			updatetext();//update cash display
-			updatetext();//update armour display
-			shopscreen.shopmessage.text = "Bought Armour!";//shop message
+			if (currentrank < 5){
+				shopscreen.shopmessage.text = "You Must be Rank 5 to purchase this!";//shop message
 			}else{
-				shopscreen.shopmessage.text = "Not enough cash!";//shop message
-			}
-			if(shopscreen.contains(confirmarmour)){
-				shopscreen.removeChild(confirmarmour);
+				if (currentcash >= 2000){
+				hasarmour = true;
+				armour += 40;
+				currentcash -= 2000;//cost of armour
+				globalcashspent += 2000;
+				updatetext();//update cash display
+				updatetext();//update armour display
+				shopscreen.shopmessage.text = "Bought Armour!";//shop message
+				}else{
+					shopscreen.shopmessage.text = "Not enough cash!";//shop message
+				}
+				if(shopscreen.contains(confirmarmour)){
+					shopscreen.removeChild(confirmarmour);
+				}
 			}
 		}
 		//MEDSHOT
@@ -1358,19 +1379,23 @@
 			}
 		}
 		public function confirmBUYMEDSHOT(event:MouseEvent):void {
-			if (currentcash >= 1500){
-			hasarmour = true;
-			collectMedshot();
-			currentcash -= 1500;//cost of medshot
-			globalcashspent += 1500;
-			updatetext();//update cash display
-			updatetext();//update display
-			shopscreen.shopmessage.text = "Bought Medkit!";//shop message
+			if (currentrank < 5){
+				shopscreen.shopmessage.text = "You Must be Rank 5 to purchase this!";//shop message
 			}else{
-				shopscreen.shopmessage.text = "Not enough cash!";//shop message
-			}
-			if(shopscreen.contains(confirmmedshot)){
-				shopscreen.removeChild(confirmmedshot);
+				if (currentcash >= 1500){
+				hasarmour = true;
+				collectMedshot();
+				currentcash -= 1500;//cost of medshot
+				globalcashspent += 1500;
+				updatetext();//update cash display
+				updatetext();//update display
+				shopscreen.shopmessage.text = "Bought Medkit!";//shop message
+				}else{
+					shopscreen.shopmessage.text = "Not enough cash!";//shop message
+				}
+				if(shopscreen.contains(confirmmedshot)){
+					shopscreen.removeChild(confirmmedshot);
+				}
 			}
 		}
 		//MEDKIT
@@ -1385,19 +1410,23 @@
 			}
 		}
 		public function confirmBUYMEDKIT(event:MouseEvent):void {
-			if (currentcash >= 2500){
-			hasarmour = true;
-			collectMedpack();
-			currentcash -= 2500;//cost of medkit
-			globalcashspent += 2500;
-			updatetext();//update cash display
-			updatetext();//update display
-			shopscreen.shopmessage.text = "Bought Medkit!";//shop message
+			if (currentrank < 5){
+				shopscreen.shopmessage.text = "You Must be Rank 5 to purchase this!";//shop message
 			}else{
-				shopscreen.shopmessage.text = "Not enough cash!";//shop message
-			}
-			if(shopscreen.contains(confirmmedkit)){
-				shopscreen.removeChild(confirmmedkit);
+				if (currentcash >= 2500){
+				hasarmour = true;
+				collectMedpack();
+				currentcash -= 2500;//cost of medkit
+				globalcashspent += 2500;
+				updatetext();//update cash display
+				updatetext();//update display
+				shopscreen.shopmessage.text = "Bought Medkit!";//shop message
+				}else{
+					shopscreen.shopmessage.text = "Not enough cash!";//shop message
+				}
+				if(shopscreen.contains(confirmmedkit)){
+					shopscreen.removeChild(confirmmedkit);
+				}
 			}
 		}
 		//TORCH
@@ -1412,17 +1441,21 @@
 			}
 		}
 		public function confirmBUYTORCH(event:MouseEvent):void {
-			if (currentcash >= 2500){
-			collectTorch();
-			currentcash -= 2500;//cost of torch
-			globalcashspent += 2500;
-			updatetext();//update cash display
-			shopscreen.shopmessage.text = "Bought Torch!";//shop message
+			if (currentrank < 5){
+				shopscreen.shopmessage.text = "You Must be Rank 5 to purchase this!";//shop message
 			}else{
-				shopscreen.shopmessage.text = "Not enough cash!";//shop message
-			}
-			if(shopscreen.contains(confirmtorch)){
-				shopscreen.removeChild(confirmtorch);
+				if (currentcash >= 2500){
+				collectTorch();
+				currentcash -= 2500;//cost of torch
+				globalcashspent += 2500;
+				updatetext();//update cash display
+				shopscreen.shopmessage.text = "Bought Torch!";//shop message
+				}else{
+					shopscreen.shopmessage.text = "Not enough cash!";//shop message
+				}
+				if(shopscreen.contains(confirmtorch)){
+					shopscreen.removeChild(confirmtorch);
+				}
 			}
 		}
 		//AMMO
@@ -1437,17 +1470,21 @@
 			}
 		}
 		public function confirmBUYPISTOLAMMO(event:MouseEvent):void {
-			if (currentcash >= 50){
-			pistolammo = 100;
-			currentcash -= 50;//cost of uzi
-			globalcashspent += 50;
-			updatetext();//update cash display
-			shopscreen.shopmessage.text = "Bought Pistol Ammo!";//shop message
+			if (currentrank < 5){
+				shopscreen.shopmessage.text = "You Must be Rank 5 to purchase this!";//shop message
 			}else{
-				shopscreen.shopmessage.text = "Not enough cash!";//shop message
-			}
-			if(shopscreen.contains(confirmpistolammo)){
-				shopscreen.removeChild(confirmpistolammo);
+				if (currentcash >= 50){
+				pistolammo = 100;
+				currentcash -= 50;//cost of uzi
+				globalcashspent += 50;
+				updatetext();//update cash display
+				shopscreen.shopmessage.text = "Bought Pistol Ammo!";//shop message
+				}else{
+					shopscreen.shopmessage.text = "Not enough cash!";//shop message
+				}
+				if(shopscreen.contains(confirmpistolammo)){
+					shopscreen.removeChild(confirmpistolammo);
+				}
 			}
 		}
 		public function buyUZIAMMO(event:MouseEvent):void {
@@ -1461,17 +1498,21 @@
 			}
 		}
 		public function confirmBUYUZIAMMO(event:MouseEvent):void {
-			if (currentcash >= 500){
-			uziammo = 500;
-			currentcash -= 500;//cost of uzi
-			globalcashspent += 500;
-			updatetext();//update cash display
-			shopscreen.shopmessage.text = "Bought UZI Ammo!";//shop message
+			if (currentrank < 5){
+				shopscreen.shopmessage.text = "You Must be Rank 5 to purchase this!";//shop message
 			}else{
-				shopscreen.shopmessage.text = "Not enough cash!";//shop message
-			}
-			if(shopscreen.contains(confirmuziammo)){
-				shopscreen.removeChild(confirmuziammo);
+				if (currentcash >= 500){
+				uziammo = 500;
+				currentcash -= 500;//cost of uzi
+				globalcashspent += 500;
+				updatetext();//update cash display
+				shopscreen.shopmessage.text = "Bought UZI Ammo!";//shop message
+				}else{
+					shopscreen.shopmessage.text = "Not enough cash!";//shop message
+				}
+				if(shopscreen.contains(confirmuziammo)){
+					shopscreen.removeChild(confirmuziammo);
+				}
 			}
 		}public function buySHOTGUNAMMO(event:MouseEvent):void {
 			shopscreen.addChild(confirmshotgunammo);
@@ -1484,17 +1525,21 @@
 			}
 		}
 		public function confirmSHOTGUNAMMO(event:MouseEvent):void {
-			if (currentcash >= 150){
-			shotgunammo = 50;
-			currentcash -= 150;//cost of shotgun ammo
-			globalcashspent += 150;
-			updatetext();//update cash display
-			shopscreen.shopmessage.text = "Bought Shotgun Ammo!";//shop message
+			if (currentrank < 5){
+				shopscreen.shopmessage.text = "You Must be Rank 5 to purchase this!";//shop message
 			}else{
-				shopscreen.shopmessage.text = "Not enough cash!";//shop message
-			}
-			if(shopscreen.contains(confirmshotgunammo)){
-				shopscreen.removeChild(confirmshotgunammo);
+				if (currentcash >= 150){
+				shotgunammo = 50;
+				currentcash -= 150;//cost of shotgun ammo
+				globalcashspent += 150;
+				updatetext();//update cash display
+				shopscreen.shopmessage.text = "Bought Shotgun Ammo!";//shop message
+				}else{
+					shopscreen.shopmessage.text = "Not enough cash!";//shop message
+				}
+				if(shopscreen.contains(confirmshotgunammo)){
+					shopscreen.removeChild(confirmshotgunammo);
+				}
 			}
 		}
 		public function buyFLAMETHROWERAMMO(event:MouseEvent):void {
@@ -1508,17 +1553,21 @@
 			}
 		}
 		public function confirmBUYFLAMETHROWERAMMO(event:MouseEvent):void {
-			if (currentcash >= 500){
-			flamethrowerammo = 250;
-			currentcash -= 500;//cost of flaethrower ammo
-			globalcashspent += 500;
-			updatetext();//update cash display
-			shopscreen.shopmessage.text = "Bought Flamethrower Ammo!";//shop message
+			if (currentrank < 5){
+				shopscreen.shopmessage.text = "You Must be Rank 5 to purchase this!";//shop message
 			}else{
-				shopscreen.shopmessage.text = "Not enough cash!";//shop message
-			}
-			if(shopscreen.contains(confirmflamethrowerammo)){
-				shopscreen.removeChild(confirmflamethrowerammo);
+				if (currentcash >= 500){
+				flamethrowerammo = 250;
+				currentcash -= 500;//cost of flaethrower ammo
+				globalcashspent += 500;
+				updatetext();//update cash display
+				shopscreen.shopmessage.text = "Bought Flamethrower Ammo!";//shop message
+				}else{
+					shopscreen.shopmessage.text = "Not enough cash!";//shop message
+				}
+				if(shopscreen.contains(confirmflamethrowerammo)){
+					shopscreen.removeChild(confirmflamethrowerammo);
+				}
 			}
 		}
 		public function buySPEEDBOOST(event:MouseEvent):void {
@@ -1533,17 +1582,21 @@
 		}
 		//Speed boost
 		public function confirmSPEEDBOOST(event:MouseEvent):void {
-			if (currentcash >= 1000){
-			collectSpeedpack();// turn speed boost on
-			currentcash -= 1000;//cost of speedboost
-			globalcashspent += 1000;
-			updatetext();//update cash display
-			shopscreen.shopmessage.text = "Bought Speed Boost!";//shop message
+			if (currentrank < 5){
+				shopscreen.shopmessage.text = "You Must be Rank 5 to purchase this!";//shop message
 			}else{
-				shopscreen.shopmessage.text = "Not enough cash!";//shop message
-			}
-			if(shopscreen.contains(confirmspeedboost)){
-				shopscreen.removeChild(confirmspeedboost);
+				if (currentcash >= 1000){
+				collectSpeedpack();// turn speed boost on
+				currentcash -= 1000;//cost of speedboost
+				globalcashspent += 1000;
+				updatetext();//update cash display
+				shopscreen.shopmessage.text = "Bought Speed Boost!";//shop message
+				}else{
+					shopscreen.shopmessage.text = "Not enough cash!";//shop message
+				}
+				if(shopscreen.contains(confirmspeedboost)){
+					shopscreen.removeChild(confirmspeedboost);
+				}
 			}
 		}
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -2213,8 +2266,8 @@
 			if (Rankedup == true){
 				//increase timer
 				SecondsElapsedRANK++;
-				//check if timer has "ticked" 10 times
-				if (SecondsElapsedRANK >= 3){
+				//check if timer has "ticked" 2 times (2seconds)
+				if (SecondsElapsedRANK >= 2){
 					// tell function text has already been shown
 					rankupshown = true;
 					//stop timer
