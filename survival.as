@@ -121,6 +121,7 @@
 		
 		//ranks
 		public var Rankedup:Boolean = false;
+		public var rankupshown:Boolean = false;
 		public static var rankup:rankup_mc = new rankup_mc();
 		
 		public static var rank0:rank0_mc = new rank0_mc();
@@ -251,9 +252,6 @@
 			stage.addEventListener(MouseEvent.MOUSE_UP, mouseUpHandler, false, 0, true);
 			trace ("Game Intialised");
 			
-			
-			//TEMP BOSS SPAWN TEST
-			//spawnboss1();
 		}
 		//MAIN GAME LOOP
 		public function mainloop(e:Event):void {
@@ -382,10 +380,6 @@
 			playerMoving();
 			//remove flame thrower flames
 			removeFlames();
-			
-			if(boss1spawned == true){
-				checkbosszombieHit();
-			}
 			//dont save every frame need tofigure out when to save
 			//saveachiveData();// save achivement data to disk
 		}
@@ -1556,18 +1550,10 @@
 //						ZOMBIES
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		var zombieArray:Array = [];//holds zombies
-		var bosszombieArray:Array = [];//holds all boss zombies
 		var deadzombieArray:Array = [];//holds all deadzombies
 		//create new zombie from Zombie class and place on stage at spawn point
 		public function createZombies():void {
-			
-
-			//check if boss is spawned
-			if(boss1spawned == true){
-				stopspawn = true;
-			}
-			//check how many zombies have been spawned
-			else if((zombiecount > zombiespawncount)){
+ if((zombiecount > zombiespawncount)){
 				stopspawn = true;
 			}else if (stopspawn == false) {
 				//check how many zombies on stage
@@ -1758,148 +1744,7 @@
 			deadzombieArray.splice(deadzombieArray.indexOf(ee.currentTarget),1);
 			trace ("Dead Zombie Removed");
 		}
-		var boss1spawned:Boolean = false;
-		public function spawnboss1():void{
-			if ((level == 1)&&(boss1spawned == false)){
-				var bosszombie:BossZombie = new BossZombie(stage, BossZombie.bossZombieX, BossZombie.bossZombieY);
-				//add boss zombie to stage
-				bosszombieArray.push(bosszombie);
-				enemycontainer.addChild(bosszombie);
-				//enemycontainer.setChildIndex(bosszombie,1);
-				bosszombie.addEventListener(Event.REMOVED_FROM_STAGE, bosszombieRemoved, false, 0, true);
-				totalzomibes += 1;
-				boss1spawned = true;
-				trace ("Boss Spawned");
-			}
-		}
-		public function checkbosszombieHit():void{
-			for (var idxbb:int = bosszombieArray.length - 1; idxbb >= 0; idxbb--){
-				var bosszombie1:BossZombie = bosszombieArray[idxbb];
-				
-					bosszombie1.hpbar.width = (bosszombie1.bosszombiehitpoints / 100);
-					
-					//normal push player
-					if (bosszombie1.hitTestPoint(player.x+radius, player.y, true)){
-						player.x -= 1;
-						bosszombie1.x += 1;
-						playerDamaged();
-					}
-					if (bosszombie1.hitTestPoint(player.x, player.y-radius, true)){
-						player.y += 1;
-						bosszombie1.y -= 1;
-						playerDamaged();
-					}
-					if (bosszombie1.hitTestPoint(player.x-radius, player.y, true)){
-						player.x += 1;
-						bosszombie1.x -= 1;
-						playerDamaged();
-					}
-					if (bosszombie1.hitTestPoint(player.x, player.y+radius, true)){
-						player.y -= 1;
-						bosszombie1.y += 1;
-						playerDamaged();
-					}
-					
-					if ((infintehealth == false)&&(hasbeenhit == true)){
-						if(hasbeenhittimerCount >=100){
-							checkhealth();
-							checkarmour();
-							hasbeenhittimerCount = 0;
-							hasbeenhittimer.stop();
-							hasbeenhittimer.removeEventListener(TimerEvent.TIMER, hasbeenhittimerTickHandler);
-							if (hasarmour == false){
-								health -= bosszombie1.zombiedamage;
-							}else if (hasarmour == true){
-								armour -= bosszombie1.zombiedamage;
-							}
-							trace("player hit");
-						}else{
-							hasbeenhit = false;
-						}
-					}
-					
-					
-					//flamerthrower
-					if(flamethrowerflames.hitTestPoint(bosszombie1.x,bosszombie1.y, true)){
-						if (this.contains(bosszombie1)){
-							bosszombie1.bosszombiehitpoints -= 1;// damage per second (roughly)
-						}
-						
-						if(bosszombie1.bosszombiehitpoints <= 0){
-									ground.addChild(deadzombie1);
-									deadzombieArray.push(deadzombie1);
-									deadzombie1.x = bosszombie1.x;
-									deadzombie1.y = bosszombie1.y;
-									//deadzombie1.gotoAndStop(1);
-									deadzombie1.rotation = bosszombie1.rotation  - 180;
-									//deadzombie1.addEventListener(Event.REMOVED_FROM_STAGE, deadzombieRemoved, false, 0, true);
-									experience += 1000;
-									currentcash += 1000;
-									globalcashearnt += 1000;
-									enemycontainer.removeChild(bosszombie1);
-									currentdead += 1;
-						}
-					}
-					//bullets
-					for (var bidx:int = bulletList.length - 1; bidx >= 0; bidx--){
-						var bullet1:Bullet = bulletList[bidx];
-						//check if bullet hits zombie
-						
-						if (bullet1.hitTestObject(bosszombie1)){
-							if (enemycontainer.contains(bosszombie1)){
-								//remove zombie and bullet
-								if(isusingshotgun == true){
-									bosszombie1.bosszombiehitpoints -= 10;// damage per pellet
-									enemycontainer.removeChild(bullet1);
-								} else {
-									bosszombie1.bosszombiehitpoints -= 5;//damage per bullet
-									enemycontainer.removeChild(bullet1);
-								}
-
-								if(bosszombie1.bosszombiehitpoints <= 0){
-									ground.addChild(deadzombie1);
-									deadzombieArray.push(deadzombie1);
-									deadzombie1.x = bosszombie1.x;
-									deadzombie1.y = bosszombie1.y;
-									//deadzombie1.gotoAndStop(1);
-									deadzombie1.rotation = bosszombie1.rotation  - 180;
-									//deadzombie1.addEventListener(Event.REMOVED_FROM_STAGE, deadzombieRemoved, false, 0, true);
-									experience += 1000;
-									currentcash += 1000;
-									globalcashearnt += 1000;
-									enemycontainer.removeChild(bosszombie1);
-									currentdead += 1;
-								}
-							}
-						
-						}
-					}
-			 }
-		}
-		public function bosszombieRemoved(ee:Event):void{
-			//remove the event listner from current zombie
-			ee.currentTarget.removeEventListener(Event.REMOVED_FROM_STAGE, bosszombieRemoved);
-			bosszombieArray.splice(bosszombieArray.indexOf(ee.currentTarget),1);
-			//count xombie kill
-			//fix possible next level bug
-			if (zombieskilled <= 90){
-				zombieskilled = 91;
-			}else{
-				zombieskilled += 1;
-			}
-			//total zombies
-			totalzombieskilled += 1;
-			globalzombiekills +=1;
-			//globalzombiekills
-			//Process XP
-			ProcessXP();
-			//check next level requirments
-			finishlevel();
-			//save achive
-			saveachiveData();
-			boss1spawned = false;
-			trace ("Boss Zombie Removed");
-		}
+		
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //						LEVELS
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -2369,7 +2214,9 @@
 				//increase timer
 				SecondsElapsedRANK++;
 				//check if timer has "ticked" 10 times
-				if (SecondsElapsedRANK >= 10){
+				if (SecondsElapsedRANK >= 3){
+					// tell function text has already been shown
+					rankupshown = true;
 					//stop timer
 					Timer10.stop();
 					//reset timer
@@ -2382,8 +2229,21 @@
 				}
 			}
 		}
-		
+		public function ShowRankUp():void{
+			if(rankupshown == false){
+				addChild(rankup);
+				rankup.x = 400;
+				rankup.y = 200;
+				setChildIndex(rankup,6);
+				//Rank up pop up
+				addEventListener(TimerEvent.TIMER, checkRankUpTimer);
+				Rankedup = true;
+				Timer10.start();
+checkRankUpTimer();
+			}
+		}
 		public function ProcessXP():void{
+			
 			if (experience == 1){
 				currentrank = 0;
 				addChild(rank0);
@@ -2398,16 +2258,7 @@
 				if (this.contains(rank0)){
 					removeChild(rank0);
 				}
-				
-				//Rank up pop up
-				addEventListener(TimerEvent.TIMER, checkRankUpTimer);
-				Rankedup = true;
-				Timer10.start();
-				
-				addChild(rankup);
-				rankup.x = 400;
-				rankup.y = 200;
-				setChildIndex(rankup,6);
+ShowRankUp();
 			}
 			if (experience >= 2500){
 				currentrank = 2;
@@ -2417,7 +2268,7 @@
 				if (this.contains(rank1)){
 				removeChild(rank1);
 				}
-
+ShowRankUp();
 			}
 			if (experience >= 5000){
 				currentrank = 3;
@@ -2427,7 +2278,7 @@
 				if (this.contains(rank2)){
 				removeChild(rank2);
 				}
-
+ShowRankUp();
 			}
 			if (experience >= 10000){
 				currentrank = 4;
@@ -2437,7 +2288,7 @@
 				if (this.contains(rank3)){
 				removeChild(rank3);
 				}
-
+ShowRankUp();
 			}
 			if (experience >= 20000){
 				currentrank = 5;
@@ -2447,7 +2298,7 @@
 				if (this.contains(rank4)){
 				removeChild(rank4);
 				}
-
+ShowRankUp();
 			}
 			if (experience >= 40000){
 				currentrank = 6;
@@ -2457,7 +2308,7 @@
 				if (this.contains(rank5)){
 				removeChild(rank5);
 				}
-;
+ShowRankUp();
 			}
 			if (experience >= 80000){
 				currentrank = 7;
@@ -2467,7 +2318,7 @@
 				if (this.contains(rank6)){
 				removeChild(rank6);
 				}
-
+ShowRankUp();
 			}
 			if (experience >= 160000){
 				currentrank = 8;
@@ -2477,7 +2328,7 @@
 				if (this.contains(rank7)){
 				removeChild(rank7);
 				}
-
+ShowRankUp();
 			}
 			if (experience >= 320000){
 				currentrank = 9;
@@ -2487,7 +2338,7 @@
 				if (this.contains(rank8)){
 				removeChild(rank8);
 				}
-
+ShowRankUp();
 			}
 			if (experience >= 640000){
 				currentrank = 10;
@@ -2497,7 +2348,7 @@
 				if (this.contains(rank9)){
 				removeChild(rank9);
 				}
-
+ShowRankUp();
 			}
 			if (experience >= 1200000){
 				currentrank = 11;
@@ -2507,7 +2358,7 @@
 				if (this.contains(rank10)){
 				removeChild(rank10);
 				}
-
+ShowRankUp();
 			}
 			if (experience >= 2400000){
 				currentrank = 12;
@@ -2517,7 +2368,7 @@
 				if (this.contains(rank11)){
 				removeChild(rank11);
 				}
-
+ShowRankUp();
 			}
 			if (experience >= 4800000){
 				currentrank = 13;
@@ -2527,7 +2378,7 @@
 				if (this.contains(rank12)){
 				removeChild(rank12);
 				}
-
+ShowRankUp();
 			}
 			if (experience >= 9600000){
 				currentrank = 14;
@@ -2537,7 +2388,7 @@
 				if (this.contains(rank13)){
 				removeChild(rank13);
 				}
-
+ShowRankUp();
 			}
 			if (experience >= 19200000){
 				currentrank = 15;
@@ -2547,7 +2398,7 @@
 				if (this.contains(rank14)){
 				removeChild(rank14);
 				}
-
+ShowRankUp();
 			}
 			if (experience >= 38400000){
 				currentrank = 16;
@@ -2557,7 +2408,7 @@
 				if (this.contains(rank15)){
 				removeChild(rank15);
 				}
-
+ShowRankUp();
 			}
 			if (experience >= 76800000){
 				currentrank = 17;
@@ -2567,7 +2418,7 @@
 				if (this.contains(rank16)){
 				removeChild(rank16);
 				}
-
+ShowRankUp();
 			}
 			if (experience >= 153600000){
 				currentrank = 18;
@@ -2577,7 +2428,7 @@
 				if (this.contains(rank17)){
 				removeChild(rank17);
 				}
-
+ShowRankUp();
 			}
 			if (experience >= 307200000){
 				currentrank = 19;
@@ -2587,7 +2438,7 @@
 				if (this.contains(rank18)){
 				removeChild(rank18);
 				}
-
+ShowRankUp();
 			}
 		}
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////

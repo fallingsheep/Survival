@@ -5,7 +5,7 @@
 	
 	public class Zombie extends MovieClip {
 		
-		private var stageRef:Stage;
+		public var stageRef:Stage;
 		public var zombieRandom:int;
 		public static var ZombieX:int;
 		public static var ZombieY:int;
@@ -18,6 +18,8 @@
 		public var isbigzombie:Boolean;
 		public var zombiehitpoints:int;
 		public var zombiedamage:int;
+		public var attackRandom:int;
+		public var isAttacking:Boolean = false;
 			
         public function Zombie(stageRef:Stage, ZombieX:int, ZombieY:int):void {
 			zombieRandom = randomRange(0,9);
@@ -72,6 +74,7 @@
 				
 				zombieType = randomRange(0,1);//how many types of zombies
 				bigzombiechance = randomRange(0,8);
+				
 				if(zombieType == 0){
 					radius = 19;
 					this.gotoAndStop(1)
@@ -137,7 +140,7 @@
 					this.x--;
 				}
 				//move zombie towards player
-				if (distance < agrorange){
+				if ((distance <= agrorange)&&(isAttacking == false)){
 					//rotate zombie to face player
 					this.rotation=to_degrees(Zangle);
 					//move zombie towards player
@@ -159,10 +162,10 @@
 ///////////////////////////////////////////////////////
 //							MISC
 ///////////////////////////////////////////////////////
-		private function to_radians(n:Number):Number {
+		public function to_radians(n:Number):Number {
 				return (n*0.0174532925);
 			}
-		private function to_degrees(n:Number):Number {
+		public function to_degrees(n:Number):Number {
 				return (n*57.2957795);
 			}
 		public function randomRange(minNum:Number, maxNum:Number):Number {
