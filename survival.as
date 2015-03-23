@@ -101,7 +101,7 @@
 		public var collectedSpeedPack:Boolean = false;
 		
 		public var level:int = 1;//set start level
-		public var currentcash:int = 0;//cash
+		public static var currentcash:int = 0;//cash
 		public var deaths:int = 0;
 
 		//what stage to start on
@@ -117,7 +117,7 @@
 		
 		public static var ispaused:Boolean = false;
 		public var currentrank:int = 0;
-		public var experience:int = 1;		
+		public static var experience:int = 1;		
 		
 		//ranks
 		public var Rankedup:Boolean = false;
@@ -386,43 +386,51 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //							Time Played
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////		
-		public var timer:Timer = new Timer(100);
+		public var timer:Timer = new Timer(60);
 		public var timerCount:int = 0;
 		public var globaltimerCount:int = 0;
 		
 		public function timerTickHandler(Event:TimerEvent):void
 		{
-			timerCount += 100;
-			globaltimerCount += 100;
+			timerCount += 60;
+			globaltimerCount += 60;
 			timePlayed(timerCount);
 		}
 		
 		public var currentseconds:int;
 		public var currentminutes:int;
+		public var currenthours:int;
 		public var globalseconds:int;
 		public var globalminutes:int;
+		public var globalhours:int;
 		public var totalTimeplayed:int;
 		
 		public function timePlayed(milliseconds:int):void{
 			var time:Date = new Date(milliseconds);
 			var minutes:int = time.minutes;
 			var seconds:int = time.seconds;
+			var hours:int = time.hours;
+			var displayhours:String = hours.toString();
 			var displayminutes:String = minutes.toString();
 			var displayseconds:String = seconds.toString();
+			var displayglobalhours:String = globalhours.toString();
 			var displayglobalminutes:String = globalminutes.toString();
 			var displayglobalseconds:String = globalseconds.toString();
 			
 			displayglobalseconds = ((globaltimerCount /1000).toFixed(0)).toString();
 			displayglobalminutes = (globalminutes).toString();
+			displayglobalhours = (globalhours).toString();
 			
+			displayhours = (displayhours.length != 2) ? '0'+displayhours : displayhours;
 			displayminutes = (displayminutes.length != 2) ? '0'+displayminutes : displayminutes;
 			displayseconds = (displayseconds.length != 2) ? '0'+displayseconds : displayseconds;
 			
+			displayglobalhours = (displayglobalhours.length != 2) ? '0'+displayglobalhours : displayglobalhours;
 			displayglobalminutes = (displayglobalminutes.length != 2) ? '0'+displayglobalminutes : displayglobalminutes;
 			displayglobalseconds = (displayglobalseconds.length != 2) ? '0'+displayglobalseconds : displayglobalseconds;
 			
-			statsscreen.currenttimeplayedtext.text = displayglobalminutes + ":" + displayglobalseconds;//current time played
-			statsscreen.timeplayedtext.text = displayminutes + ":" + displayseconds; //toatal time played
+			statsscreen.currenttimeplayedtext.text = displayglobalhours + ":" +displayglobalminutes + ":" + displayglobalseconds;//current time played
+			statsscreen.timeplayedtext.text = displayhours + ":" +displayminutes + ":" + displayseconds; //toatal time played
 			totalTimeplayed = minutes;
 		}
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -472,7 +480,7 @@
 		public var saveAchivementDataObject:SharedObject;
 		//ADD NEW ACHIVES TO BOTTOM !!
 		//cash
-		public var globalcashearnt:int;
+		public static var globalcashearnt:int;
 		public var globalcashspent:int;
 		
 		//weapons
@@ -1605,11 +1613,16 @@
 		var zombieArray:Array = [];//holds zombies
 		var deadzombieArray:Array = [];//holds all deadzombies
 		//create new zombie from Zombie class and place on stage at spawn point
+		var ranspawn:int;
+		
+		
 		public function createZombies():void {
  if((zombiecount > zombiespawncount)){
 				stopspawn = true;
 			}else if (stopspawn == false) {
+				ranspawn = randomRange(0,10);
 				//check how many zombies on stage
+				if(ranspawn <= 9){
 				var zombie:Zombie = new Zombie(stage, Zombie.ZombieX, Zombie.ZombieY);
 				//Add event to zombie to remove them from array when removed from stage
 				zombie.addEventListener(Event.REMOVED_FROM_STAGE, zombieRemoved, false, 0, true);
@@ -1617,6 +1630,15 @@
 				zombieArray.push(zombie);
 				//add zombie to stage
 				enemycontainer.addChild(zombie);
+			}else{
+				var zombieBig:BigZombie = new BigZombie(stage, BigZombie.BigZombieX, BigZombie.BigZombieY);
+				//Add event to zombie to remove them from array when removed from stage
+				zombieBig.addEventListener(Event.REMOVED_FROM_STAGE, zombieRemoved, false, 0, true);
+				//add zombie to array
+				zombieArray.push(zombieBig);
+				//add zombie to stage
+				enemycontainer.addChild(zombieBig);
+			}
 				//enemycontainer.setChildIndex(zombie,1);
 				//increase zombie counters
 				zombiecount += 1;
@@ -1639,9 +1661,9 @@
 			hasbeenhittimerCount += 100;
 		}
 
-			
-		public var deadzombie1:deadzombie1_mc = new deadzombie1_mc();
-		public var currentdead:int;
+		public static var currentdead:int;
+		
+		
 		public function checkzombieHit():void{
 			for (var idx:int = zombieArray.length - 1; idx >= 0; idx--){
 					var zombie1:Zombie = zombieArray[idx];
@@ -1684,39 +1706,11 @@
 							hasbeenhit = false;
 						}
 					}
-					
-					
-					
+
 					//flamerthrower
 					if(flamethrowerflames.hitTestPoint(zombie1.x,zombie1.y, true)){
 						if (this.contains(zombie1)){
 							zombie1.zombiehitpoints -= 1;// damage per second (roughly)
-						}
-						
-						if(zombie1.zombiehitpoints <= 0){
-								if(zombie1.zombiehitpoints <= 0){
-									if(zombie1.zombieType == 0){
-												ground.addChild(deadzombie1);
-												deadzombieArray.push(deadzombie1);
-												deadzombie1.x = zombie1.x;
-												deadzombie1.y = zombie1.y;
-												deadzombie1.gotoAndStop(1);
-												deadzombie1.rotation = zombie1.rotation  - 180;
-												deadzombie1.addEventListener(Event.REMOVED_FROM_STAGE, deadzombieRemoved, false, 0, true);
-									}
-									if(zombie1.zombieType == 0){
-											experience += 100;
-											currentcash += 10;
-											globalcashearnt += 10;
-									}
-									if(zombie1.zombieType == 1){
-											experience += 500;
-											currentcash += 50;
-											globalcashearnt += 50;
-									}
-									enemycontainer.removeChild(zombie1);
-									currentdead += 1;
-							}
 						}
 					}
 					//bullets
@@ -1733,31 +1727,6 @@
 								} else {
 									zombie1.zombiehitpoints -= 5;//damage per bullet
 									enemycontainer.removeChild(bullet1);
-								}
-
-								if(zombie1.zombiehitpoints <= 0){
-										if(zombie1.zombieType == 0){
-												ground.addChild(deadzombie1);
-												deadzombieArray.push(deadzombie1);
-												deadzombie1.x = zombie1.x;
-												deadzombie1.y = zombie1.y;
-												//deadzombie1.gotoAndStop(1);
-												deadzombie1.rotation = zombie1.rotation  - 180;
-												//deadzombie1.addEventListener(Event.REMOVED_FROM_STAGE, deadzombieRemoved, false, 0, true);
-										}
-										
-									if(zombie1.zombieType == 0){
-											experience += 10;
-											currentcash += 10;
-											globalcashearnt += 10;
-									}
-									if(zombie1.zombieType == 1){
-											experience += 50;
-											currentcash += 50;
-											globalcashearnt += 50;
-									}
-									enemycontainer.removeChild(zombie1);
-									currentdead += 1;
 								}
 								
 							}
@@ -1789,13 +1758,6 @@
 			//save achive
 			saveachiveData();
 			trace ("Zombie Removed");
-		}
-		public function deadzombieRemoved(ee:Event):void{
-			//remove the event listner from current zombie
-			ee.currentTarget.removeEventListener(Event.REMOVED_FROM_STAGE, deadzombieRemoved);
-			//remove current zombie from array
-			deadzombieArray.splice(deadzombieArray.indexOf(ee.currentTarget),1);
-			trace ("Dead Zombie Removed");
 		}
 		
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////

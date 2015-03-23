@@ -11,17 +11,29 @@
 		public static var ZombieY:int;
 		public var radius:int;
 		public var zombieSpeed:Number;
-		public var bigzombiechance:Number;
-		public var zombieType:Number;
 		public var agrorange:int;
 		public var inrangeX,inrangeY:Boolean;
-		public var isbigzombie:Boolean;
 		public var zombiehitpoints:int;
 		public var zombiedamage:int;
 		public var attackRandom:int;
 		public var isAttacking:Boolean = false;
 			
-        public function Zombie(stageRef:Stage, ZombieX:int, ZombieY:int):void {
+        public function Zombie(stageRef:Stage, ZombieX:int, ZombieY:int){
+			trace ("Zombie Created");
+			RandomSpawnPoint();
+            this.stageRef = stageRef;
+            this.x = ZombieX;
+            this.y = ZombieY;
+			radius = 19;
+			this.gotoAndStop(1)
+			zombieSpeed = 0.5;
+			zombiehitpoints = 10;
+			zombiedamage = 1;
+			agrorange = 350;//how far zombie can see
+			addEventListener(Event.ENTER_FRAME,onFrame);
+			
+        }
+		public function RandomSpawnPoint(){
 			zombieRandom = randomRange(0,9);
 			//set zombies X and Y to random spawn points
 			if (zombieRandom == 0){
@@ -68,46 +80,27 @@
 				ZombieX=700;
 				ZombieY=300;
 			}
-            this.stageRef = stageRef;
-            this.x = ZombieX;
-            this.y = ZombieY;
-				
-				zombieType = randomRange(0,1);//how many types of zombies
-				bigzombiechance = randomRange(0,8);
-				
-				if(zombieType == 0){
-					radius = 19;
-					this.gotoAndStop(1)
-					zombieSpeed = 0.5;
-					isbigzombie = false;
-					zombiehitpoints = 10;
-					zombiedamage = 1;
-					agrorange = 350;//how far zombie can see
-				}else if((zombieType == 1) && (bigzombiechance == 1)){
-					radius = 9;//how big is the zombie in pixels (sphere)
-					this.gotoAndStop(2)
-					zombieSpeed = 0.2;
-					isbigzombie = true;
-					zombiedamage = 5;
-					zombiehitpoints = 20;
-					agrorange = 200;
-				}else{
-					zombieType = 0;
-					radius = 19;
-					this.gotoAndStop(1)
-					zombieSpeed = 0.5;
-					isbigzombie = false;
-					zombiehitpoints = 10;
-					agrorange = 350;//how far zombie can see
-					zombiedamage = 1;
-				}
+		}
+///////////////////////////////////////////////////////
+//							Kill Zombie
+///////////////////////////////////////////////////////
+		public function killZombie():void{
+			survival.enemycontainer.removeChild(this);
+			removeEventListener(Event.ENTER_FRAME,onFrame);
+				survival.experience += 10;
+				survival.currentcash += 10;
+				survival.globalcashearnt += 10;
 
-				addEventListener(Event.ENTER_FRAME,zombieloop);
-        }
+				survival.experience += 50;
+				survival.currentcash += 50;
+				survival.globalcashearnt += 50;
+
+			survival.currentdead += 1;
+		}
 ///////////////////////////////////////////////////////
 //							Main Loop
 ///////////////////////////////////////////////////////
-		public function zombieloop(e:Event):void {
+		public function onFrame(e:Event):void {
 			if (survival.ispaused == false){
 				var Zdist_x:Number=this.x-survival.player.x;
 				var Zdist_y:Number=this.y-survival.player.y;
@@ -156,6 +149,9 @@
 					if(this.x < survival.player.x){
 						this.x += zombieSpeed;//X RIGHT
 					}
+				}
+				if (zombiehitpoints <= 0){
+					killZombie();
 				}
 			}
 		}
