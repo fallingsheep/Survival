@@ -1618,28 +1618,28 @@
 		
 		
 		public function createZombies():void {
- if((zombiecount > zombiespawncount)){
+ 			if((zombiecount > zombiespawncount)){
 				stopspawn = true;
 			}else if (stopspawn == false) {
 				ranspawn = randomRange(0,10);
 				//check how many zombies on stage
 				if(ranspawn <= 9){
-				var zombie:Zombie = new Zombie(stage, Zombie.ZombieX, Zombie.ZombieY);
-				//Add event to zombie to remove them from array when removed from stage
-				zombie.addEventListener(Event.REMOVED_FROM_STAGE, zombieRemoved, false, 0, true);
-				//add zombie to array
-				zombieArray.push(zombie);
-				//add zombie to stage
-				enemycontainer.addChild(zombie);
-			}else{
-				var zombieBig:BigZombie = new BigZombie(stage, BigZombie.BigZombieX, BigZombie.BigZombieY);
-				//Add event to zombie to remove them from array when removed from stage
-				zombieBig.addEventListener(Event.REMOVED_FROM_STAGE, zombieRemoved, false, 0, true);
-				//add zombie to array
-				zombieArray.push(zombieBig);
-				//add zombie to stage
-				enemycontainer.addChild(zombieBig);
-			}
+					var zombie:Zombie = new Zombie(stage, Zombie.ZombieX, Zombie.ZombieY);
+					//Add event to zombie to remove them from array when removed from stage
+					zombie.addEventListener(Event.REMOVED_FROM_STAGE, zombieRemoved, false, 0, true);
+					//add zombie to array
+					zombieArray.push(zombie);
+					//add zombie to stage
+					enemycontainer.addChild(zombie);
+				}else{
+					var zombieBig:BigZombie = new BigZombie(stage, BigZombie.BigZombieX, BigZombie.BigZombieY);
+					//Add event to zombie to remove them from array when removed from stage
+					zombieBig.addEventListener(Event.REMOVED_FROM_STAGE, zombieRemoved, false, 0, true);
+					//add zombie to array
+					zombieArray.push(zombieBig);
+					//add zombie to stage
+					enemycontainer.addChild(zombieBig);
+				}
 				//enemycontainer.setChildIndex(zombie,1);
 				//increase zombie counters
 				zombiecount += 1;
@@ -1647,6 +1647,7 @@
 				Zombiesspawnedtotal += 1;
 			}
 		}
+		
 		public function playerDamaged():void{
 			hasbeenhit = true;
 			//TImer

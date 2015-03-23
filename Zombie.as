@@ -106,6 +106,7 @@
 				var Zdist_y:Number=this.y-survival.player.y;
 				var Zangle:Number=- Math.atan2(Zdist_x,Zdist_y);
 				var distance:Number = Math.sqrt((Zdist_x)*(Zdist_x) + (Zdist_y)*(Zdist_y));
+				
 				//stop zombies going thru walls
 				while (survival.environment.hitTestPoint(this.x, this.y+radius, true)) {
 					this.y--;
@@ -150,11 +151,14 @@
 						this.x += zombieSpeed;//X RIGHT
 					}
 				}
+				//kill zombie if hp is 0 or below
 				if (zombiehitpoints <= 0){
 					killZombie();
 				}
 			}
 		}
+		
+		
 ///////////////////////////////////////////////////////
 //							MISC
 ///////////////////////////////////////////////////////
