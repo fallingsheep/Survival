@@ -413,6 +413,7 @@
 			var displayhours:String = hours.toString();
 			var displayminutes:String = minutes.toString();
 			var displayseconds:String = seconds.toString();
+			
 			var displayglobalhours:String = globalhours.toString();
 			var displayglobalminutes:String = globalminutes.toString();
 			var displayglobalseconds:String = globalseconds.toString();
