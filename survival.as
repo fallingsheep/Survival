@@ -178,7 +178,7 @@
 			}
 			stopspawn = false;//zombie spawn control
 			
-			//TImer
+			//Timer
 			timer.start();
 			timer.addEventListener(TimerEvent.TIMER, timerTickHandler);
 			
@@ -1182,6 +1182,9 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //						SHOP
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+public var itemname:String;
+
 		public function showshop(event:MouseEvent):void {
 			pausescreen.gotoshop.removeEventListener(MouseEvent.CLICK, showshop);
 			pausescreen.addChild(shopscreen);
@@ -1240,8 +1243,12 @@
 			}
 		}
 		public function confirmBUYCHAINGUN(event:MouseEvent):void {
+			itemname = "ChainGun";
 			if (currentrank < 5){
-				shopscreen.shopmessage.text = "You Must be Rank 5 to purchase this!";//shop message
+				shopscreen.shopmessage.text = "You Must be Rank 5 to purchase " + itemname +"!";//shop message
+				if(shopscreen.contains(confirmchaingun)){
+					shopscreen.removeChild(confirmchaingun);
+				}
 			}else{
 				if (currentcash >= 5000){
 				haschaingun = true;
@@ -1269,8 +1276,12 @@
 			}
 		}
 		public function confirmBUYUZI(event:MouseEvent):void {
+			itemname = "UZI";
 			if (currentrank < 5){
-				shopscreen.shopmessage.text = "You Must be Rank 5 to purchase this!";//shop message
+				shopscreen.shopmessage.text = "You Must be Rank 5 to purchase " + itemname +"!";//shop message
+				if(shopscreen.contains(confirmuzi)){
+					shopscreen.removeChild(confirmuzi);
+				}
 			}else{
 				if (currentcash >= 1000){
 				hasuzi = true;
@@ -1298,8 +1309,12 @@
 			}
 		}
 		public function confirmBUYSHOTGUN(event:MouseEvent):void {
+			itemname = "ShotGun";
 			if (currentrank < 5){
-				shopscreen.shopmessage.text = "You Must be Rank 5 to purchase this!";//shop message
+				shopscreen.shopmessage.text = "You Must be Rank 5 to purchase " + itemname +"!";//shop message
+				if(shopscreen.contains(confirmshotgun)){
+					shopscreen.removeChild(confirmshotgun);
+				}
 			}else{
 				if (currentcash >= 500){
 				hasshotgun = true;
@@ -1327,8 +1342,12 @@
 			}
 		}
 		public function confirmBUYFLAMETHROWER(event:MouseEvent):void {
+			itemname = "Flame Thrower";
 			if (currentrank < 5){
-				shopscreen.shopmessage.text = "You Must be Rank 5 to purchase this!";//shop message
+				shopscreen.shopmessage.text = "You Must be Rank 5 to purchase " + itemname +"!";//shop message
+				if(shopscreen.contains(confirmflamethrower)){
+					shopscreen.removeChild(confirmflamethrower);
+				}
 			}else{
 				if (currentcash >= 2500){
 				hasflamethrower = true;
@@ -1357,8 +1376,12 @@
 			}
 		}
 		public function confirmBUYARMOUR(event:MouseEvent):void {
+			itemname = "Armour";
 			if (currentrank < 5){
-				shopscreen.shopmessage.text = "You Must be Rank 5 to purchase this!";//shop message
+				shopscreen.shopmessage.text = "You Must be Rank 5 to purchase " + itemname +"!";//shop message
+			if(shopscreen.contains(confirmarmour)){
+				shopscreen.removeChild(confirmarmour);
+			}
 			}else{
 				if (currentcash >= 2000){
 				hasarmour = true;
@@ -1388,8 +1411,12 @@
 			}
 		}
 		public function confirmBUYMEDSHOT(event:MouseEvent):void {
+			itemname = "MedShot";
 			if (currentrank < 5){
-				shopscreen.shopmessage.text = "You Must be Rank 5 to purchase this!";//shop message
+				shopscreen.shopmessage.text = "You Must be Rank 5 to purchase " + itemname +"!";//shop message
+			if(shopscreen.contains(confirmmedshot)){
+				shopscreen.removeChild(confirmmedshot);
+			}
 			}else{
 				if (currentcash >= 1500){
 				hasarmour = true;
@@ -1419,8 +1446,12 @@
 			}
 		}
 		public function confirmBUYMEDKIT(event:MouseEvent):void {
+			itemname = "MedKit";
 			if (currentrank < 5){
-				shopscreen.shopmessage.text = "You Must be Rank 5 to purchase this!";//shop message
+				shopscreen.shopmessage.text = "You Must be Rank 5 to purchase " + itemname +"!";//shop message
+			if(shopscreen.contains(confirmmedkit)){
+				shopscreen.removeChild(confirmmedkit);
+			}
 			}else{
 				if (currentcash >= 2500){
 				hasarmour = true;
@@ -1450,8 +1481,12 @@
 			}
 		}
 		public function confirmBUYTORCH(event:MouseEvent):void {
+			itemname = "Torch";
 			if (currentrank < 5){
-				shopscreen.shopmessage.text = "You Must be Rank 5 to purchase this!";//shop message
+				shopscreen.shopmessage.text = "You Must be Rank 5 to purchase " + itemname +"!";//shop message
+			if(shopscreen.contains(confirmtorch)){
+				shopscreen.removeChild(confirmtorch);
+			}
 			}else{
 				if (currentcash >= 2500){
 				collectTorch();
@@ -1479,8 +1514,12 @@
 			}
 		}
 		public function confirmBUYPISTOLAMMO(event:MouseEvent):void {
+			itemname = "Pistol";
 			if (currentrank < 5){
-				shopscreen.shopmessage.text = "You Must be Rank 5 to purchase this!";//shop message
+				shopscreen.shopmessage.text = "You Must be Rank 5 to purchase " + itemname +"!";//shop message
+			if(shopscreen.contains(confirmpistolammo)){
+				shopscreen.removeChild(confirmpistolammo);
+			}
 			}else{
 				if (currentcash >= 50){
 				pistolammo = 100;
@@ -1507,8 +1546,12 @@
 			}
 		}
 		public function confirmBUYUZIAMMO(event:MouseEvent):void {
+			itemname = "AMMO: UZI";
 			if (currentrank < 5){
-				shopscreen.shopmessage.text = "You Must be Rank 5 to purchase this!";//shop message
+				shopscreen.shopmessage.text = "You Must be Rank 5 to purchase " + itemname +"!";//shop message
+			if(shopscreen.contains(confirmuziammo)){
+				shopscreen.removeChild(confirmuziammo);
+			}
 			}else{
 				if (currentcash >= 500){
 				uziammo = 500;
@@ -1534,8 +1577,12 @@
 			}
 		}
 		public function confirmSHOTGUNAMMO(event:MouseEvent):void {
+			itemname = "AMMO: SHOTGUN";
 			if (currentrank < 5){
-				shopscreen.shopmessage.text = "You Must be Rank 5 to purchase this!";//shop message
+				shopscreen.shopmessage.text = "You Must be Rank 5 to purchase " + itemname +"!";//shop message
+			if(shopscreen.contains(confirmshotgunammo)){
+				shopscreen.removeChild(confirmshotgunammo);
+			}
 			}else{
 				if (currentcash >= 150){
 				shotgunammo = 50;
@@ -1562,8 +1609,12 @@
 			}
 		}
 		public function confirmBUYFLAMETHROWERAMMO(event:MouseEvent):void {
+			itemname = "AMMO: Flame Thrower";
 			if (currentrank < 5){
-				shopscreen.shopmessage.text = "You Must be Rank 5 to purchase this!";//shop message
+				shopscreen.shopmessage.text = "You Must be Rank 5 to purchase " + itemname +"!";//shop message
+			if(shopscreen.contains(confirmflamethrowerammo)){
+				shopscreen.removeChild(confirmflamethrowerammo);
+			}
 			}else{
 				if (currentcash >= 500){
 				flamethrowerammo = 250;
@@ -1591,8 +1642,12 @@
 		}
 		//Speed boost
 		public function confirmSPEEDBOOST(event:MouseEvent):void {
+			itemname = "SpeedBoost";
 			if (currentrank < 5){
-				shopscreen.shopmessage.text = "You Must be Rank 5 to purchase this!";//shop message
+				shopscreen.shopmessage.text = "You Must be Rank 5 to purchase " + itemname +"!";//shop message
+			if(shopscreen.contains(confirmspeedboost)){
+				shopscreen.removeChild(confirmspeedboost);
+			}
 			}else{
 				if (currentcash >= 1000){
 				collectSpeedpack();// turn speed boost on
@@ -1631,6 +1686,10 @@
 					zombieArray.push(zombie);
 					//add zombie to stage
 					enemycontainer.addChild(zombie);
+					//increase zombie counters
+					zombiecount += 1;
+					totalzomibes += 1;
+					Zombiesspawnedtotal += 1;
 				}else{
 					var zombieBig:BigZombie = new BigZombie(stage, BigZombie.BigZombieX, BigZombie.BigZombieY);
 					//Add event to zombie to remove them from array when removed from stage
@@ -1639,12 +1698,11 @@
 					zombieArray.push(zombieBig);
 					//add zombie to stage
 					enemycontainer.addChild(zombieBig);
+					//increase zombie counters
+					zombiecount += 1;
+					totalzomibes += 1;
+					Zombiesspawnedtotal += 1;
 				}
-				//enemycontainer.setChildIndex(zombie,1);
-				//increase zombie counters
-				zombiecount += 1;
-				totalzomibes += 1;
-				Zombiesspawnedtotal += 1;
 			}
 		}
 		

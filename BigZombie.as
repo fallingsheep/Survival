@@ -16,8 +16,6 @@
 					zombiedamage = 5;
 					zombiehitpoints = 20;
 					agrorange = 200;
-
-					
 			super (stageRef, ZombieX, ZombieY)
 		}
 		public override function killZombie():void{

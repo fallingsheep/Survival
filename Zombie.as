@@ -26,8 +26,8 @@
             this.y = ZombieY;
 			radius = 19;
 			this.gotoAndStop(1)
-			zombieSpeed = 0.5;
-			zombiehitpoints = 10;
+			zombieSpeed = 0.5; //how fast zombie moves
+			zombiehitpoints = 10; //how much health zombie has
 			zombiedamage = 1;
 			agrorange = 350;//how far zombie can see
 			addEventListener(Event.ENTER_FRAME,onFrame);
@@ -90,12 +90,7 @@
 				survival.experience += 10;
 				survival.currentcash += 10;
 				survival.globalcashearnt += 10;
-
-				survival.experience += 50;
-				survival.currentcash += 50;
-				survival.globalcashearnt += 50;
-
-			survival.currentdead += 1;
+				survival.currentdead += 1;
 		}
 ///////////////////////////////////////////////////////
 //							Main Loop
