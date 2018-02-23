@@ -8,6 +8,13 @@
 	import flash.system.System;
 	
 	public class survival extends Sprite {
+	// MERGED
+	public var cheatscreen:cheatscreen_mc = new cheatscreen_mc();
+	public var confirmsavescreen:confirmsavescreen_mc = new confirmsavescreen_mc();
+	public var gameoverdeath:Boolean = false;
+	public var nofogcheat:Boolean = false;
+	public var maxlight:Boolean = false;
+	
 		//global variables
 		public static var environment:environment_mc = new environment_mc();
 		public static var intro:intro_mc = new intro_mc();
@@ -967,35 +974,55 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //							PAUSE GAME
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////		
+		public function gamepause():void{
+			//process achivements
+			saveachiveData();
+			processAchivements();
+			
+			ispaused = true;
+			stage.removeEventListener(Event.ENTER_FRAME,mainloop);
+			stage.removeEventListener(Event.ENTER_FRAME,processScripts);
+			trace("GAME PAUSED");
+		}
+		public function gameunpause():void{
+			//process achivements
+			processAchivements();
+			saveachiveData();
+			
+			ispaused = false;
+			stage.addEventListener(Event.ENTER_FRAME,mainloop);
+			stage.addEventListener(Event.ENTER_FRAME,processScripts);
+			trace("GAME RESUMED");
+		}
+		
 		public function openpausescreen(e:MouseEvent):void{
 					//process achivements
 					saveachiveData();
 					processAchivements();
-					
-					ispaused = true;
-					stage.removeEventListener(Event.ENTER_FRAME,mainloop);
-					stage.removeEventListener(Event.ENTER_FRAME,processScripts);
-					trace("GAME PAUSED");
+					gamepause();
 					stage.addChild(pausescreen);
 					pausescreen.gotoshop.addEventListener(MouseEvent.CLICK, showshop);
 					pausescreen.gotorankscreen.addEventListener(MouseEvent.CLICK, showrankscreen);
 					pausescreen.gotoachivementscreen.addEventListener(MouseEvent.CLICK, showachivementscreen);
 					pausescreen.restartgame.addEventListener(MouseEvent.CLICK, restartGame);
 					pausescreen.exitpausescreen.addEventListener(MouseEvent.CLICK, closepausescreen);
+					pausescreen.savegamebutton.addEventListener(MouseEvent.CLICK, savegamestate);
 					pausescreen.savegamebutton.addEventListener(MouseEvent.CLICK, confirmsavegame);
 					pausescreen.loadgamebutton.addEventListener(MouseEvent.CLICK, loadgame);
 					pausescreen.gotostatsscreen.addEventListener(MouseEvent.CLICK, showstatsscreen);
 		}
 		public function closepausescreen(e:MouseEvent):void{
-					//process achivements
-					processAchivements();
-					saveachiveData();
-					
-					ispaused = false;
-					stage.addEventListener(Event.ENTER_FRAME,mainloop);
-					stage.addEventListener(Event.ENTER_FRAME,processScripts);
-					trace("GAME RESUMED");
+					gameunpause();
+					// remove event listners from pause screen
 					pausescreen.gotoshop.removeEventListener(MouseEvent.CLICK, showshop);
+					pausescreen.gotorankscreen.removeEventListener(MouseEvent.CLICK, showrankscreen);
+					pausescreen.gotoachivementscreen.removeEventListener(MouseEvent.CLICK, showachivementscreen);
+					pausescreen.restartgame.removeEventListener(MouseEvent.CLICK, restartGame);
+					pausescreen.exitpausescreen.removeEventListener(MouseEvent.CLICK, closepausescreen);
+					pausescreen.savegamebutton.removeEventListener(MouseEvent.CLICK, savegamestate);
+					pausescreen.loadgamebutton.removeEventListener(MouseEvent.CLICK, loadgame);
+					pausescreen.gotostatsscreen.removeEventListener(MouseEvent.CLICK, showstatsscreen);
+					//remove pause screen
 					if(stage.contains(pausescreen)){
 						stage.removeChild(pausescreen);
 					}
@@ -1129,6 +1156,13 @@
 					delayCounter = 0;
 					trace ("Switched to chaingun:" + delayMax);
 				}
+				break;
+				case 54 : // 6
+					//show cheat menu
+					addChild(cheatscreen);
+					//pause game
+					trace ("Cheat Menu Opened");
+					gamepause();
 				break;
 			}
 		}
@@ -2064,7 +2098,10 @@ public var itemname:String;
 		public function collectTorch():void {
 				playerhastorch = true;
 				//update lighting
-				lighting();
+				//update lighting
+				if(maxlight == false){
+					lighting();
+				}
 		}
 		//AMMO
 		public function collectAmmo():void {
@@ -2262,6 +2299,7 @@ public var itemname:String;
 					trace("GAME OVER");
 					stage.addChild(gameoverscreen);
 					deaths += 1;
+					gameoverdeath = true;
 					gameoverscreen.restartgame.addEventListener(MouseEvent.CLICK, restartGame);
 		
 	}
@@ -2529,10 +2567,12 @@ ShowRankUp();
 		light.x = player.x;
 		light.y = player.y;
 	}
-	public function startfog():void{		
+	public function startfog():void{
+		if(nofogcheat == false){	
 	//start fog
 			ground.addChild(s1); 
 			s1.alpha = 0.5;
+		}
 	}
 	public function endfog():void{		
 	//start fog
@@ -2551,8 +2591,15 @@ ShowRankUp();
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		public function restartGame(event:MouseEvent):void {
    		 		stage.addChild(confirmrestartgame);
-				confirmrestartgame.yesrestartgame.addEventListener(MouseEvent.CLICK, confirmRESTART);
-				confirmrestartgame.norestartgame.addEventListener(MouseEvent.CLICK, cancelRESTART);
+				if(gameoverdeath == true){
+					var url:String = stage.loaderInfo.url;
+  	 	 			var request:URLRequest = new URLRequest(url);
+   		 			navigateToURL(request,"_level0");
+		 			trace ("Game Restarted");
+				} else {
+					confirmrestartgame.yesrestartgame.addEventListener(MouseEvent.CLICK, confirmRESTART);
+					confirmrestartgame.norestartgame.addEventListener(MouseEvent.CLICK, cancelRESTART);
+				}
 		}
 		private function cancelRESTART(event:MouseEvent):void {
 			if(stage.contains(confirmrestartgame)){
@@ -2569,6 +2616,16 @@ ShowRankUp();
 //							SAVE AND LOAD
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////		
 	public var saveDataObject:SharedObject;
+	public function savegamestate(e:MouseEvent):void{
+		stage.addChild(confirmsavescreen);
+		confirmsavescreen.confirmsaveyes.addEventListener(MouseEvent.CLICK, saveData);
+		confirmsavescreen.confirmsaveno.addEventListener(MouseEvent.CLICK, cancelSave);
+	}
+	public function cancelSave(e:MouseEvent):void{
+			if(stage.contains(confirmsavescreen)){
+   		 		stage.removeChild(confirmsavescreen);
+			}		
+	}
 
 	public function saveData(){
 			saveDataObject = SharedObject.getLocal("test"); 
@@ -2609,12 +2666,16 @@ ShowRankUp();
 			saveDataObject.data.savedpistolammo = pistolammo;
 			saveDataObject.data.saveduziammo = uziammo;
 			saveDataObject.data.savedshotgunammo = shotgunammo;
-			saveDataObject.data.savedflamethrowerammo = flamethrowerammo;
+			saveDataObject.data.savedflamethrowerammo = flamethrowerammo;			
+			saveDataObject.flush(); // immediately save to the local drive
+			// TODO - add confirmation of save popup 
+			//close confirm save screen
+			if(stage.contains(confirmsavescreen)){
+   		 		stage.removeChild(confirmsavescreen);
+			}	
 
 			trace("Game Saved!");//replace with conformation screen later
-			
-			saveDataObject.flush(); // immediately save to the local drive
-			trace(saveDataObject.size); // this will show the size of the save file, in bytes
+			trace(((saveDataObject.size) / 1000) + "KB"); // this will show the size of the save file, in KiloBytes
 	}
  
 	public function loadData():void{
