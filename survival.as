@@ -2310,6 +2310,7 @@ public var itemname:String;
 		public function showrankscreen(event:MouseEvent):void {
 			pausescreen.gotorankscreen.removeEventListener(MouseEvent.CLICK, showrankscreen);
 			pausescreen.addChild(rankscreen);
+			rankscreen.currentrankimage.gotoAndStop(currentrank);
 			rankscreen.exitrankscreen.addEventListener(MouseEvent.CLICK, closerankscreen);
 		}
 		public function closerankscreen(event:MouseEvent):void {
