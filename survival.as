@@ -98,6 +98,9 @@
 		public var zombiespawncount:int = 19; // MUST BE 1 LESS than actual count!! used as starting zombie spawn count
 		public var totalzomibes:int = 0; // total zombies spawned
 		public var zomibeskilled:int = 0; // total zombies killed
+		
+		public var spawnboss:Boolean = false; // spawn boss
+		
 		//timers
 		public var SecondsElapsed:Number = 1;
 		public var SecondsElapsedRANK:Number = 1;
@@ -1724,7 +1727,7 @@ public var itemname:String;
 					zombiecount += 1;
 					totalzomibes += 1;
 					Zombiesspawnedtotal += 1;
-				}else{
+				}else if (ranspawn == 10){
 					var zombieBig:BigZombie = new BigZombie(stage, BigZombie.BigZombieX, BigZombie.BigZombieY);
 					//Add event to zombie to remove them from array when removed from stage
 					zombieBig.addEventListener(Event.REMOVED_FROM_STAGE, zombieRemoved, false, 0, true);
@@ -1732,6 +1735,18 @@ public var itemname:String;
 					zombieArray.push(zombieBig);
 					//add zombie to stage
 					enemycontainer.addChild(zombieBig);
+					//increase zombie counters
+					zombiecount += 1;
+					totalzomibes += 1;
+					Zombiesspawnedtotal += 1;
+				}else if(bossspawn == true){
+					var zombieBoss:BossZombie = new BossZombie(stage, BossZombie.BossZombieX, BossZombie.BossZombieY);
+					//Add event to zombie to remove them from array when removed from stage
+					zombieBoss.addEventListener(Event.REMOVED_FROM_STAGE, zombieRemoved, false, 0, true);
+					//add zombie to array
+					zombieArray.push(zombieBoss);
+					//add zombie to stage
+					enemycontainer.addChild(zombieBoss);
 					//increase zombie counters
 					zombiecount += 1;
 					totalzomibes += 1;
@@ -1884,6 +1899,7 @@ public var itemname:String;
 				trace ("Level:" + level);
 			}
 			else if ((level == 5)&&(zombieskilled >= 90)){
+				spawnboss = true;
 				zombiespawncount = 19;
 				level += 1;
 				stopspawn = false;

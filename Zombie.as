@@ -17,6 +17,7 @@
 		public var zombiedamage:int;
 		public var attackRandom:int;
 		public var isAttacking:Boolean = false;
+
 			
         public function Zombie(stageRef:Stage, ZombieX:int, ZombieY:int){
 			trace ("Zombie Created");
@@ -96,6 +97,7 @@
 //							Main Loop
 ///////////////////////////////////////////////////////
 		public function onFrame(e:Event):void {
+			attackRandom = randomRange(1,1000);
 			if (survival.ispaused == false){
 				var Zdist_x:Number=this.x-survival.player.x;
 				var Zdist_y:Number=this.y-survival.player.y;
