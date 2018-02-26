@@ -25,6 +25,7 @@
 			survival.currentcash += 50;
 			survival.globalcashearnt += 50;
 			survival.currentdead += 1;
+
 		}
 
 	}

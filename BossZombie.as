@@ -7,11 +7,6 @@
 		public static var BossZombieX:int;
 		public static var BossZombieY:int;
 		//BOSS STUFF
-		public var attackRandom:int;
-		public var bossTimer:Timer = new Timer(1000,0)
-		public var bosschargeTimer:Timer = new Timer(1000,0);
-		public var SecondsElapsed:Number = 1;
-		public var chargeSecondsElapsed:Number = 1;
 		public var isCharging:Boolean = false;
 		
 		public function BossZombie(stageRef:Stage, BossZombieX:int, BossZombieY:int) {
@@ -27,8 +22,12 @@
 		}
 		public function bosszombieloop(e:Event):void {
 			attackRandom = randomRange(1,1000);// 1 in 1000 chance of charge attack
-			if (survival.ispaused == false){				
-				if(ischarging == true){
+			if (survival.ispaused == false){
+								var Zdist_x:Number=this.x-survival.player.x;
+				var Zdist_y:Number=this.y-survival.player.y;
+				var Zangle:Number=- Math.atan2(Zdist_x,Zdist_y);
+				var distance:Number = Math.sqrt((Zdist_x)*(Zdist_x) + (Zdist_y)*(Zdist_y));
+				if(isCharging == true){
 					
 				}
 				//attack player if in range
@@ -38,7 +37,7 @@
 					zombiedamage = 2;//attack damage
 					isAttacking = true;
 					zombieSpeed = 0.5;
-					ischarging = false;
+					isCharging = false;
 					trace("boss attacking!");
 				}else if(distance > 75){
 					isAttacking = false;
@@ -62,11 +61,11 @@
 					}
 				}
 				//charge player if far enough away
-				if ((distance >= 100)&&(ischarging == false)){
+				if ((distance >= 100)&&(isCharging == false)){
 					this.rotation=to_degrees(Zangle);
 					if(attackRandom == 1){
 					zombieSpeed = 2;
-					ischarging = true;
+					isCharging = true;
 					trace("boss charging!");
 					}
 				}
@@ -79,7 +78,7 @@
 			survival.currentcash += 500;
 			survival.globalcashearnt += 500;
 			survival.currentdead += 1;
-			survival.spawnboss = false;
+			survival.bossspawn = false;
 			trace("boss killed!");
 		}
 

@@ -38,10 +38,10 @@
 		public var deadzombie:deadzombie_mc = new deadzombie_mc();
 		public static var enemycontainer:enemycontainer_mc = new enemycontainer_mc();
 		//items
-		public var ammocrate:ammocrate_mc = new ammocrate_mc();
-		public var medpack:medpack_mc = new medpack_mc();
-		public var speedpack:speedpack_mc = new speedpack_mc();
-		public var torch:torch_mc= new torch_mc();
+		public static var ammocrate:ammocrate_mc = new ammocrate_mc();
+		public static var medpack:medpack_mc = new medpack_mc();
+		public static var speedpack:speedpack_mc = new speedpack_mc();
+		public static var torch:torch_mc= new torch_mc();
 		//weapons
 		public var pistol:pistol_mc = new pistol_mc();
 		public var chaingun:chaingun_mc = new chaingun_mc();
@@ -99,7 +99,7 @@
 		public var totalzomibes:int = 0; // total zombies spawned
 		public var zomibeskilled:int = 0; // total zombies killed
 		
-		public var spawnboss:Boolean = false; // spawn boss
+		public static var bossspawn:Boolean = false; // spawn boss
 		
 		//timers
 		public var SecondsElapsed:Number = 1;
@@ -110,12 +110,12 @@
 		
 		public var collectedSpeedPack:Boolean = false;
 		
-		public var level:int = 1;//set start level
+		public var level:int = 1;//set start level 5 is boss
 		public static var currentcash:int = 0;//cash
 		public var deaths:int = 0;
 
 		//what stage to start on
-		public var currentstage:int = 1;
+		public var currentstage:int = 1; 
 		//cheats
 		public var shootthruwalls:Boolean = false;
 		public var walkthruwalls:Boolean = false;
@@ -156,6 +156,9 @@
 		public static var rank19:rank19_mc = new rank19_mc();
 
 		public var s1:fogbg_mc = new fogbg_mc();
+		
+		public static var dropmed:Boolean = false;
+		public static var dropammo:Boolean = false;
 		
 		var frames:int=0;
 		var FPS:int=0;
@@ -380,11 +383,8 @@
 		public function processScripts(e:Event):void{
 			updatetext();
 			checkSpeedPackTimer();
-			
 			createZombies();
 			checkzombieHit();
-			
-			collectItem();
 			//openDoor();
 			lighting();
 			playerMoving();
@@ -1751,6 +1751,7 @@ public var itemname:String;
 					zombiecount += 1;
 					totalzomibes += 1;
 					Zombiesspawnedtotal += 1;
+					bossspawn = false;
 				}
 			}
 		}
@@ -1859,7 +1860,6 @@ public var itemname:String;
 			totalzombieskilled += 1;
 			//globalzombiekills
 			globalzombiekills +=1;
-												
 			//Process XP
 			ProcessXP();
 			//check next level requirments
@@ -1899,7 +1899,7 @@ public var itemname:String;
 				trace ("Level:" + level);
 			}
 			else if ((level == 5)&&(zombieskilled >= 90)){
-				spawnboss = true;
+				bossspawn = true;
 				zombiespawncount = 19;
 				level += 1;
 				stopspawn = false;
@@ -2085,31 +2085,8 @@ public var itemname:String;
 		}
 		
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//							ITEMS
+//							ITEMS 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
-		//check if player collects an item
-		public function collectItem():void{
-			//check if player "collects" Ammo
-			if (player.hitTestObject(ammocrate)){
-				//run colleted ammo function
-				collectAmmo();
-			}
-			//check if player "collects" Medpack
-			if (player.hitTestObject(medpack)){
-				//run colleted medpack function
-				collectMedpack();
-			}
-			//check if player "collects" Speedpack
-			if (player.hitTestObject(speedpack)){
-				//run colleted speedpack function
-				collectSpeedpack();
-			}
-			//check if player "collects" Torch
-			if (player.hitTestObject(torch)){
-				//run colleted medpack function
-				collectTorch();
-			}
-		}
 		//torch
 		public function collectTorch():void {
 				playerhastorch = true;
@@ -2380,7 +2357,7 @@ checkRankUpTimer();
 				rank0.x = 66;
 				rank0.y = 387;
 			}
-			if (experience >= 10){
+			if (experience >= 500){
 				currentrank = 1;
 				addChild(rank1);
 				rank1.x = 66;
