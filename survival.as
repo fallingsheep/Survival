@@ -12,8 +12,6 @@
 	public var cheatscreen:cheatscreen_mc = new cheatscreen_mc();
 	public var confirmsavescreen:confirmsavescreen_mc = new confirmsavescreen_mc();
 	public var gameoverdeath:Boolean = false;
-	public var nofogcheat:Boolean = false;
-	public var maxlight:Boolean = false;
 	
 		//global variables
 		public static var environment:environment_mc = new environment_mc();
@@ -119,9 +117,11 @@
 		//cheats
 		public var shootthruwalls:Boolean = false;
 		public var walkthruwalls:Boolean = false;
-		public var infinteammo:Boolean = false;
 		public var infintehealth:Boolean = false;
-		
+		public var nofogcheat:Boolean = false;
+		public var maxlight:Boolean = false;
+		public var infinteammo:Boolean = false;
+
 		public var player_speed:int = 2;//player movement speed (Default is 2)
 		public var playerhastorch:Boolean = false;
 		
@@ -338,32 +338,42 @@
 			if(mousePressed == true){
 				delayCounter++; //increase the delayCounter by 1
 				if(delayCounter == delayMax){
-					if ((isusingpistol == true) && (pistolammo >= 1) && (infinteammo == false)){
-						pistolammo -= 1;
+					if ((isusingpistol == true) && (pistolammo >= 1)){
+						if(infinteammo == false){
+							pistolammo -= 1;
+						}
 						globalpistolbullets += 1;
 						shootBullet(); //shoot a bullet
 						delayCounter = 0; //reset the delay counter so there is a pause between bullets
 					}
-					if ((isusingshotgun == true) && (shotgunammo >= 1) && (infinteammo == false)){
-						shotgunammo -= 1;
+					if ((isusingshotgun == true) && (shotgunammo >= 1)){
+						if(infinteammo == false){
+							shotgunammo -= 1;
+						}
 						globalshotgunbullets += 1;
 						shootShotgun(); //shoot a bullet
 						delayCounter = 0; //reset the delay counter so there is a pause between bullets
 					}
-					if ((isusinguzi == true) && (uziammo >= 1) && (infinteammo == false)){
-						uziammo -= 1;
+					if ((isusinguzi == true) && (uziammo >= 1)){
+						if(infinteammo == false){
+							uziammo -= 1;
+						}
 						globaluzibullets += 1;
 						shootBullet(); //shoot a bullet
 						delayCounter = 0; //reset the delay counter so there is a pause between bullets
 					}
-					if ((isusingflamethrower == true) && (flamethrowerammo >= 1) && (infinteammo == false)){
+					if ((isusingflamethrower == true) && (flamethrowerammo >= 1)){
 						delayCounter = 0;
 						shootFlames();
-						flamethrowerammo -= 1;
+						if(infinteammo == false){
+							flamethrowerammo -= 1;
+						}
 						globalflamethrowerbullets += 1;
 					}
-					if ((isusingchaingun == true) && (chaingunammo >= 1) && (infinteammo == false)){
-						chaingunammo -= 2;
+					if ((isusingchaingun == true) && (chaingunammo >= 1)){
+						if(infinteammo == false){
+							chaingunammo -= 2;
+						}
 						globalchaingunbullets += 2;
 						shootChaingunBullet(); //shoot a bullet
 						delayCounter = 0; //reset the delay counter so there is a pause between bullets
@@ -776,6 +786,7 @@
 		}
 		
 		public function processAchivements():void{
+		if(hascheated == false){
 			//CASH EARNT
 			if( globalcashearnt >= 1000){
 				achive1 = true;
@@ -940,7 +951,9 @@
 				achive50 = true;
 			}
 		}
+		}
 		public function saveachiveData():void{
+			if(hascheated == false){
 				saveAchivementDataObject = SharedObject.getLocal("achivements"); 
 				saveAchivementDataObject.data.savedglobalcashearnt = globalcashearnt;
 				saveAchivementDataObject.data.savedsglobalcashspent = globalcashspent;
@@ -956,6 +969,7 @@
 				saveAchivementDataObject.data.savedglobalminutes = globalminutes;
 				
 				saveAchivementDataObject.flush(); // immediately save to the local drive
+			}
 		}
 		public function loadachiveData():void{
 			saveAchivementDataObject = SharedObject.getLocal("achivements"); 
@@ -1161,11 +1175,7 @@
 				}
 				break;
 				case 54 : // 6
-					//show cheat menu
-					addChild(cheatscreen);
-					//pause game
-					trace ("Cheat Menu Opened");
-					gamepause();
+					cheatmenuopen()
 				break;
 			}
 		}
@@ -1207,6 +1217,7 @@
 		public function checkhealth():void{
 			if (health <=0){
 				gameover();
+				
 				saveachiveData();
 			}
 		}
@@ -1215,6 +1226,94 @@
 				hasarmour = false;
 				saveachiveData();
 			}
+		}
+		
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//						CHEATS
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+		public function cheatmenuopen():void{
+			//show cheat menu
+			addChild(cheatscreen);
+			//pause game
+			gamepause();
+			cheatscreen.infiniteammoon.addEventListener(MouseEvent.CLICK,cheatammoon);
+			cheatscreen.infiniteammooff.addEventListener(MouseEvent.CLICK,cheatammooff);
+			cheatscreen.infinitehealthon.addEventListener(MouseEvent.CLICK,cheathealthon);
+			cheatscreen.infinitehealthoff.addEventListener(MouseEvent.CLICK,cheathealthoff);
+			cheatscreen.shootthruwallson.addEventListener(MouseEvent.CLICK,cheatshootwallon);
+			cheatscreen.shootthruwallsoff.addEventListener(MouseEvent.CLICK,cheatshootwalloff);
+			cheatscreen.walkthruwallson.addEventListener(MouseEvent.CLICK,cheatnoclipon);
+			cheatscreen.walkthruwallsoff.addEventListener(MouseEvent.CLICK,cheatnoclipoff);
+			cheatscreen.nofogon.addEventListener(MouseEvent.CLICK,cheatfogon);
+			cheatscreen.nofogoff.addEventListener(MouseEvent.CLICK,cheatfogoff);
+			cheatscreen.exitcheatmenu.addEventListener(MouseEvent.CLICK,cheatmenuclose);
+			trace ("Cheat Menu Opened");
+		}
+		public function cheatmenuclose(event:MouseEvent):void{
+			//remove cheat menu
+			if(stage.contains(cheatscreen)){
+				removeChild(cheatscreen);
+			}
+			//pause game
+			gameunpause();
+			cheatscreen.infiniteammoon.removeEventListener(MouseEvent.CLICK,cheatammoon);
+			cheatscreen.infiniteammooff.removeEventListener(MouseEvent.CLICK,cheatammooff);
+			cheatscreen.infinitehealthon.removeEventListener(MouseEvent.CLICK,cheathealthon);
+			cheatscreen.infinitehealthoff.removeEventListener(MouseEvent.CLICK,cheathealthoff);
+			cheatscreen.shootthruwallson.removeEventListener(MouseEvent.CLICK,cheatshootwallon);
+			cheatscreen.shootthruwallsoff.removeEventListener(MouseEvent.CLICK,cheatshootwalloff);
+			cheatscreen.walkthruwallson.removeEventListener(MouseEvent.CLICK,cheatnoclipon);
+			cheatscreen.walkthruwallsoff.removeEventListener(MouseEvent.CLICK,cheatnoclipoff);
+			cheatscreen.nofogon.removeEventListener(MouseEvent.CLICK,cheatfogon);
+			cheatscreen.nofogoff.removeEventListener(MouseEvent.CLICK,cheatfogoff);
+			cheatscreen.exitcheatmenu.removeEventListener(MouseEvent.CLICK,cheatmenuclose);
+			trace ("Cheat Menu Closed");
+		}
+		public function cheatammoon(event:MouseEvent):void{
+			cheatscreen.infiteammotext.text = "On";
+			infinteammo = true;
+			hascheated = true;
+		}
+		public function cheatammooff(event:MouseEvent):void{
+			cheatscreen.infiteammotext.text = "Off";
+			infinteammo = false;
+		}
+		public function cheathealthon(event:MouseEvent):void{
+			cheatscreen.infinitehealthtext.text = "On";
+			infintehealth = true;
+			hascheated = true;
+		}
+		public function cheathealthoff(event:MouseEvent):void{
+			cheatscreen.infinitehealthtext.text = "Off";
+			infintehealth = false;
+		}
+		public function cheatshootwallon(event:MouseEvent):void{
+			cheatscreen.shootthruwallstext.text = "On";
+			shootthruwalls = true;
+			hascheated = true;
+		}
+		public function cheatshootwalloff(event:MouseEvent):void{
+			cheatscreen.shootthruwallstext.text = "Off";
+			shootthruwalls = false;
+		}
+		public function cheatnoclipon(event:MouseEvent):void{
+			cheatscreen.walkthruwallstext.text = "On";
+			walkthruwalls = true;
+			hascheated = true;
+		}
+		public function cheatnoclipoff(event:MouseEvent):void{
+			cheatscreen.walkthruwallstext.text = "Off";
+			walkthruwalls = false;
+		}
+		public function cheatfogon(event:MouseEvent):void{
+			cheatscreen.nofogtext.text = "On";
+			nofogcheat = true;
+			hascheated = true;
+		}
+		public function cheatfogoff(event:MouseEvent):void{
+			cheatscreen.nofogtext.text = "Off";
+			nofogcheat = false;
 		}
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //						SHOP
@@ -1251,8 +1350,8 @@ public var itemname:String;
 			if(pausescreen.contains(shopscreen)){
 				pausescreen.removeChild(shopscreen);
 			}
-			//save achive data
-			saveachiveData();
+				//save achive data
+				saveachiveData();
 		}
 		public var confirmpistolammo:confirmpistolammo_mc = new confirmpistolammo_mc();
 		public var confirmshotgun:confirmshotgun_mc = new confirmshotgun_mc();
@@ -1864,8 +1963,8 @@ public var itemname:String;
 			ProcessXP();
 			//check next level requirments
 			finishlevel();
-			//save achive
-			saveachiveData();
+				//save achive
+				saveachiveData();
 			trace ("Zombie Removed");
 		}
 		
