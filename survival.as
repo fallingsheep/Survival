@@ -199,7 +199,7 @@
 			
 			//load achivement data
 			loadachiveData();
-			
+			ProcessXP(); //setup rank
 			processfog(); //start fog
 
 			//environment

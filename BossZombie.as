@@ -15,12 +15,13 @@
 					this.gotoAndStop(1)
 					zombieSpeed = 0.2;
 					zombiedamage = 10;
-					zombiehitpoints = 200;
+					zombiehitpoints = 2000;
 					agrorange = 200;
 					addEventListener(Event.ENTER_FRAME,bosszombieloop);
 			super (stageRef, ZombieX, ZombieY)
 		}
 		public function bosszombieloop(e:Event):void {
+			trace ("BOSS CREATED"+zombiehitpoints);
 			attackRandom = randomRange(1,100);// 1 in 100 chance of charge attack
 			if (survival.ispaused == false){
 				var Zdist_x:Number=this.x-survival.player.x;
