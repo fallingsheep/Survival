@@ -21,9 +21,9 @@
 			super (stageRef, ZombieX, ZombieY)
 		}
 		public function bosszombieloop(e:Event):void {
-			attackRandom = randomRange(1,1000);// 1 in 1000 chance of charge attack
+			attackRandom = randomRange(1,100);// 1 in 100 chance of charge attack
 			if (survival.ispaused == false){
-								var Zdist_x:Number=this.x-survival.player.x;
+				var Zdist_x:Number=this.x-survival.player.x;
 				var Zdist_y:Number=this.y-survival.player.y;
 				var Zangle:Number=- Math.atan2(Zdist_x,Zdist_y);
 				var distance:Number = Math.sqrt((Zdist_x)*(Zdist_x) + (Zdist_y)*(Zdist_y));
@@ -69,11 +69,45 @@
 					trace("boss charging!");
 					}
 				}
+				
+				//stop zombies going thru walls
+				while (survival.environment.hitTestPoint(this.x, this.y+radius, true)) {
+					this.y--;
+				}
+				while (survival.environment.hitTestPoint(this.x, this.y-radius, true)) {
+					this.y++;
+				}
+				while (survival.environment.hitTestPoint(this.x-radius, this.y, true)) {
+					this.x++;
+				}
+				while (survival.environment.hitTestPoint(this.x+radius, this.y, true)) {
+					this.x--;
+				}
+				//stop zombies going thru door
+				while (survival.door.hitTestPoint(this.x, this.y+radius, true)) {
+					this.y--;
+				}
+				while (survival.door.hitTestPoint(this.x, this.y-radius, true)) {
+					this.y++;
+				}
+				while (survival.door.hitTestPoint(this.x-radius, this.y, true)) {
+					this.x++;
+				}
+				while (survival.door.hitTestPoint(this.x+radius, this.y, true)) {
+					this.x--;
+				}
+				//kill zombie if hp is 0 or below
+				if (zombiehitpoints <= 0){
+					killZombie();
+				}
 			}
 		}
 		public override function killZombie():void{
-			survival.enemycontainer.removeChild(this);
+			if(survival.enemycontainer.contains(this)){
+				survival.enemycontainer.removeChild(this);
+			}
 			removeEventListener(Event.ENTER_FRAME,onFrame);
+			removeEventListener(Event.ENTER_FRAME,bosszombieloop);
 			survival.experience += 500;
 			survival.currentcash += 500;
 			survival.globalcashearnt += 500;

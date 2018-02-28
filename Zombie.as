@@ -20,7 +20,7 @@
 
 			
         public function Zombie(stageRef:Stage, ZombieX:int, ZombieY:int){
-			trace ("Zombie Created");
+			//trace ("Zombie Created");
 			RandomSpawnPoint();
             this.stageRef = stageRef;
             this.x = ZombieX;

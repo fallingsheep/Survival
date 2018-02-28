@@ -12,6 +12,7 @@
 	public var cheatscreen:cheatscreen_mc = new cheatscreen_mc();
 	public var confirmsavescreen:confirmsavescreen_mc = new confirmsavescreen_mc();
 	public var gameoverdeath:Boolean = false;
+	public var hascheated:Boolean = false;
 	
 		//global variables
 		public static var environment:environment_mc = new environment_mc();
@@ -50,13 +51,13 @@
 		
 		public var flamethrowerflames:flamethrowerflames_mc = new flamethrowerflames_mc();
 		
-		public var isusingpistol:Boolean = true;//
+		public var isusingpistol:Boolean = true;
 		public var isusinguzi:Boolean = false;
 		public var isusingshotgun:Boolean = false;
 		public var isusingflamethrower:Boolean = false;
-		public var isusingchaingun:Boolean = false;//
+		public var isusingchaingun:Boolean = false;
 		
-		public var haschaingun:Boolean = true;//
+		public var haschaingun:Boolean = false;
 		public var haspistol:Boolean = true;
 		public var hasuzi:Boolean = false;
 		public var hasshotgun:Boolean = false;
@@ -81,10 +82,10 @@
 		public var uziammo:int = 0;
 		public var shotgunammo:int = 0;
 		public var flamethrowerammo:int = 0;
-		public var chaingunammo:int = 1000;
+		public var chaingunammo:int = 0;
 		
 		public var hasarmour:Boolean = true;
-		public var armour:int = 25;//starting armour
+		public var armour:int = 0;//starting armour
 		public var health:int = 100;//starting health
 		
 		
@@ -1175,7 +1176,8 @@
 				}
 				break;
 				case 54 : // 6
-					cheatmenuopen()
+					//cheatmenuopen();
+					createBoss();
 				break;
 			}
 		}
@@ -1807,7 +1809,23 @@ public var itemname:String;
 		//create new zombie from Zombie class and place on stage at spawn point
 		var ranspawn:int;
 		
-		
+		public function createBoss():void{
+			 //if(bossspawn == true){
+					var zombieBoss:BossZombie = new BossZombie(stage, BossZombie.BossZombieX, BossZombie.BossZombieY);
+					//Add event to zombie to remove them from array when removed from stage
+					zombieBoss.addEventListener(Event.REMOVED_FROM_STAGE, zombieRemoved, false, 0, true);
+					//add zombie to array
+					zombieArray.push(zombieBoss);
+					//add zombie to stage
+					enemycontainer.addChild(zombieBoss);
+					//increase zombie counters
+					zombiecount += 1;
+					totalzomibes += 1;
+					Zombiesspawnedtotal += 1;
+					bossspawn = false;
+					trace("Boss zombie spawned!")
+			//}
+		}
 		public function createZombies():void {
  			if((zombiecount > zombiespawncount)){
 				stopspawn = true;
@@ -1838,19 +1856,6 @@ public var itemname:String;
 					zombiecount += 1;
 					totalzomibes += 1;
 					Zombiesspawnedtotal += 1;
-				}else if(bossspawn == true){
-					var zombieBoss:BossZombie = new BossZombie(stage, BossZombie.BossZombieX, BossZombie.BossZombieY);
-					//Add event to zombie to remove them from array when removed from stage
-					zombieBoss.addEventListener(Event.REMOVED_FROM_STAGE, zombieRemoved, false, 0, true);
-					//add zombie to array
-					zombieArray.push(zombieBoss);
-					//add zombie to stage
-					enemycontainer.addChild(zombieBoss);
-					//increase zombie counters
-					zombiecount += 1;
-					totalzomibes += 1;
-					Zombiesspawnedtotal += 1;
-					bossspawn = false;
 				}
 			}
 		}
@@ -1998,7 +2003,6 @@ public var itemname:String;
 				trace ("Level:" + level);
 			}
 			else if ((level == 5)&&(zombieskilled >= 90)){
-				bossspawn = true;
 				zombiespawncount = 19;
 				level += 1;
 				stopspawn = false;
@@ -2067,6 +2071,8 @@ public var itemname:String;
 				processfog();
 				environment.gotoAndStop(5);
 				ground.gotoAndStop(5);
+				bossspawn = true;
+				createBoss(); // create boss
 			}
 		}
 
@@ -2766,7 +2772,7 @@ ShowRankUp();
 			if(stage.contains(confirmsavescreen)){
    		 		stage.removeChild(confirmsavescreen);
 			}	
-
+			saveDataObject.data.savedhascheated = hascheated;
 			trace("Game Saved!");//replace with conformation screen later
 			trace(((saveDataObject.size) / 1000) + "KB"); // this will show the size of the save file, in KiloBytes
 	}
@@ -2811,6 +2817,7 @@ ShowRankUp();
 			uziammo = saveDataObject.data.saveduziammo;
 			shotgunammo = saveDataObject.data.savedshotgunammo;
 			flamethrowerammo = saveDataObject.data.savedflamethrowerammo;
+			hascheated = saveDataObject.data.savedhascheated; 
 			
 			//DONT LOAD ACHIVEMENT DATA HERE IT WILL OVERWRITE ANY NEW DATA IN CURRENT SESSION!!
 			//LOAD ACHIVEMENT DATA WHEN GAME FIRST STARTS
