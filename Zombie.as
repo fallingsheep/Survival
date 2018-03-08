@@ -16,18 +16,26 @@
 		public var zombiehitpoints:int;
 		public var zombiedamage:int;
 		public var attackRandom:int;
+		public var speedRandom:int;
 		public var isAttacking:Boolean = false;
 
 			
         public function Zombie(stageRef:Stage, ZombieX:int, ZombieY:int){
-			//trace ("Zombie Created");
+			if(survival.traceoutput == true){
+				trace ("Zombie Created");
+			}
 			RandomSpawnPoint();
             this.stageRef = stageRef;
             this.x = ZombieX;
             this.y = ZombieY;
 			radius = 19;
-			this.gotoAndStop(1)
-			zombieSpeed = 0.5; //how fast zombie moves
+			this.gotoAndStop(1);
+			speedRandom = randomRange(0,9);
+			if (speedRandom == 1){
+				zombieSpeed = 1; //how fast zombie moves
+			}else{
+				zombieSpeed = 0.5;
+			}
 			zombiehitpoints = 10; //how much health zombie has
 			zombiedamage = 1;
 			agrorange = 350;//how far zombie can see

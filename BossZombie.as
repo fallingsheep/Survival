@@ -10,7 +10,9 @@
 		public var isCharging:Boolean = false;
 		
 		public function BossZombie(stageRef:Stage, BossZombieX:int, BossZombieY:int) {
+			if(survival.traceoutput == true){
 			trace ("BOSS CREATED");
+			}
 					radius = 12;//how big is the zombie in pixels (sphere)
 					this.gotoAndStop(1)
 					zombieSpeed = 0.2;
@@ -21,7 +23,9 @@
 			super (stageRef, ZombieX, ZombieY)
 		}
 		public function bosszombieloop(e:Event):void {
+			if(survival.traceoutput == true){
 			trace ("BOSS CREATED"+zombiehitpoints);
+			}
 			attackRandom = randomRange(1,100);// 1 in 100 chance of charge attack
 			if (survival.ispaused == false){
 				var Zdist_x:Number=this.x-survival.player.x;
@@ -39,7 +43,9 @@
 					isAttacking = true;
 					zombieSpeed = 0.5;
 					isCharging = false;
+					if(survival.traceoutput == true){
 					trace("boss attacking!");
+					}
 				}else if(distance > 75){
 					isAttacking = false;
 				}
@@ -67,7 +73,9 @@
 					if(attackRandom == 1){
 					zombieSpeed = 2;
 					isCharging = true;
+					if(survival.traceoutput == true){
 					trace("boss charging!");
+					}
 					}
 				}
 				
@@ -114,7 +122,9 @@
 			survival.globalcashearnt += 500;
 			survival.currentdead += 1;
 			survival.bossspawn = false;
-			trace("boss killed!");
+			if(survival.traceoutput == true){
+				trace("boss killed!");
+			}
 		}
 
 	}

@@ -8,10 +8,12 @@
 		public static var BigZombieX:int;
 		public static var BigZombieY:int;
 		
-		public function BigZombie(stageRef:Stage, BigZombieX:int, BigZombieY:int) {
-			trace ("Big Zombie Created");
+		public override function BigZombie(stageRef:Stage, BigZombieX:int, BigZombieY:int) {
+				if(survival.traceoutput == true){
+					trace ("Big Zombie Created");
+				}
 					radius = 9;//how big is the zombie in pixels (sphere)
-					this.gotoAndStop(1)
+					this.gotoAndStop(1);
 					zombieSpeed = 0.2;
 					zombiedamage = 5;
 					zombiehitpoints = 20;

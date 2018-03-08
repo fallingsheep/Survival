@@ -8,7 +8,9 @@
 	import flash.system.System;
 	
 	public class survival extends Sprite {
-	// MERGED
+
+public static var traceoutput:Boolean = false;
+
 	public var cheatscreen:cheatscreen_mc = new cheatscreen_mc();
 	public var confirmsavescreen:confirmsavescreen_mc = new confirmsavescreen_mc();
 	public var gameoverdeath:Boolean = false;
@@ -171,7 +173,7 @@
 			addChild(intro);
 			intro.startgame.addEventListener(MouseEvent.CLICK, startgame);
 		}
-		public function debugstuff():void{
+		public function debugstuff():void {
 			frames+=1;
 			curTimer=getTimer();
 				if(curTimer-prevTimer>=1000){
@@ -264,7 +266,9 @@
 			//add mouse listeners
 			stage.addEventListener(MouseEvent.MOUSE_DOWN, mouseDownHandler, false, 0, true);
 			stage.addEventListener(MouseEvent.MOUSE_UP, mouseUpHandler, false, 0, true);
-			trace ("Game Intialised");
+			if(traceoutput == true){
+				trace ("Game Intialised");
+			}
 			
 		}
 		//MAIN GAME LOOP
@@ -1000,7 +1004,9 @@
 			ispaused = true;
 			stage.removeEventListener(Event.ENTER_FRAME,mainloop);
 			stage.removeEventListener(Event.ENTER_FRAME,processScripts);
-			trace("GAME PAUSED");
+			if(traceoutput == true){
+				trace("GAME PAUSED");
+			}
 		}
 		public function gameunpause():void{
 			//process achivements
@@ -1010,7 +1016,9 @@
 			ispaused = false;
 			stage.addEventListener(Event.ENTER_FRAME,mainloop);
 			stage.addEventListener(Event.ENTER_FRAME,processScripts);
-			trace("GAME RESUMED");
+			if(traceoutput == true){
+				trace("GAME RESUMED");
+			}
 		}
 		
 		public function openpausescreen(e:MouseEvent):void{
@@ -1058,13 +1066,17 @@
 					confirmsave.savegameYes.removeEventListener(MouseEvent.CLICK, saveData);
 					confirmsave.savegameNo.removeEventListener(MouseEvent.CLICK, savegameNo);
 					pausescreen.removeChild(confirmsave);
-					trace("GAME SAVED");
+					if(traceoutput == true){
+						trace("GAME SAVED");
+					}
 		}
 		public function savegameNo(e:MouseEvent):void{
 					confirmsave.savegameYes.removeEventListener(MouseEvent.CLICK, saveData);
 					confirmsave.savegameNo.removeEventListener(MouseEvent.CLICK, savegameNo);
 					pausescreen.removeChild(confirmsave);
-					trace("SAVE ABORTED");
+					if(traceoutput == true){
+						trace("SAVE ABORTED");
+					}
 		}
 		
 		
@@ -1103,7 +1115,9 @@
 					isusingflamethrower = false;
 					delayMax = 15; //try changing this number to shoot more or less rapidly
 					delayCounter = 0;
-					trace ("Switched to pistol:" + delayMax);
+					if(traceoutput == true){
+						trace ("Switched to pistol:" + delayMax);
+					}
 				break;
 				
 				case 50 : // 2
@@ -1120,7 +1134,9 @@
 					isusingflamethrower = false;
 					delayMax = 6; //try changing this number to shoot more or less rapidly
 					delayCounter = 0;
-					trace ("Switched to uzi:" + delayMax);
+					if(traceoutput == true){
+						trace ("Switched to uzi:" + delayMax);
+					}
 				}
 				break;
 				
@@ -1138,7 +1154,9 @@
 					isusingchaingun = false;
 					delayMax = 20; //try changing this number to shoot more or less rapidly
 					delayCounter = 0;
-					trace ("Switched to shotgun:" + delayMax);
+					if(traceoutput == true){
+						trace ("Switched to shotgun:" + delayMax);
+					}
 				}
 				break;
 				case 52 : // 4
@@ -1155,7 +1173,9 @@
 					isusingchaingun = false;
 					delayMax = 2; //try changing this number to shoot more or less rapidly
 					delayCounter = 0;
-					trace ("Switched to flamethrower:" + delayMax);
+					if(traceoutput == true){
+						trace ("Switched to flamethrower:" + delayMax);
+					}
 				}
 				break;
 				case 53 : // 5
@@ -1172,7 +1192,9 @@
 					isusingchaingun = true;
 					delayMax = 2; //try changing this number to shoot more or less rapidly
 					delayCounter = 0;
-					trace ("Switched to chaingun:" + delayMax);
+					if(traceoutput == true){
+						trace ("Switched to chaingun:" + delayMax);
+					}
 				}
 				break;
 				case 54 : // 6
@@ -1250,7 +1272,9 @@
 			cheatscreen.nofogon.addEventListener(MouseEvent.CLICK,cheatfogon);
 			cheatscreen.nofogoff.addEventListener(MouseEvent.CLICK,cheatfogoff);
 			cheatscreen.exitcheatmenu.addEventListener(MouseEvent.CLICK,cheatmenuclose);
-			trace ("Cheat Menu Opened");
+			if(traceoutput == true){
+				trace ("Cheat Menu Opened");
+			}
 		}
 		public function cheatmenuclose(event:MouseEvent):void{
 			//remove cheat menu
@@ -1270,7 +1294,9 @@
 			cheatscreen.nofogon.removeEventListener(MouseEvent.CLICK,cheatfogon);
 			cheatscreen.nofogoff.removeEventListener(MouseEvent.CLICK,cheatfogoff);
 			cheatscreen.exitcheatmenu.removeEventListener(MouseEvent.CLICK,cheatmenuclose);
-			trace ("Cheat Menu Closed");
+			if(traceoutput == true){
+				trace ("Cheat Menu Closed");
+			}
 		}
 		public function cheatammoon(event:MouseEvent):void{
 			cheatscreen.infiteammotext.text = "On";
@@ -1810,7 +1836,7 @@ public var itemname:String;
 		var ranspawn:int;
 		
 		public function createBoss():void{
-			 //if(bossspawn == true){
+			 if(bossspawn == true){
 					var zombieBoss:BossZombie = new BossZombie(stage, BossZombie.BossZombieX, BossZombie.BossZombieY);
 					//Add event to zombie to remove them from array when removed from stage
 					zombieBoss.addEventListener(Event.REMOVED_FROM_STAGE, zombieRemoved, false, 0, true);
@@ -1823,8 +1849,10 @@ public var itemname:String;
 					totalzomibes += 1;
 					Zombiesspawnedtotal += 1;
 					bossspawn = false;
-					trace("Boss zombie spawned!")
-			//}
+					if(traceoutput == true){
+						trace("Boss zombie spawned!")
+					}
+			}
 		}
 		public function createZombies():void {
  			if((zombiecount > zombiespawncount)){
@@ -1915,7 +1943,9 @@ public var itemname:String;
 							}else if (hasarmour == true){
 								armour -= zombie1.zombiedamage;
 							}
-							trace("player hit");
+							if(traceoutput == true){
+								trace("player hit");
+							}
 						}else{
 							hasbeenhit = false;
 						}
@@ -1970,7 +2000,9 @@ public var itemname:String;
 			finishlevel();
 				//save achive
 				saveachiveData();
-			trace ("Zombie Removed");
+				if(traceoutput == true){
+					trace ("Zombie Removed");
+				}
 		}
 		
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1982,49 +2014,65 @@ public var itemname:String;
 				zombiespawncount = 19; // how many zombies to spawn for level 2 (if you want 10 set it to 9!)
 				level += 1;
 				stopspawn = false;
-				trace ("Level:" + level);
+				if(traceoutput == true){
+					trace ("Level:" + level);
+				}
 			}
 			else if ((level == 2)&&(zombieskilled >= 30)){
 				zombiespawncount = 19;
 				level += 1;
 				stopspawn = false;
-				trace ("Level:" + level);
+				if(traceoutput == true){
+					trace ("Level:" + level);
+				}
 			}
 			else if ((level == 3)&&(zombieskilled >= 50)){
 				zombiespawncount = 19;
 				level += 1;
 				stopspawn = false;
-				trace ("Level:" + level);
+				if(traceoutput == true){
+					trace ("Level:" + level);
+				}
 			}
 			else if ((level == 4)&&(zombieskilled >= 70)){
 				zombiespawncount = 19;
 				level += 1;
 				stopspawn = false;
+				if(traceoutput == true){
 				trace ("Level:" + level);
+				}
 			}
 			else if ((level == 5)&&(zombieskilled >= 90)){
 				zombiespawncount = 19;
 				level += 1;
 				stopspawn = false;
+				if(traceoutput == true){
 				trace ("Level:" + level);
+				}
 			}
 			else if ((level == 6)&&(zombieskilled >= 110)){
 				zombiespawncount = 19;
 				level += 1;
 				stopspawn = false;
+				if(traceoutput == true){
 				trace ("Level:" + level);
+				}
 			}
 			else if ((level == 7)&&(zombieskilled >= 130)){
 				zombiespawncount = 19;
 				level += 1;
 				stopspawn = false;
+				if(traceoutput == true){
 				trace ("Level:" + level);
+				}
 			}
 			else if ((level == 8)&&(zombieskilled >= 150)){
 				zombiespawncount = 19;
 				level += 1;
 				stopspawn = false;
+				if(traceoutput == true){
 				trace ("Level:" + level);
+				}
 			}
 			else if ((level == 9)&&(zombieskilled >= 170)){
 				zombiespawncount = 19;
@@ -2037,14 +2085,18 @@ public var itemname:String;
 		}
 		public function nextstage():void{
 			if (currentstage == 1){
+				if(traceoutput == true){
 				trace ("Stage 1");
+				}
 				environment.gotoAndStop(1);
 				ground.gotoAndStop(1);
 			}
 			if (currentstage == 2){
 				level = 1;
 				zombieskilled = 0;
+				if(traceoutput == true){
 				trace ("Stage 2");
+				}
 				environment.gotoAndStop(2);
 				ground.gotoAndStop(2);
 			}
@@ -2052,14 +2104,18 @@ public var itemname:String;
 				level = 1;
 				zombieskilled = 0;
 				endfog();//stop fog
+				if(traceoutput == true){
 				trace ("Stage 3");
+				}
 				environment.gotoAndStop(3);
 				ground.gotoAndStop(3);
 			}
 			if (currentstage == 4){
 				level = 1;
 				zombieskilled = 0;
+				if(traceoutput == true){
 				trace ("Stage 4");
+				}
 				environment.gotoAndStop(4);
 				ground.gotoAndStop(4);
 			}
@@ -2067,7 +2123,9 @@ public var itemname:String;
 			if (currentstage == 5){
 				level = 1;
 				zombieskilled = 0;
+				if(traceoutput == true){
 				trace ("Stage 5");
+				}
 				processfog();
 				environment.gotoAndStop(5);
 				ground.gotoAndStop(5);
@@ -2210,7 +2268,9 @@ public var itemname:String;
 				flamethrowerammo += 150;
 				//reset ammo
 				ammoempty = false;
-				trace ("Collected Ammo Pack");
+				if(traceoutput == true){
+					trace ("Collected Ammo Pack");
+				}
 
 		}
 		//MEDSHOT
@@ -2226,7 +2286,9 @@ public var itemname:String;
 				//set current health to 100
 				health = 100;
 			}
-			trace ("Collected Medshot");
+			if(traceoutput == true){
+				trace ("Collected Medshot");
+			}
 		}
 		//MEDPACK
 		public function collectMedpack():void {
@@ -2240,7 +2302,9 @@ public var itemname:String;
 				//set current health to 100
 				health = 100;
 			}
-			trace ("Collected Medpack");
+			if(traceoutput == true){
+				trace ("Collected Medpack");
+			}
 		}
 		
 		//SPEEDPACK
@@ -2256,7 +2320,9 @@ public var itemname:String;
 				Timer10.start();
 				//set collected speed pack to true
 				collectedSpeedPack = true;
-				trace ("Collected Speedpack");
+				if(traceoutput == true){
+					trace ("Collected Speedpack");
+				}
 
 		}
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -2298,7 +2364,9 @@ public var itemname:String;
 					door.y ++;
 					dooropening = true;
 				}
-				trace ("Door Opening");
+				if(traceoutput == true){
+					trace ("Door Opening");
+				}
 			}else{
 				dooropening = false;
 			}
@@ -2311,7 +2379,9 @@ public var itemname:String;
 					door2.y ++;
 					door2opening = true;
 				}
-				trace ("Door Opening");
+				if(traceoutput == true){
+					trace ("Door Opening");
+				}
 			}else{
 				door2opening = false;
 			}
@@ -2394,7 +2464,9 @@ public var itemname:String;
 					ispaused = true;
 					stage.removeEventListener(Event.ENTER_FRAME,mainloop);
 					stage.removeEventListener(Event.ENTER_FRAME,processScripts);
-					trace("GAME OVER");
+					if(traceoutput == true){
+						trace("GAME OVER");
+					}
 					stage.addChild(gameoverscreen);
 					deaths += 1;
 					gameoverdeath = true;
@@ -2419,8 +2491,9 @@ public var itemname:String;
 		
 		//Rank up timer checker
 		public function checkRankUpTimer():void{
-			
-			trace ("timerstarted");
+			if(traceoutput == true){
+				trace ("timerstarted");
+			}
 			//check if player has speedpack
 			if (Rankedup == true){
 				//increase timer
@@ -2694,7 +2767,9 @@ ShowRankUp();
 					var url:String = stage.loaderInfo.url;
   	 	 			var request:URLRequest = new URLRequest(url);
    		 			navigateToURL(request,"_level0");
-		 			trace ("Game Restarted");
+					if(traceoutput == true){
+		 				trace ("Game Restarted");
+					}
 				} else {
 					confirmrestartgame.yesrestartgame.addEventListener(MouseEvent.CLICK, confirmRESTART);
 					confirmrestartgame.norestartgame.addEventListener(MouseEvent.CLICK, cancelRESTART);
@@ -2709,7 +2784,9 @@ ShowRankUp();
    		 var url:String = stage.loaderInfo.url;
   	 	 var request:URLRequest = new URLRequest(url);
    		 navigateToURL(request,"_level0");
-		 trace ("Game Restarted");
+		 if(traceoutput == true){
+			 trace ("Game Restarted");
+		 }
 		}
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //							SAVE AND LOAD
@@ -2773,8 +2850,10 @@ ShowRankUp();
    		 		stage.removeChild(confirmsavescreen);
 			}	
 			saveDataObject.data.savedhascheated = hascheated;
+			if(traceoutput == true){
 			trace("Game Saved!");//replace with conformation screen later
 			trace(((saveDataObject.size) / 1000) + "KB"); // this will show the size of the save file, in KiloBytes
+			}
 	}
  
 	public function loadData():void{
@@ -2821,8 +2900,9 @@ ShowRankUp();
 			
 			//DONT LOAD ACHIVEMENT DATA HERE IT WILL OVERWRITE ANY NEW DATA IN CURRENT SESSION!!
 			//LOAD ACHIVEMENT DATA WHEN GAME FIRST STARTS
-			
+			if(traceoutput == true){
 			trace("Game Loaded!");
+			}
 		}
 		
 		public function loadgame(event:MouseEvent):void{
